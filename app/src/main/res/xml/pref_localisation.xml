@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="@string/maps_activity_title">
+
+
+    <Preference
+        android:defaultValue="@string/not_set"
+        android:key="localisation_text"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/pref_localisation" />
+
+
+
+</PreferenceScreen>

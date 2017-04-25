@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.kacper.walkwithme.OptionsActivity.OptionsActivity"
+    tools:layout_editor_absoluteY="81dp"
+    tools:layout_editor_absoluteX="0dp">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/newWalkButton"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_margin="15dp"
+                android:background="@drawable/new_walk_icon" />
+
+            <ImageButton
+                android:id="@+id/chatButton"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_margin="15dp"
+                android:background="@drawable/chat_icon" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/settingsButton"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_margin="15dp"
+                android:background="@drawable/settings_icon" />
+
+            <ImageButton
+                android:id="@+id/logoutButton"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_margin="15dp"
+                android:background="@drawable/logout_icon" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

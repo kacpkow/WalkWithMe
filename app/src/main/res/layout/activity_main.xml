@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/icons_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#009000"
+        android:orientation="horizontal">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageButton
+                android:id="@+id/personButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:adjustViewBounds="true"
+                android:maxHeight="30dp"
+                android:scaleType="fitCenter"
+                android:layout_marginLeft="0dp"
+                android:layout_marginRight="0dp"
+                android:layout_marginTop="4dp"
+                android:background="#00ffffff"
+                android:src="@drawable/person_icon"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="@+id/guideline9"
+                app:layout_constraintRight_toLeftOf="@+id/guideline9"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <ImageButton
+                android:id="@+id/chatButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:adjustViewBounds="true"
+                android:maxHeight="30dp"
+                android:scaleType="fitCenter"
+                android:layout_marginLeft="0dp"
+                android:layout_marginRight="0dp"
+                android:layout_marginTop="4dp"
+                android:background="#00ffffff"
+                android:src="@drawable/chat_icon_small"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="@+id/guideline8"
+                app:layout_constraintRight_toLeftOf="@+id/guideline8"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <ImageButton
+                android:id="@+id/homeButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:maxHeight="30dp"
+                android:scaleType="fitCenter"
+                android:layout_marginBottom="4dp"
+                android:layout_marginLeft="0dp"
+                android:layout_marginRight="0dp"
+                android:layout_marginTop="4dp"
+                android:background="#00ffffff"
+                android:src="@drawable/home_icon_small"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="@+id/guideline11"
+                app:layout_constraintRight_toLeftOf="@+id/guideline11"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <ImageButton
+                android:id="@+id/notificationsButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:maxHeight="30dp"
+                android:scaleType="fitCenter"
+                android:layout_marginBottom="4dp"
+                android:layout_marginLeft="0dp"
+                android:layout_marginRight="0dp"
+                android:layout_marginTop="4dp"
+                android:background="#00ffffff"
+                android:src="@drawable/notification_icon_small"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="@+id/guideline10"
+                app:layout_constraintRight_toLeftOf="@+id/guideline10"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <ImageButton
+                android:id="@+id/settingsButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:maxHeight="30dp"
+                android:scaleType="fitCenter"
+                android:layout_marginBottom="4dp"
+                android:layout_marginLeft="0dp"
+                android:layout_marginRight="0dp"
+                android:layout_marginTop="4dp"
+                android:background="#00ffffff"
+                android:src="@drawable/settings_icon_small"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="@+id/guideline12"
+                app:layout_constraintRight_toLeftOf="@+id/guideline12"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <android.support.constraint.Guideline
+                android:id="@+id/guideline8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.5" />
+
+            <android.support.constraint.Guideline
+                android:id="@+id/guideline9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.3" />
+
+            <android.support.constraint.Guideline
+                android:id="@+id/guideline10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.7" />
+
+            <android.support.constraint.Guideline
+                android:id="@+id/guideline11"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.1" />
+
+            <android.support.constraint.Guideline
+                android:id="@+id/guideline12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.9" />
+
+            <TextView
+                android:id="@+id/chatNotification"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_marginRight="0dp"
+                android:background="@drawable/button_notification_rounded"
+                android:gravity="fill_vertical"
+                android:text="1"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Display3"
+                android:textSize="10sp"
+                android:visibility="visible"
+                app:layout_constraintRight_toRightOf="@+id/chatButton"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginBottom="4dp" />
+
+
+        </android.support.constraint.ConstraintLayout>
+
+    </LinearLayout>
+
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!--<fragment android:name="com.example.kacper.walkwithme.MainActivity.ForthcomingAppointments.AppointmentsFragment"-->
+        <!--android:id="@+id/fragment_place"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"/>-->
+
+
+    <!--<android.support.v7.widget.RecyclerView-->
+        <!--android:id="@+id/rv"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent">-->
+
+    <!--</android.support.v7.widget.RecyclerView>-->
+
+
+</LinearLayout>

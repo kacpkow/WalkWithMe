@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background1"
+    tools:context="com.example.kacper.walkwithme.LoginActivity.LoginActivity"
+    tools:layout_editor_absoluteY="81dp"
+    tools:layout_editor_absoluteX="0dp">
+
+    <EditText
+        android:id="@+id/loginField"
+        style="@style/Widget.AppCompat.AutoCompleteTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Login"
+        android:inputType="text"
+        android:singleLine="false"
+        android:textAllCaps="false"
+        android:textColor="@android:color/black"
+        android:layout_marginEnd="58dp"
+        tools:layout_editor_absoluteY="234dp"
+        tools:layout_editor_absoluteX="37dp" />
+
+    <Button
+        android:id="@+id/submitButton"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:background="@drawable/button_register_rounded"
+        android:elevation="1dp"
+        android:enabled="true"
+        android:text="Submit"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        tools:layout_editor_absoluteY="363dp"
+        tools:layout_editor_absoluteX="16dp" />
+
+    <EditText
+        android:id="@+id/passwordField"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Password"
+        android:inputType="textPassword"
+        android:shadowColor="@android:color/darker_gray"
+        android:shadowDx="5"
+        android:textColor="@android:color/background_dark"
+        tools:shadowDx="5"
+        android:layout_marginEnd="11dp"
+        tools:layout_editor_absoluteY="411dp"
+        tools:layout_editor_absoluteX="72dp" />
+
+    <TextView
+        android:id="@+id/mainLabel"
+        android:layout_width="0dp"
+        android:layout_height="62dp"
+        android:layout_marginStart="4dp"
+        android:text="Walk With Me"
+        android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
+        tools:layout_editor_absoluteY="49dp"
+        tools:layout_editor_absoluteX="4dp" />
+
+    <GridLayout
+        android:layout_width="199dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="34dp"
+        tools:layout_editor_absoluteX="126dp"
+        tools:layout_editor_absoluteY="301dp">
+
+        <TextView
+            android:id="@+id/accountRequest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Have no account?"
+            tools:layout_editor_absoluteX="100dp"
+            tools:layout_editor_absoluteY="480dp" />
+
+        <Button
+            android:id="@+id/registerButton"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="88dp"
+            android:layout_height="48dp"
+            android:text="Register"
+            android:textAppearance="@style/TextAppearance.AppCompat"
+            tools:layout_editor_absoluteX="204dp"
+            tools:layout_editor_absoluteY="464dp"
+            tools:textColor="@color/colorPrimary" />
+
+    </GridLayout>
+
+</android.support.constraint.ConstraintLayout>
