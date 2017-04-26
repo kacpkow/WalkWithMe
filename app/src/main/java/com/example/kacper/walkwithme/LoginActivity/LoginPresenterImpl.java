@@ -45,12 +45,12 @@ public class LoginPresenterImpl implements LoginPresenter, LoginInteractor.OnLog
 //        map.put("password", loginView.returnPassword());
 //
 //        myReq = new GsonRequest<User>(url,User.class, map, createSuccessListener(), createErrorListener());
-        String url ="http://10.0.2.2:8080/start.jsp";
+        String url ="http://10.0.2.2:8080/home.jsp";
         strReq = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        loginView.showToast(response.toString().substring(0,500));
+                        loginView.showToast(response.toString());
                         //progressDialog.setTitle(response.substring(0,500));
                         progressDialog.setTitle(response.toString());
                         progressDialog.show();
