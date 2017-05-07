@@ -12,5 +12,4 @@ public interface LoginPresenter<T extends LoginView> {
     void validateCredentials(String username, String password);
     void onDestroy();
     GsonRequest<User> getGsonRequest();
-    StringRequest getStrRequest();
 }

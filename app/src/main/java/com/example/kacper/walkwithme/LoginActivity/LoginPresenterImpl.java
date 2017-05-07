@@ -22,10 +22,8 @@ import static android.content.ContentValues.TAG;
 public class LoginPresenterImpl implements LoginPresenter, LoginInteractor.OnLoginFinishedListener {
     private LoginView loginView;
     private LoginInteractor mainInteractor;
-    //JsonObjectRequest jsonObjReq;
     GsonRequest<User> myReq;
     ProgressDialog progressDialog;
-    StringRequest strReq;
 
     public LoginPresenterImpl(LoginView loginView) {
         this.loginView = loginView;
@@ -36,34 +34,14 @@ public class LoginPresenterImpl implements LoginPresenter, LoginInteractor.OnLog
     @Override
     public void validateCredentials(String username, String password) {
 
-//        String url = "http://json.org/JSONRequest.html";
-//        progressDialog.setTitle("Logging, please wait ...");
-//        progressDialog.show();
-//        Map<String, String> map = new HashMap<String, String>();
-//        map.put("req_type_tag", "LIN");
-//        map.put("login", loginView.returnLogin());
-//        map.put("password", loginView.returnPassword());
-//
-//        myReq = new GsonRequest<User>(url,User.class, map, createSuccessListener(), createErrorListener());
-        String url ="http://10.0.2.2:8080/home.jsp";
-        strReq = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        loginView.showToast(response.toString());
-                        //progressDialog.setTitle(response.substring(0,500));
-                        progressDialog.setTitle(response.toString());
-                        progressDialog.show();
-//        progressDialog.show();
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                if(error != null)
-                    loginView.showToast("Error "+ error.toString() );
-        }
-        });
+        String url ="http://10.0.2.2:8080/login.jsp";
+        progressDialog.setTitle("Logging, please wait ...");
+        progressDialog.show();
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("firstName", loginView.returnLogin());
+        map.put("password", loginView.returnPassword());
 
+        myReq = new GsonRequest<User>(url,User.class, map, createSuccessListener(), createErrorListener());
 
     }
 
@@ -83,7 +61,6 @@ public class LoginPresenterImpl implements LoginPresenter, LoginInteractor.OnLog
         return new Response.Listener<User>() {
             @Override
             public void onResponse(User response) {
-                Log.i(TAG, "Response : " + response.getName());
                 progressDialog.dismiss();
                 //loginView.showToast("Logged to: " + response.getName());
                 loginView.showToast("Logged to: " + response.toString());
@@ -118,10 +95,6 @@ public class LoginPresenterImpl implements LoginPresenter, LoginInteractor.OnLog
 
     public GsonRequest<User> getGsonRequest(){
         return myReq;
-    }
-
-    public StringRequest getStrRequest(){
-        return strReq;
     }
 
 }
