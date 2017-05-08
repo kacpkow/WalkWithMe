@@ -1,5 +1,6 @@
 package com.example.kacper.walkwithme.RegistrationActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -37,7 +38,7 @@ public class RegistrationActivity extends AppCompatActivity implements Registrat
         presenter = new RegistrationPresenterImpl(this);
         registerButton.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                presenter.validateCredentials(
+                presenter.register(
                         login.getText().toString(),
                         firstPassword.getText().toString(),
                         secondPassword.getText().toString(),
@@ -57,4 +58,10 @@ public class RegistrationActivity extends AppCompatActivity implements Registrat
         Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
         startActivity(intent);
     }
+
+    @Override
+    public Context getActivityContext() {
+        return getActivityContext();
+    }
+
 }

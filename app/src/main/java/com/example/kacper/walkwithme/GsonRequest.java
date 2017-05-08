@@ -1,16 +1,16 @@
 package com.example.kacper.walkwithme;
 
-        import com.android.volley.AuthFailureError;
-        import com.android.volley.NetworkResponse;
-        import com.android.volley.ParseError;
-        import com.android.volley.Request;
-        import com.android.volley.Response;
-        import com.android.volley.toolbox.HttpHeaderParser;
-        import com.google.gson.Gson;
-        import com.google.gson.JsonSyntaxException;
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.ParseError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.toolbox.HttpHeaderParser;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 
-        import java.io.UnsupportedEncodingException;
-        import java.util.Map;
+import java.io.UnsupportedEncodingException;
+import java.util.Map;
 
 public class GsonRequest<T> extends Request<T> {
     private final Gson gson = new Gson();

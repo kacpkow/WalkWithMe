@@ -5,19 +5,20 @@ package com.example.kacper.walkwithme;
  */
 
 public class User {
-    private String name;
+    private String nick;
     private String firstName;
     private String lastName;
-    private Double geoLat;  // user location longtitude
-    private Double geoLng;  // user location latitude
+    //private Double geoLat;  // user location longtitude
+    //private Double geoLng;  // user location latitude
     private String email;
+    private String sessionId;
 
-    public String getName() {
-        return name;
+    public String getNick() {
+        return nick;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setNick(String nick) {
+        this.nick = nick;
     }
 
     public String getFirstName() {
@@ -36,21 +37,21 @@ public class User {
         this.lastName = lastName;
     }
 
-    public Double getGeoLat() {
-        return geoLat;
-    }
-
-    public void setGeoLat(Double geoLat) {
-        this.geoLat = geoLat;
-    }
-
-    public Double getGeoLng() {
-        return geoLng;
-    }
-
-    public void setGeoLng(Double geoLng) {
-        this.geoLng = geoLng;
-    }
+//    public Double getGeoLat() {
+//        return geoLat;
+//    }
+//
+//    public void setGeoLat(Double geoLat) {
+//        this.geoLat = geoLat;
+//    }
+//
+//    public Double getGeoLng() {
+//        return geoLng;
+//    }
+//
+//    public void setGeoLng(Double geoLng) {
+//        this.geoLng = geoLng;
+//    }
 
     public String getEmail() {
         return email;
@@ -59,4 +60,13 @@ public class User {
     public void setEmail(String email) {
         this.email = email;
     }
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
+    }
+
 }

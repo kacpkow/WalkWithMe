@@ -41,8 +41,8 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
             @Override
             public void onClick(View v) {
                 presenter.validateCredentials(login.getText().toString(), password.getText().toString());
-                queue.add(presenter.getGsonRequest());
-                queue.getCache().clear();
+                //queue.add(presenter.getGsonRequest());
+                //queue.getCache().clear();
             }
         });
 
