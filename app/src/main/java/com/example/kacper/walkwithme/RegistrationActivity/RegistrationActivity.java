@@ -21,6 +21,9 @@ public class RegistrationActivity extends AppCompatActivity implements Registrat
     private EditText login;
     private EditText firstPassword;
     private EditText secondPassword;
+    private EditText firstName;
+    private EditText lastName;
+    private EditText city;
     private EditText email;
     private Button registerButton;
 
@@ -30,6 +33,9 @@ public class RegistrationActivity extends AppCompatActivity implements Registrat
         setContentView(R.layout.activity_register);
 
         login = (EditText) findViewById(R.id.loginTextField);
+        firstName = (EditText) findViewById(R.id.firstNameTextField);
+        lastName = (EditText) findViewById(R.id.lastNameTextField);
+        city = (EditText) findViewById(R.id.cityTextField);
         firstPassword = (EditText) findViewById(R.id.firstPasswordTextField);
         secondPassword = (EditText) findViewById(R.id.secondPasswordTextField);
         email = (EditText) findViewById(R.id.emailTextField);

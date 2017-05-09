@@ -8,6 +8,7 @@ import android.os.Looper;
 import android.text.TextUtils;
 import android.widget.Toast;
 
+import com.example.kacper.walkwithme.User;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -78,7 +79,12 @@ public class RegistrationPresenterImpl implements RegistrationPresenter{
                 public void onResponse(Call call, okhttp3.Response response) throws IOException {
                     progressDialog.dismiss();
                     String json = response.body().string();
-                    backgroundThreadShortToast(registrationView.getAppContext(),json);
+                    //backgroundThreadShortToast(registrationView.getAppContext(),json);
+
+                    if(!json.equals("error")){
+                        backgroundThreadShortToast(registrationView.getAppContext(),json);
+                    }
+
                     setFlag(1);
                 }
             });
