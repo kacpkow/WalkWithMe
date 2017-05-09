@@ -1,0 +1,6 @@
+Instrukcja pobierania repozytorium
+
+1. W android studio kliknij File->New->Project from version control->GitHub
+2. Ustaw œcie¿kê do projektu
+3. Poczekaj na pobranie plików
+4. Kompiluj
