@@ -83,9 +83,12 @@ public class RegistrationPresenterImpl implements RegistrationPresenter{
 
                     if(!json.equals("error")){
                         backgroundThreadShortToast(registrationView.getAppContext(),json);
+                        setFlag(1);
+                    }
+                    else{
+                        backgroundThreadShortToast(registrationView.getAppContext(),"error");
                     }
 
-                    setFlag(1);
                 }
             });
 
