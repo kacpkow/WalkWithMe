@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.example.kacper.walkwithme.MainActivity.MainView;
 import com.example.kacper.walkwithme.User;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import java.io.IOException;
 import okhttp3.Call;
@@ -67,10 +68,12 @@ public class LoginPresenterImpl implements LoginPresenter {
 
                 @Override
                 public void onResponse(Call call, okhttp3.Response response) throws IOException {
+                    Gson retGson = new Gson();
                     progressDialog.dismiss();
                     json = response.body().string();
-                    if(!json.equals("error")){
-                        Gson retGson = new Gson();
+                    String jsonString = "{\"error\":\"notAnUser\"}";
+                    if(!json.equals(jsonString)){
+
                         usr = retGson.fromJson(json, User.class);
                         backgroundThreadShortToast(loginView.getAppContext(),"logged to: "+usr.getNick());
                         backgroundThreadStartMainActivity(loginView.getAppContext());
