@@ -3,91 +3,76 @@ package com.example.kacper.walkwithme.LoginActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
+import android.text.TextUtils;
 import android.widget.Toast;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.example.kacper.walkwithme.GsonRequest;
 import com.example.kacper.walkwithme.MainActivity.MainView;
-import com.example.kacper.walkwithme.OptionsActivity.OptionsActivity;
 import com.example.kacper.walkwithme.User;
+import com.google.gson.Gson;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.FormBody;
-import okhttp3.MultipartBody;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 
-import static android.content.ContentValues.TAG;
 
 /**
  * Created by kacper on 2017-03-31.
  */
 
-public class LoginPresenterImpl implements LoginPresenter, LoginInteractor.OnLoginFinishedListener {
+public class LoginPresenterImpl implements LoginPresenter {
     private LoginView loginView;
-    private LoginInteractor mainInteractor;
-    GsonRequest<User> myReq;
     ProgressDialog progressDialog;
     String json;
 
     public LoginPresenterImpl(LoginView loginView) {
         this.loginView = loginView;
-        this.mainInteractor = new LoginInteractorImpl();
-        progressDialog = new ProgressDialog(loginView.getActivityContext());
     }
 
     @Override
     public void validateCredentials(String username, String password) {
+        if(validateFields(username, password)){
+            progressDialog = new ProgressDialog(loginView.getActivityContext());
+            progressDialog.setTitle("Logging, please wait ...");
+            progressDialog.show();
+            String url ="http://10.0.2.2:8080/Register";
+            OkHttpClient client = new OkHttpClient();
 
-        loginView.showToast("logowanie");
-        progressDialog.setTitle("Logging, please wait ...");
-        progressDialog.show();
-        String url ="http://10.0.2.2:8080/login.jsp";
-        OkHttpClient client = new OkHttpClient();
+            Gson gson = new Gson();
 
-        RequestBody requestBody = new FormBody.Builder()
-                .add("req_type","aLog")
-                .add("nick", loginView.returnLogin())
-                .add("password", loginView.returnPassword())
-                .build();
+            LoginContent log = new LoginContent(username, password);
+            MediaType mediaType = MediaType.parse("application/json");
+            RequestBody requestBody = RequestBody.create(mediaType, gson.toJson(log));
 
-        Request request;
-        request = new Request.Builder()
-                .url(url)
-                .post(requestBody)
-                .build();
+            Request request;
+            request = new Request.Builder()
+                    .url(url)
+                    .post(requestBody)
+                    .addHeader("content-type", "application/json")
+                    .build();
 
+            Call call = client.newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    progressDialog.dismiss();
+                    backgroundThreadShortToast(loginView.getAppContext(), "Error in logging occured");
+                }
 
-        Call call = client.newCall(request);
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                progressDialog.dismiss();
-                loginView.showToast("error in logging occured");
-            }
-
-            @Override
-            public void onResponse(Call call, okhttp3.Response response) throws IOException {
-                progressDialog.dismiss();
-                json = response.body().string();
-                backgroundThreadShortToast(loginView.getAppContext(),json);
-            }
-        });
-
-
-
+                @Override
+                public void onResponse(Call call, okhttp3.Response response) throws IOException {
+                    progressDialog.dismiss();
+                    json = response.body().string();
+                    backgroundThreadShortToast(loginView.getAppContext(),json);
+                    backgroundThreadStartMainActivity(loginView.getAppContext());
+                }
+            });
+        }
     }
 
     public static void backgroundThreadShortToast(final Context context,
@@ -97,9 +82,20 @@ public class LoginPresenterImpl implements LoginPresenter, LoginInteractor.OnLog
 
                 @Override
                 public void run() {
+                    Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
+    public static void backgroundThreadStartMainActivity(final Context context) {
+        if (context != null) {
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+
+                @Override
+                public void run() {
                     Intent intent = new Intent(context, MainView.class);
                     context.startActivity(intent);
-                    Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -110,27 +106,18 @@ public class LoginPresenterImpl implements LoginPresenter, LoginInteractor.OnLog
         loginView = null;
     }
 
-    @Override
-    public void onUsernameError() {
-        if(loginView != null){
-            loginView.showToast("Username error");
+    public Boolean validateFields(String username, String password){
+        if(TextUtils.isEmpty(username) || TextUtils.isEmpty(password)){
+            if(TextUtils.isEmpty(username)){
+                loginView.showToast("Empty login field\nTry again");
+                return false;
+            }
+            else{
+                loginView.showToast("Empty password field\nTry again");
+                return false;
+            }
         }
-    }
-
-    @Override
-    public void onPasswordError() {
-        if(loginView != null){
-            loginView.showToast("Password error");
-        }
-    }
-
-    @Override
-    public void onSuccess() {
-        loginView.goToOptions();
-    }
-
-    public GsonRequest<User> getGsonRequest(){
-        return myReq;
+        return true;
     }
 
 }

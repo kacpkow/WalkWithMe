@@ -11,6 +11,4 @@ public interface LoginView {
     void goToOptions();
     Context getAppContext();
     Context getActivityContext();
-    String returnLogin();
-    String returnPassword();
 }

@@ -41,8 +41,6 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
             @Override
             public void onClick(View v) {
                 presenter.validateCredentials(login.getText().toString(), password.getText().toString());
-                //queue.add(presenter.getGsonRequest());
-                //queue.getCache().clear();
             }
         });
 
@@ -76,16 +74,6 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
     @Override
     public Context getActivityContext() {
         return this;
-    }
-
-    @Override
-    public String returnLogin() {
-        return login.getText().toString();
-    }
-
-    @Override
-    public String returnPassword() {
-        return password.getText().toString();
     }
 
 }

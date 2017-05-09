@@ -38,11 +38,16 @@ public class RegistrationActivity extends AppCompatActivity implements Registrat
         presenter = new RegistrationPresenterImpl(this);
         registerButton.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                presenter.register(
+                boolean registeredCheck = presenter.register(
                         login.getText().toString(),
                         firstPassword.getText().toString(),
                         secondPassword.getText().toString(),
                         email.getText().toString());
+
+                if(registeredCheck){
+                    presenter.setFlag(0);
+                    goToLoginScreen();
+                }
             }
         });
     }
@@ -55,12 +60,16 @@ public class RegistrationActivity extends AppCompatActivity implements Registrat
 
     @Override
     public void goToLoginScreen() {
-        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-        startActivity(intent);
+        this.finish();
     }
 
     @Override
     public Context getActivityContext() {
+        return this;
+    }
+
+    @Override
+    public Context getAppContext() {
         return getActivityContext();
     }
 

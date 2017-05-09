@@ -1,0 +1,32 @@
+package com.example.kacper.walkwithme.LoginActivity;
+
+/**
+ * Created by kacper on 2017-05-09.
+ */
+
+public class LoginContent {
+    private String nick;
+    private String password;
+
+    public LoginContent(String nick, String password){
+        this.nick = nick;
+        this.password = password;
+    }
+
+    public String getNick() {
+        return nick;
+    }
+
+    public void setNick(String nick) {
+        this.nick = nick;
+    }
+
+    public String getPassword() {
+
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+}

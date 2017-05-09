@@ -10,4 +10,5 @@ public interface RegistrationView {
     void showToast(String msg);
     void goToLoginScreen();
     Context getActivityContext();
+    Context getAppContext();
 }
