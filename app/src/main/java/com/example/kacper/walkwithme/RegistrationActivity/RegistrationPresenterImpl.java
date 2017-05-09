@@ -55,7 +55,7 @@ public class RegistrationPresenterImpl implements RegistrationPresenter{
 
             Gson gson = new Gson();
 
-            RegistrationContent reg = new RegistrationContent(username,password,email);
+            RegistrationContent reg = new RegistrationContent(username,password,email, "Jan", "Kowalski", "Warsaw");
             MediaType mediaType = MediaType.parse("application/json");
             RequestBody requestBody = RequestBody.create(mediaType, gson.toJson(reg));
 
