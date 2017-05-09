@@ -1,0 +1,12 @@
+instrukcja u¿ytkowania aplikacji:
+
+1. Po zainstalowaniu i uruchomieniu aplikacji ukazuje siê okno logowania z mo¿liwoœci¹ przejœcia do rejestracji konta po wciœniêciu przycisku SIGN UP.
+2. U¿ytkownik mo¿e siê zalogowaæ tylko gdy poda niepusty login i has³o.
+3. Po zalogowaniu wyœwietli siê nowy ekran tzw. Main Activity. W tej czêœci na górze ekranu znajduje siê pasek nawigacyjny z mo¿liwoœci¹ przejœcia do poszczególnych sekcji:
+	-strony g³ównej,
+	-strony wyszukiwania potencjalnych kandydatów/ek na spacery,
+	-czatu,
+	-strony powiadomieñ,
+	-ustawieñ.
+4. Na stronie wyszukiwania potencjalnych kandydatów/ek na spacery by umówiæ siê z wybran¹ osob¹ nale¿y klikn¹æ na dan¹ osobê na liœcie, nastêpnie klikn¹æ opcjê umów siê na spacer. 
+5. Ci¹g dalszy instrukcji nastêpi...
