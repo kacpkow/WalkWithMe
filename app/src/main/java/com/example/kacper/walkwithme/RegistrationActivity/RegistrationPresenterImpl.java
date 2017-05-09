@@ -48,7 +48,7 @@ public class RegistrationPresenterImpl implements RegistrationPresenter{
     public Boolean register(String username, String password, String confirmation, String email) {
         if(validateFields(username, password, confirmation, email)){
             progressDialog = new ProgressDialog(registrationView.getActivityContext());
-            String url ="http://10.0.2.2:8080/Register";
+            String url ="http://10.0.2.2:8080/RegisterAndroid";
             progressDialog.setTitle("Account registering, please wait ...");
             progressDialog.show();
             OkHttpClient client = new OkHttpClient();

@@ -29,6 +29,7 @@ public class LoginPresenterImpl implements LoginPresenter {
     private LoginView loginView;
     ProgressDialog progressDialog;
     String json;
+    private User usr;
 
     public LoginPresenterImpl(LoginView loginView) {
         this.loginView = loginView;
@@ -40,7 +41,7 @@ public class LoginPresenterImpl implements LoginPresenter {
             progressDialog = new ProgressDialog(loginView.getActivityContext());
             progressDialog.setTitle("Logging, please wait ...");
             progressDialog.show();
-            String url ="http://10.0.2.2:8080/Register";
+            String url ="http://10.0.2.2:8080/LoginAndroid";
             OkHttpClient client = new OkHttpClient();
 
             Gson gson = new Gson();
@@ -49,7 +50,7 @@ public class LoginPresenterImpl implements LoginPresenter {
             MediaType mediaType = MediaType.parse("application/json");
             RequestBody requestBody = RequestBody.create(mediaType, gson.toJson(log));
 
-            Request request;
+            final Request request;
             request = new Request.Builder()
                     .url(url)
                     .post(requestBody)
@@ -68,8 +69,15 @@ public class LoginPresenterImpl implements LoginPresenter {
                 public void onResponse(Call call, okhttp3.Response response) throws IOException {
                     progressDialog.dismiss();
                     json = response.body().string();
-                    backgroundThreadShortToast(loginView.getAppContext(),json);
-                    backgroundThreadStartMainActivity(loginView.getAppContext());
+                    if(!json.equals("error")){
+                        Gson retGson = new Gson();
+                        usr = retGson.fromJson(json, User.class);
+                        backgroundThreadShortToast(loginView.getAppContext(),"logged to: "+usr.getNick());
+                        backgroundThreadStartMainActivity(loginView.getAppContext());
+                    }
+                    else{
+                        backgroundThreadShortToast(loginView.getAppContext(),"bad logging data");
+                    }
                 }
             });
         }

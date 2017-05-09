@@ -13,6 +13,14 @@ public class User {
     private String email;
     private String sessionId;
 
+    public User(String nick, String firstName, String lastName, String email, String sessionId) {
+        this.nick = nick;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.sessionId = sessionId;
+    }
+
     public String getNick() {
         return nick;
     }
