@@ -12,6 +12,15 @@ public class User {
     //private Double geoLng;  // user location latitude
     private String email;
     private String sessionId;
+    private int user_id;
+
+    public int getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(int user_id) {
+        this.user_id = user_id;
+    }
 
     public User(String nick, String firstName, String lastName, String email, String sessionId) {
         this.nick = nick;

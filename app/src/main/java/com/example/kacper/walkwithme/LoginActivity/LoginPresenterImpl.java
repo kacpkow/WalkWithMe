@@ -30,7 +30,6 @@ public class LoginPresenterImpl implements LoginPresenter {
     private LoginView loginView;
     ProgressDialog progressDialog;
     String json;
-    private User usr;
 
     public LoginPresenterImpl(LoginView loginView) {
         this.loginView = loginView;
@@ -72,10 +71,10 @@ public class LoginPresenterImpl implements LoginPresenter {
                     progressDialog.dismiss();
                     json = response.body().string();
                     String jsonString = "{\"error\":\"notAnUser\"}";
-                    if(!json.equals(jsonString)){
+                    if(json.equals(jsonString) == false){
 
-                        usr = retGson.fromJson(json, User.class);
-                        backgroundThreadShortToast(loginView.getAppContext(),"logged to: "+usr.getNick());
+                        User usr = retGson.fromJson(json, User.class);
+                        backgroundThreadShortToast(loginView.getAppContext(),"user ID: "+usr.getUser_id());
                         backgroundThreadStartMainActivity(loginView.getAppContext());
                     }
                     else{
