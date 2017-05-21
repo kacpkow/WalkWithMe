@@ -9,11 +9,11 @@ import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.example.kacper.walkwithme.MainActivity.MainView;
-import com.example.kacper.walkwithme.User;
+import com.example.kacper.walkwithme.Model.User;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 
 import java.io.IOException;
+
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -49,7 +49,8 @@ public class LoginPresenterImpl implements LoginPresenter {
             LoginContent log = new LoginContent(username, password);
             MediaType mediaType = MediaType.parse("application/json");
             RequestBody requestBody = RequestBody.create(mediaType, gson.toJson(log));
-
+            backgroundThreadStartMainActivity(loginView.getAppContext(), 0);
+/*
             final Request request;
             request = new Request.Builder()
                     .url(url)
@@ -70,18 +71,21 @@ public class LoginPresenterImpl implements LoginPresenter {
                     Gson retGson = new Gson();
                     progressDialog.dismiss();
                     json = response.body().string();
+
                     String jsonString = "{\"error\":\"notAnUser\"}";
                     if(json.equals(jsonString) == false){
 
                         User usr = retGson.fromJson(json, User.class);
                         backgroundThreadShortToast(loginView.getAppContext(),"user ID: "+usr.getUser_id());
-                        backgroundThreadStartMainActivity(loginView.getAppContext());
+                        backgroundThreadStartMainActivity(loginView.getAppContext(), usr.getUser_id());
                     }
                     else{
                         backgroundThreadShortToast(loginView.getAppContext(),"bad logging data");
                     }
+
                 }
             });
+*/
         }
     }
 
@@ -98,13 +102,14 @@ public class LoginPresenterImpl implements LoginPresenter {
         }
     }
 
-    public static void backgroundThreadStartMainActivity(final Context context) {
+    public static void backgroundThreadStartMainActivity(final Context context, final int user_Id) {
         if (context != null) {
             new Handler(Looper.getMainLooper()).post(new Runnable() {
 
                 @Override
                 public void run() {
                     Intent intent = new Intent(context, MainView.class);
+                    intent.putExtra("USER_ID", user_Id);
                     context.startActivity(intent);
                 }
             });

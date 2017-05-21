@@ -9,8 +9,6 @@ import android.content.Intent;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.Volley;
 import com.example.kacper.walkwithme.MainActivity.MainView;
 import com.example.kacper.walkwithme.R;
 import com.example.kacper.walkwithme.RegistrationActivity.RegistrationActivity;
@@ -32,8 +30,6 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
         registerButton = (Button) findViewById(R.id.registerButton);
         login = (EditText) findViewById(R.id.loginField);
         password = (EditText) findViewById(R.id.passwordField);
-        final RequestQueue queue = Volley.newRequestQueue(this);
-        queue.getCache().clear();
 
         presenter = new LoginPresenterImpl(this);
 

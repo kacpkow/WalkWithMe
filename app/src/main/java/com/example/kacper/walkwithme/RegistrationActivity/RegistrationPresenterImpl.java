@@ -2,13 +2,11 @@ package com.example.kacper.walkwithme.RegistrationActivity;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 import android.widget.Toast;
 
-import com.example.kacper.walkwithme.User;
 import com.google.gson.Gson;
 
 import java.io.IOException;

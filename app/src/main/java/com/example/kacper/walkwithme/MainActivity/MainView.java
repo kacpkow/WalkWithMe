@@ -24,11 +24,12 @@ public class MainView extends AppCompatActivity {
     private ImageButton peopleButton;
     private ImageButton homeButton;
     private TextView chatNotificationsView;
+    private int userId;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        userId = getIntent().getIntExtra("USER_ID", 0);
         setContentView(R.layout.activity_main);
 
         chatButton = (ImageButton) findViewById(R.id.chatButton);
@@ -40,6 +41,9 @@ public class MainView extends AppCompatActivity {
         final Animation animScaleHomeButton = AnimationUtils.loadAnimation(this, R.anim.anim_press_menu_button);
         final Animation animScaleChatButton = AnimationUtils.loadAnimation(this, R.anim.anim_press_menu_button);
         final Animation animScaleSettingsButton = AnimationUtils.loadAnimation(this, R.anim.anim_press_menu_button);
+
+        final Bundle bundle = new Bundle();
+        bundle.putInt("USER_ID", userId);
 
         if (savedInstanceState != null) {
             return;
@@ -64,6 +68,7 @@ public class MainView extends AppCompatActivity {
                     @Override
                     public void onAnimationEnd(Animation animation) {
                         PersonsListFragment newFragment = new PersonsListFragment();
+                        newFragment.setArguments(bundle);
                         android.support.v4.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
                         android.support.v4.app.Fragment f = getSupportFragmentManager().findFragmentById(R.id.fragment_container);

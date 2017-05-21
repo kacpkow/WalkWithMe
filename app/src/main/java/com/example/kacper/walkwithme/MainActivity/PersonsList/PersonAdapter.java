@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.kacper.walkwithme.PersonDetails.PersonDetailsActivity;
 import com.example.kacper.walkwithme.R;
 
@@ -20,7 +21,8 @@ import java.util.List;
  */
 
 public class PersonAdapter extends RecyclerView.Adapter<PersonAdapter.PersonViewHolder> {
-
+    private Context mContext;
+    private List<com.example.kacper.walkwithme.MainActivity.PersonsList.Person> persons;
 
     public static class PersonViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         CardView cv;
@@ -39,7 +41,6 @@ public class PersonAdapter extends RecyclerView.Adapter<PersonAdapter.PersonView
             distance = (TextView)itemView.findViewById(R.id.person_distance);
             personAge = (TextView)itemView.findViewById(R.id.person_age);
             personPhoto = (ImageView)itemView.findViewById(R.id.person_photo);
-            //itemView.setOnClickListener(this);
       }
 
         @Override
@@ -51,10 +52,11 @@ public class PersonAdapter extends RecyclerView.Adapter<PersonAdapter.PersonView
         }
     }
 
-    List<Person> persons;
 
-    PersonAdapter(List<Person> persons){
+
+    PersonAdapter(List<com.example.kacper.walkwithme.MainActivity.PersonsList.Person> persons, Context context){
         this.persons = persons;
+        mContext = context;
     }
 
     @Override
@@ -71,10 +73,11 @@ public class PersonAdapter extends RecyclerView.Adapter<PersonAdapter.PersonView
 
     @Override
     public void onBindViewHolder(PersonViewHolder personViewHolder, final int i) {
-        personViewHolder.personName.setText(persons.get(i).name);
-        personViewHolder.personAge.setText(persons.get(i).age.toString() + " years");
-        personViewHolder.distance.setText(persons.get(i).distance);
-        personViewHolder.personPhoto.setImageResource(persons.get(i).photoId);
+        personViewHolder.personName.setText(persons.get(i).getFirstName() + " "+persons.get(i).getLastName());
+        personViewHolder.personAge.setText(persons.get(i).getAge().toString() + " years");
+        personViewHolder.distance.setText(persons.get(i).getDistance());
+        Glide.with(mContext).load(persons.get(i).getMediumImage())
+               .into(personViewHolder.personPhoto);
     }
 
 
