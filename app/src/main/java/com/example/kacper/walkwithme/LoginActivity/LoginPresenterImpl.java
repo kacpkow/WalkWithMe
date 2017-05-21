@@ -49,8 +49,8 @@ public class LoginPresenterImpl implements LoginPresenter {
             LoginContent log = new LoginContent(username, password);
             MediaType mediaType = MediaType.parse("application/json");
             RequestBody requestBody = RequestBody.create(mediaType, gson.toJson(log));
-            backgroundThreadStartMainActivity(loginView.getAppContext(), 0);
-/*
+           // backgroundThreadStartMainActivity(loginView.getAppContext(), 0);
+
             final Request request;
             request = new Request.Builder()
                     .url(url)
@@ -85,7 +85,6 @@ public class LoginPresenterImpl implements LoginPresenter {
 
                 }
             });
-*/
         }
     }
 
