@@ -15,6 +15,15 @@ public class Person implements Serializable{
     private Integer age;
     private Integer distance; //distance from user based on maps location
     private String mediumImage, largeImage;
+    private String personDescription;
+
+    public String getPersonDescription() {
+        return personDescription;
+    }
+
+    public void setPersonDescription(String personDescription) {
+        this.personDescription = personDescription;
+    }
 
     public String getNick() {
         return nick;

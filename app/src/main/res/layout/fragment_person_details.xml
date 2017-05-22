@@ -2,10 +2,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.kacper.walkwithme.MainActivity.PersonDetails.PersonDetailsActivity">
+    tools:context="com.example.kacper.walkwithme.MainActivity.PersonDetails.PersonDetailsFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
+        android:id="@+id/intentNr1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text="@string/hello_blank_fragment" />

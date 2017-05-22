@@ -28,8 +28,14 @@ public class PersonAdapter extends RecyclerView.Adapter<PersonAdapter.PersonView
         CardView cv;
         TextView personName;
         TextView personAge;
+        int userId;
+        String personDescription;
+        String personFirstName;
+        String personLastName;
+        String personLocation;
+        String personLargePhoto;
         TextView distance;
-        ImageView personPhoto;
+        ImageView personMediumPhoto;
 
         private Context context;
 
@@ -40,18 +46,32 @@ public class PersonAdapter extends RecyclerView.Adapter<PersonAdapter.PersonView
             personName = (TextView)itemView.findViewById(R.id.person_name);
             distance = (TextView)itemView.findViewById(R.id.person_distance);
             personAge = (TextView)itemView.findViewById(R.id.person_age);
-            personPhoto = (ImageView)itemView.findViewById(R.id.person_photo);
+            personMediumPhoto = (ImageView)itemView.findViewById(R.id.person_photo);
+            personLargePhoto = "";
+            personLocation = "";
+            personFirstName = "";
+            personLastName = "";
+            userId = 0;
+            personDescription = "";
+            itemView.setOnClickListener(this);
       }
 
         @Override
         public void onClick(View v) {
             context = v.getContext();
             Intent intent = new Intent(context, PersonDetailsActivity.class);
-            intent.putExtra("id", getAdapterPosition());
+            intent.putExtra("USER_ID", userId);
+            intent.putExtra("USER_AGE", personAge.getText().toString());
+            intent.putExtra("USER_LOCATION", personLocation);
+            intent.putExtra("USER_DESCRIPTION", personDescription);
+            intent.putExtra("USER_FIRST_NAME", personFirstName);
+            intent.putExtra("USER_LAST_NAME", personLastName);
+            intent.putExtra("USER_IMAGE", personLargePhoto);
+
             context.startActivity(intent);
+
         }
     }
-
 
 
     PersonAdapter(List<com.example.kacper.walkwithme.MainActivity.PersonsList.Person> persons, Context context){
@@ -75,9 +95,15 @@ public class PersonAdapter extends RecyclerView.Adapter<PersonAdapter.PersonView
     public void onBindViewHolder(PersonViewHolder personViewHolder, final int i) {
         personViewHolder.personName.setText(persons.get(i).getFirstName() + " "+persons.get(i).getLastName());
         personViewHolder.personAge.setText(persons.get(i).getAge().toString() + " years");
-        personViewHolder.distance.setText(persons.get(i).getDistance());
+        personViewHolder.distance.setText(persons.get(i).getDistance() + " km");
+        personViewHolder.userId = persons.get(i).getId();
+        personViewHolder.personFirstName = persons.get(i).getFirstName();
+        personViewHolder.personLastName = persons.get(i).getLastName();
+        personViewHolder.personDescription = persons.get(i).getPersonDescription();
+        personViewHolder.personLocation = persons.get(i).getCity();
+        personViewHolder.personLargePhoto = persons.get(i).getLargeImage();
         Glide.with(mContext).load(persons.get(i).getMediumImage())
-               .into(personViewHolder.personPhoto);
+                .into(personViewHolder.personMediumPhoto);
     }
 
 

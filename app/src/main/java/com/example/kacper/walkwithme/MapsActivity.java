@@ -2,6 +2,7 @@ package com.example.kacper.walkwithme;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -36,6 +37,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private GoogleMap mMap;
     private Marker marker;
+    float latitude;
+    float longtitude;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +73,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         {
             Geocoder geocoder = new Geocoder(this);
             try {
-                addressList = geocoder.getFromLocationName(location , 1);
+                addressList = geocoder.getFromLocationName(location, 1);
 
 
             } catch (IOException e) {
@@ -82,14 +85,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.clear();
             mMap.addMarker(new MarkerOptions().position(latLng).title("Marker"));
             mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
-            getApplicationContext();
-            SharedPreferences settings = getSharedPreferences("localisation_values", 0);
-            SharedPreferences.Editor editor = settings.edit();
-            editor.putInt("localisation_values",1);
-            editor.commit();
+            latitude = (float)address.getLatitude();
+            longtitude = (float)address.getLongitude();
         }
     }
 
+    public void onSave(View view){
+        getApplicationContext();
+        SharedPreferences settings = getSharedPreferences("userLocation", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putFloat("latitude", latitude);
+        editor.putFloat("longtitude", longtitude);
+        editor.commit();
+        Toast.makeText(this, String.valueOf(latitude), Toast.LENGTH_SHORT).show();
+        finish();
+    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -97,10 +107,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.clear();
         }
         mMap = googleMap;
-
-        marker = mMap.addMarker(new MarkerOptions().position(new LatLng(52.229675,21.012228))
+        LatLng warsawLatLng = new LatLng(52.229675,21.012228);
+        marker = mMap.addMarker(new MarkerOptions().position(warsawLatLng)
                 .title("Warszawa"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(0,0), 8));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(warsawLatLng, 15));
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             return;

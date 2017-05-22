@@ -7,14 +7,76 @@
     tools:context="com.example.kacper.walkwithme.MainActivity.ForthcomingAppointments.AppointmentsFragment">
 
     <TextView
+        android:layout_gravity="center"
         android:id="@+id/personsListTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:layout_marginRight="0dp"
-        android:text="Persons List:"
-        android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Subtitle"
+        android:layout_marginTop="4dp"
+        android:layout_marginLeft="8dp"
+        android:text="Select people searching criteria"
+        android:textSize="16dp"
+        android:fontFamily="sans-serif-medium"
         android:visibility="visible" />
+
+    <LinearLayout
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Age:"/>
+
+
+        <EditText
+            android:id="@+id/AgeFrom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14dp"
+            android:hint="from"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" - " />
+
+        <EditText
+            android:id="@+id/AgeTo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14dp"
+            android:hint="to"/>
+
+        <TextView
+            android:layout_marginLeft="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Distance:"/>
+
+        <EditText
+            android:id="@+id/Distance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14dp"
+            android:hint="to"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="km"/>
+
+        <Button
+            android:layout_marginLeft="10dp"
+            android:id="@+id/searchWithCriteriaButton"
+            android:layout_width="80dp"
+            android:layout_height="25dp"
+            android:background="@drawable/button_register_rounded"
+            android:text="Search"/>
+
+
+    </LinearLayout>
 
 
     <android.support.v7.widget.RecyclerView

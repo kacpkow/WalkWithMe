@@ -1,5 +1,8 @@
 package com.example.kacper.walkwithme.MainActivity.PersonsList;
 
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -8,6 +11,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.kacper.walkwithme.MainActivity.SimpleDividerItemDecoration;
@@ -32,6 +37,11 @@ public class PersonsListFragment extends Fragment {
     private RecyclerView rv;
     private int userId;
     String jsonResponse;
+    private EditText ageFrom;
+    private EditText ageTo;
+    private EditText distance;
+    private Button searchButton;
+    ProgressDialog progressDialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -45,20 +55,78 @@ public class PersonsListFragment extends Fragment {
         rv.setHasFixedSize(true);
         rv.addItemDecoration(new SimpleDividerItemDecoration(getResources()));
 
-        initializeData(userId);
+        ageFrom = (EditText)rootView.findViewById(R.id.AgeFrom);
+        ageTo = (EditText)rootView.findViewById(R.id.AgeTo);
+        distance = (EditText)rootView.findViewById(R.id.Distance);
+        searchButton = (Button)rootView.findViewById(R.id.searchWithCriteriaButton);
+        progressDialog = new ProgressDialog(rootView.getContext());
+        progressDialog.setTitle("Searching, please wait ...");
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                progressDialog.show();
+                persons.clear();
+                initializeData(userId, ageFrom.getText().toString(), ageTo.getText().toString(),
+                       distance.getText().toString());
+                initializeAdapter();
+                progressDialog.dismiss();
+            }
+        });
+
+        persons = new ArrayList<>();
+
+        progressDialog.show();
+        initializeData(userId, null, null, null);
         initializeAdapter();
+        progressDialog.dismiss();
 
         return rootView;
     }
 
-    private void initializeData(int userId){
-        persons = new ArrayList<>();
+    private void initializeData(int userId, String ageFrom, String ageTo, String distance){
+        SharedPreferences settings = this.getActivity().getSharedPreferences("userLocation", Context.MODE_PRIVATE);
+        Float latitude = 0.0f;
+        Float longtitude = 0.0f;
+
+        latitude = settings.getFloat("latitude", 0.0f);
+        longtitude = settings.getFloat("longtitude", 0.0f);
+
+        Toast.makeText(getContext(), String.valueOf(latitude), Toast.LENGTH_SHORT).show();
+
         String url ="http://10.0.2.2:8080/GetPersonsAndroid";
         OkHttpClient client = new OkHttpClient();
         Gson gson = new Gson();
-        Integer id = userId;
         MediaType mediaType = MediaType.parse("application/json");
-        RequestBody requestBody = RequestBody.create(mediaType, gson.toJson(userId));
+        SearchContent requestContent = new SearchContent(userId, ageFrom, ageTo, distance, (double)latitude, (double)longtitude);
+        RequestBody requestBody = RequestBody.create(mediaType, gson.toJson(requestContent));
+/*
+        Person person = new Person();
+        person.setId(101);
+        person.setAge(19);
+        person.setDistance(12);
+        person.setFirstName("Donald");
+        person.setLastName("Trump");
+        person.setCity("Washington DC");
+        person.setLargeImage("http://static4.businessinsider.com/image/56c640526e97c625048b822a-480/donald-trump.jpg");
+        person.setPersonDescription("I'm a fckin boss...");
+        person.setMediumImage("https://pbs.twimg.com/profile_images/622622832103587840/tUKC5wZD.jpg");
+        persons.add(person);
+
+        Person person1 = new Person();
+        person1.setId(45);
+        person1.setAge(46);
+        person1.setDistance(50);
+        person1.setFirstName("Angelina");
+        person1.setLastName("Jolie");
+        person1.setPersonDescription("Brad Pitt is a dumbass for real");
+        person1.setCity("NY");
+        person1.setLargeImage("https://pbs.twimg.com/profile_images/740895191003975681/kTD5CP9x.jpg");
+        person1.setMediumImage("https://pbs.twimg.com/profile_images/740895191003975681/kTD5CP9x.jpg");
+        persons.add(person1);
+
+
+*/
+
 
         final Request request;
         request = new Request.Builder()
@@ -90,11 +158,10 @@ public class PersonsListFragment extends Fragment {
                 }
             }
         });
-
     }
 
     private void initializeAdapter(){
-        PersonAdapter adapter = new PersonAdapter(persons, this.getContext());
+        PersonAdapter adapter = new PersonAdapter(persons, this.getContext() );
         rv.setAdapter(adapter);
     }
 
