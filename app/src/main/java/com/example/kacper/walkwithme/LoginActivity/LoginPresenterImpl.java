@@ -3,6 +3,7 @@ package com.example.kacper.walkwithme.LoginActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
@@ -75,6 +76,10 @@ public class LoginPresenterImpl implements LoginPresenter {
                     if(json.equals(jsonString) == false){
 
                         User usr = retGson.fromJson(json, User.class);
+                        SharedPreferences settings = loginView.getActivityContext().getSharedPreferences("userId", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = settings.edit();
+                        editor.putFloat("ID", usr.getUser_id());
+                        editor.commit();
                         backgroundThreadShortToast(loginView.getAppContext(),"user ID: "+usr.getUser_id());
                         backgroundThreadStartMainActivity(loginView.getAppContext(), usr.getUser_id());
                     }

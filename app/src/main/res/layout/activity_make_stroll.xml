@@ -32,6 +32,7 @@
         android:layout_height="30dp"
         android:layout_marginTop="10dp"
         android:text="Choose date"
+        android:layout_gravity="center"
         android:background="@drawable/button_register_rounded"
         />
 
@@ -59,6 +60,45 @@
         android:layout_height="30dp"
         android:layout_marginTop="10dp"
         android:text="Choose time"
+        android:background="@drawable/button_register_rounded"
+        android:layout_gravity="center"
+        />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Location"/>
+        <TextView
+            android:id="@+id/fieldLocation"
+            android:layout_marginLeft="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""/>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/locationButton"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_marginTop="10dp"
+        android:text="Choose location"
+        android:background="@drawable/button_register_rounded"
+        />
+
+
+    <Button
+        android:id="@+id/buttonStroll"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="Stroll"
+        android:layout_gravity="center"
         android:background="@drawable/button_register_rounded"
         />
 

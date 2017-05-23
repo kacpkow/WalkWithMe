@@ -29,6 +29,7 @@ public class PersonAdapter extends RecyclerView.Adapter<PersonAdapter.PersonView
         TextView personName;
         TextView personAge;
         int userId;
+        int currentUserId;
         String personDescription;
         String personFirstName;
         String personLastName;
@@ -54,6 +55,7 @@ public class PersonAdapter extends RecyclerView.Adapter<PersonAdapter.PersonView
             userId = 0;
             personDescription = "";
             itemView.setOnClickListener(this);
+
       }
 
         @Override

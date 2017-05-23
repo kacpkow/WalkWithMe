@@ -67,23 +67,8 @@ public class PersonDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), MakeStrollActivity.class);
+                intent.putExtra("USER_ID", userId);
                 startActivity(intent);
-                /*
-                AlertDialog.Builder builder = new AlertDialog.Builder(PersonDetailsActivity.this);
-                builder.setMessage("Please type date, time and location u want to stroll with this user");
-                builder.setTitle("Make a stroll?");
-                builder.setPositiveButton("Stroll", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                    }
-                });
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                    }
-                });
-
-                AlertDialog dialog = builder.create();
-                dialog.show();
-                */
             }
         });
     }

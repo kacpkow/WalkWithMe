@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.example.kacper.walkwithme.MainActivity.SimpleDividerItemDecoration;
 import com.example.kacper.walkwithme.R;
@@ -90,8 +89,6 @@ public class PersonsListFragment extends Fragment {
 
         latitude = settings.getFloat("latitude", 0.0f);
         longtitude = settings.getFloat("longtitude", 0.0f);
-
-        Toast.makeText(getContext(), String.valueOf(latitude), Toast.LENGTH_SHORT).show();
 
         String url ="http://10.0.2.2:8080/GetPersonsAndroid";
         OkHttpClient client = new OkHttpClient();
