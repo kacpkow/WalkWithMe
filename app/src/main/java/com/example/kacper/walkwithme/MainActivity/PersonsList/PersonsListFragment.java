@@ -4,6 +4,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,13 +15,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import com.example.kacper.walkwithme.MainActivity.MainView;
 import com.example.kacper.walkwithme.MainActivity.SimpleDividerItemDecoration;
 import com.example.kacper.walkwithme.R;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,23 +48,22 @@ public class PersonsListFragment extends Fragment {
     private EditText distance;
     private Button searchButton;
     ProgressDialog progressDialog;
-
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         userId = getArguments().getInt("USER_ID", 0);
         View rootView = inflater.inflate(R.layout.fragment_persons_list, container, false);
 
-        rv=(RecyclerView)rootView.findViewById(R.id.rvPersons);
+        rv = (RecyclerView) rootView.findViewById(R.id.rvPersons);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         rv.setLayoutManager(llm);
         rv.setHasFixedSize(true);
         rv.addItemDecoration(new SimpleDividerItemDecoration(getResources()));
 
-        ageFrom = (EditText)rootView.findViewById(R.id.AgeFrom);
-        ageTo = (EditText)rootView.findViewById(R.id.AgeTo);
-        distance = (EditText)rootView.findViewById(R.id.Distance);
-        searchButton = (Button)rootView.findViewById(R.id.searchWithCriteriaButton);
+        ageFrom = (EditText) rootView.findViewById(R.id.AgeFrom);
+        ageTo = (EditText) rootView.findViewById(R.id.AgeTo);
+        distance = (EditText) rootView.findViewById(R.id.Distance);
+        searchButton = (Button) rootView.findViewById(R.id.searchWithCriteriaButton);
         progressDialog = new ProgressDialog(rootView.getContext());
         progressDialog.setTitle("Searching, please wait ...");
         searchButton.setOnClickListener(new View.OnClickListener() {
@@ -66,8 +72,9 @@ public class PersonsListFragment extends Fragment {
                 progressDialog.show();
                 persons.clear();
                 initializeData(userId, ageFrom.getText().toString(), ageTo.getText().toString(),
-                       distance.getText().toString());
+                        distance.getText().toString());
                 initializeAdapter();
+
                 progressDialog.dismiss();
             }
         });
@@ -76,13 +83,14 @@ public class PersonsListFragment extends Fragment {
 
         progressDialog.show();
         initializeData(userId, null, null, null);
+        //Toast.makeText(getActivity().getApplicationContext(), persons.get(0).getFirstName() , Toast.LENGTH_SHORT).show();
         initializeAdapter();
         progressDialog.dismiss();
 
         return rootView;
     }
 
-    private void initializeData(int userId, String ageFrom, String ageTo, String distance){
+    private void initializeData(int userId, String ageFrom, String ageTo, String distance) {
         SharedPreferences settings = this.getActivity().getSharedPreferences("userLocation", Context.MODE_PRIVATE);
         Float latitude = 0.0f;
         Float longtitude = 0.0f;
@@ -90,11 +98,11 @@ public class PersonsListFragment extends Fragment {
         latitude = settings.getFloat("latitude", 0.0f);
         longtitude = settings.getFloat("longtitude", 0.0f);
 
-        String url ="http://10.0.2.2:8080/GetPersonsAndroid";
+        String url = "http://10.0.2.2:8080/GetPersonsAndroid";
         OkHttpClient client = new OkHttpClient();
         Gson gson = new Gson();
         MediaType mediaType = MediaType.parse("application/json");
-        SearchContent requestContent = new SearchContent(userId, ageFrom, ageTo, distance, (double)latitude, (double)longtitude);
+        SearchContent requestContent = new SearchContent(userId, ageFrom, ageTo, distance, (double) latitude, (double) longtitude);
         RequestBody requestBody = RequestBody.create(mediaType, gson.toJson(requestContent));
 /*
         Person person = new Person();
@@ -120,8 +128,8 @@ public class PersonsListFragment extends Fragment {
         person1.setLargeImage("https://pbs.twimg.com/profile_images/740895191003975681/kTD5CP9x.jpg");
         person1.setMediumImage("https://pbs.twimg.com/profile_images/740895191003975681/kTD5CP9x.jpg");
         persons.add(person1);
-
 */
+
 
         final Request request;
         request = new Request.Builder()
@@ -139,13 +147,17 @@ public class PersonsListFragment extends Fragment {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                Gson retGson = new Gson();
-                jsonResponse = response.body().toString();
-                Person person = new Person();
-                UserProfileData userProfileData;
-                //for (int i = 0; i < response.body().contentLength(); i++) {
+                jsonResponse = response.body().string();
+
+                Gson objGson = new GsonBuilder().setPrettyPrinting().create();
+                Type listType = new TypeToken<List<UserProfileData>>() {
+                }.getType();
+                List<UserProfileData> readFromJson = objGson.fromJson(jsonResponse, listType);
+                for (UserProfileData userProfileData:readFromJson
+                     ) {
                     try {
-                        userProfileData = retGson.fromJson(jsonResponse, UserProfileData.class);
+                        Person person = new Person();
+
                         person.setCity(userProfileData.getCity());
                         person.setPersonDescription(userProfileData.getDescription());
                         person.setLargeImage(userProfileData.getPhoto_url());
@@ -153,21 +165,35 @@ public class PersonsListFragment extends Fragment {
                         person.setId(userProfileData.getUser_id());
                         person.setFirstName(userProfileData.getFirstName());
                         person.setLastName(userProfileData.getLastName());
+                        person.setAge(42);
 
                         persons.add(person);
 
                     } catch (JsonSyntaxException e) {
                         Log.e("error", "error in syntax in returning json");
                     }
-               // }
+                }
+                backgroundThreadInitializeAdapter(getActivity().getApplicationContext());
             }
         });
-
     }
 
-    private void initializeAdapter(){
-        PersonAdapter adapter = new PersonAdapter(persons, this.getContext() );
+    private void initializeAdapter() {
+        PersonAdapter adapter = new PersonAdapter(persons, this.getContext());
         rv.setAdapter(adapter);
     }
 
+    public void backgroundThreadInitializeAdapter(final Context context) {
+        if (context != null) {
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+
+                @Override
+                public void run() {
+                    initializeAdapter();
+                }
+            });
+
+
+        }
+    }
 }
