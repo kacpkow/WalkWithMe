@@ -153,8 +153,7 @@ public class PersonsListFragment extends Fragment {
                         person.setId(userProfileData.getUser_id());
                         person.setFirstName(userProfileData.getFirstName());
                         person.setLastName(userProfileData.getLastName());
-                        person.setAge(47);
-                        person.setNick(userProfileData.getNick());
+
                         persons.add(person);
 
                     } catch (JsonSyntaxException e) {

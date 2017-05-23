@@ -3,6 +3,7 @@ package com.example.kacper.walkwithme.MainActivity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -26,7 +27,9 @@ public class MainView extends AppCompatActivity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.e("good", "good");
         userId = getIntent().getIntExtra("USER_ID", 0);
+        Log.e("good", "good");
         setContentView(R.layout.activity_main);
 
         chatButton = (ImageButton) findViewById(R.id.chatButton);

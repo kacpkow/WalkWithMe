@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.example.kacper.walkwithme.MainActivity.MainView;
+import com.example.kacper.walkwithme.MapsActivity;
 import com.example.kacper.walkwithme.Model.User;
 import com.google.gson.Gson;
 
@@ -79,7 +80,7 @@ public class LoginPresenterImpl implements LoginPresenter {
                         User usr = retGson.fromJson(json, User.class);
                         SharedPreferences settings = loginView.getActivityContext().getSharedPreferences("userId", Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = settings.edit();
-                        editor.putFloat("ID", usr.getUser_id());
+                        editor.putInt("ID", usr.getUser_id());
                         editor.commit();
                         backgroundThreadShortToast(loginView.getAppContext(),"user ID: "+usr.getUser_id());
                         backgroundThreadStartMainActivity(loginView.getAppContext(), usr.getUser_id());
