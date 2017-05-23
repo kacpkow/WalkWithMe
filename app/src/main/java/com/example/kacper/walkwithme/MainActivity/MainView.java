@@ -1,8 +1,5 @@
 package com.example.kacper.walkwithme.MainActivity;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,7 +9,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.example.kacper.walkwithme.MainActivity.ForthcomingAppointments.AppointmentsFragment;
+import com.example.kacper.walkwithme.MainActivity.ForthcomingAppointments.ForcomingAppointmentsFragment;
 import com.example.kacper.walkwithme.MainActivity.PersonsList.PersonsListFragment;
 import com.example.kacper.walkwithme.R;
 import com.example.kacper.walkwithme.SettingsActivity.SettingsActivity;
@@ -34,7 +31,7 @@ public class MainView extends AppCompatActivity {
 
         chatButton = (ImageButton) findViewById(R.id.chatButton);
         settingsButton = (ImageButton) findViewById(R.id.settingsButton);
-        chatNotificationsView = (TextView) findViewById(R.id.chatNotification);
+        //chatNotificationsView = (TextView) findViewById(R.id.chatNotification);
         peopleButton = (ImageButton) findViewById(R.id.personButton);
         homeButton = (ImageButton) findViewById(R.id.homeButton);
         final Animation animScalePeopleButton = AnimationUtils.loadAnimation(this, R.anim.anim_press_menu_button);
@@ -49,7 +46,7 @@ public class MainView extends AppCompatActivity {
             return;
         }
 
-        AppointmentsFragment firstFragment = new AppointmentsFragment();
+        ForcomingAppointmentsFragment firstFragment = new ForcomingAppointmentsFragment();
         firstFragment.setArguments(getIntent().getExtras());
 
         getSupportFragmentManager().beginTransaction()
@@ -146,10 +143,10 @@ public class MainView extends AppCompatActivity {
 
                     @Override
                     public void onAnimationEnd(Animation animation) {
-                        AppointmentsFragment newFragment = new AppointmentsFragment();
+                        ForcomingAppointmentsFragment newFragment = new ForcomingAppointmentsFragment();
                         android.support.v4.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                         android.support.v4.app.Fragment f = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-                        if (!(f instanceof AppointmentsFragment)){
+                        if (!(f instanceof ForcomingAppointmentsFragment)){
                             transaction.replace(R.id.fragment_container, newFragment);
                             transaction.commit();
                         }

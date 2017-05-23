@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.kacper.walkwithme.AppointmentDetails.AppointmentDetailsActivity"
+    android:orientation="vertical"
+    android:layout_gravity="center"
+    android:weightSum="1">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="10dp"
+        android:text="Appointment details"
+        android:layout_gravity="center"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="20dp">
+
+        <ImageView
+            android:id="@+id/appointmentIcon"
+            android:layout_width="250px"
+            android:layout_height="250px"
+            android:layout_gravity="center"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="10dp">
+
+            <TextView
+                android:id="@+id/appointmentDateField"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Date: "
+                />
+
+            <TextView
+                android:id="@+id/appointmentTimeField"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Time: "
+                />
+
+            <TextView
+                android:id="@+id/appointmentLocationField"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Location: "
+                />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="300dp">
+
+        <fragment
+            android:id="@+id/mapDetailsAppointment"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="605dp"
+            android:apiKey="AIzaSyDUvDrGRcGOVPwuvrQu-H1WNT6Wpe7kvL0"
+            tools:context="com.example.kacper.walkwithme.MapsActivity"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="0dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp"
+        android:gravity="center">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:text="Cancel stroll"
+            android:background="@drawable/button_register_rounded"
+            android:textColor="#FFFFFF"
+            />
+
+        <Button
+            android:layout_marginLeft="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:text="Edit details"
+            android:background="@drawable/button_register_rounded"
+            android:textColor="#FFFFFF"
+            />
+
+    </LinearLayout>
+
+
+
+</LinearLayout>

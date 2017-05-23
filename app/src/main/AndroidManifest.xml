@@ -47,7 +47,8 @@
         <activity android:name=".MainActivity.MainView" />
         <activity android:name=".PersonsListActivity.PersonsListActivity" />
         <activity android:name=".PersonDetails.PersonDetailsActivity" />
-        <activity android:name=".MakeStrollActivity.MakeStrollActivity"></activity>
+        <activity android:name=".MakeStrollActivity.MakeStrollActivity" />
+        <activity android:name=".AppointmentDetails.AppointmentDetailsActivity"></activity>
     </application>
 
 </manifest>

@@ -121,9 +121,7 @@ public class PersonsListFragment extends Fragment {
         person1.setMediumImage("https://pbs.twimg.com/profile_images/740895191003975681/kTD5CP9x.jpg");
         persons.add(person1);
 
-
 */
-
 
         final Request request;
         request = new Request.Builder()
@@ -143,10 +141,20 @@ public class PersonsListFragment extends Fragment {
             public void onResponse(Call call, Response response) throws IOException {
                 Gson retGson = new Gson();
                 jsonResponse = response.body().toString();
-                Person person;
+                Person person = new Person();
+                UserProfileData userProfileData;
                 for (int i = 0; i < response.body().contentLength(); i++) {
                     try {
-                        person = retGson.fromJson(jsonResponse, Person.class);
+                        userProfileData = retGson.fromJson(jsonResponse, UserProfileData.class);
+                        person.setCity(userProfileData.getCity());
+                        person.setPersonDescription(userProfileData.getDescription());
+                        person.setLargeImage(userProfileData.getPhoto_url());
+                        person.setMediumImage(userProfileData.getPhoto_url());
+                        person.setId(userProfileData.getUser_id());
+                        person.setFirstName(userProfileData.getFirstName());
+                        person.setLastName(userProfileData.getLastName());
+                        person.setAge(47);
+                        person.setNick(userProfileData.getNick());
                         persons.add(person);
 
                     } catch (JsonSyntaxException e) {
@@ -155,6 +163,7 @@ public class PersonsListFragment extends Fragment {
                 }
             }
         });
+
     }
 
     private void initializeAdapter(){

@@ -5,15 +5,77 @@ package com.example.kacper.walkwithme.MainActivity.ForthcomingAppointments;
  */
 
 public class ForcomingAppointment {
-    String name;
+    Integer userId;
+    String firstName;
+    String lastName;
     String location;
-    String datetime;
-    int photoId;
+    String date;
+    String time;
+    String mediumPhoto;
 
-    ForcomingAppointment(String name, String location, String datetime, int photoId) {
-        this.name = name;
+    public ForcomingAppointment(Integer userId, String firstName, String lastName, String location, String date, String time, String mediumPhoto) {
+        this.userId = userId;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.location = location;
-        this.datetime = datetime;
-        this.photoId = photoId;
+        this.date = date;
+        this.time = time;
+        this.mediumPhoto = mediumPhoto;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public String getMediumPhoto() {
+        return mediumPhoto;
+    }
+
+    public void setMediumPhoto(String mediumPhoto) {
+        this.mediumPhoto = mediumPhoto;
     }
 }
