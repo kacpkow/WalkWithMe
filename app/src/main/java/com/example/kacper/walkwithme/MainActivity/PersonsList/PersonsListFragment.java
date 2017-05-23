@@ -143,7 +143,7 @@ public class PersonsListFragment extends Fragment {
                 jsonResponse = response.body().toString();
                 Person person = new Person();
                 UserProfileData userProfileData;
-                for (int i = 0; i < response.body().contentLength(); i++) {
+                //for (int i = 0; i < response.body().contentLength(); i++) {
                     try {
                         userProfileData = retGson.fromJson(jsonResponse, UserProfileData.class);
                         person.setCity(userProfileData.getCity());
@@ -159,7 +159,7 @@ public class PersonsListFragment extends Fragment {
                     } catch (JsonSyntaxException e) {
                         Log.e("error", "error in syntax in returning json");
                     }
-                }
+               // }
             }
         });
 

@@ -56,7 +56,7 @@ public class ForcomingAppointmentsFragment extends Fragment {
     private void initializeData(){
         SharedPreferences settings = this.getActivity().getSharedPreferences("userId", Context.MODE_PRIVATE);
         userId = settings.getInt("ID", 0);
-
+/*
         String url ="http://10.0.2.2:8080/GetAppointmentsAndroid";
         OkHttpClient client = new OkHttpClient();
         Gson gson = new Gson();
@@ -94,8 +94,8 @@ public class ForcomingAppointmentsFragment extends Fragment {
                 }
             }
         });
-
-        //forcomingAppointments.add(new ForcomingAppointment(userId, "Brad", "Pitt", "Kraków", "23.05.2017", "17:00", "http://www.a-listinternational.com/wp-content/uploads/2016/06/brad-pitt-doesn-t-really-look-much-like-brad-pitt-in-these-photos-727400.jpg"));
+*/
+        forcomingAppointments.add(new ForcomingAppointment(userId, "Brad", "Pitt", "Kraków", "23.05.2017", "17:00", "http://www.a-listinternational.com/wp-content/uploads/2016/06/brad-pitt-doesn-t-really-look-much-like-brad-pitt-in-these-photos-727400.jpg"));
     }
 
     private void initializeAdapter(){
