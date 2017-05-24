@@ -82,7 +82,6 @@ public class LoginPresenterImpl implements LoginPresenter {
                         SharedPreferences.Editor editor = settings.edit();
                         editor.putInt("ID", usr.getUser_id());
                         editor.commit();
-                        backgroundThreadShortToast(loginView.getAppContext(),"user ID: "+usr.getUser_id());
                         backgroundThreadStartMainActivity(loginView.getAppContext(), usr.getUser_id());
                     }
                     else{

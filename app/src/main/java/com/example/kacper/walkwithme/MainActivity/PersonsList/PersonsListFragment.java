@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.example.kacper.walkwithme.MainActivity.MainView;
 import com.example.kacper.walkwithme.MainActivity.SimpleDividerItemDecoration;
+import com.example.kacper.walkwithme.MakeStrollActivity.MakeStrollActivity;
 import com.example.kacper.walkwithme.R;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -48,6 +49,11 @@ public class PersonsListFragment extends Fragment {
     private EditText distance;
     private Button searchButton;
     ProgressDialog progressDialog;
+
+    private String castAgeFromString;
+    private String castAgeToString;
+    private String castDistanceString;
+
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -71,8 +77,27 @@ public class PersonsListFragment extends Fragment {
             public void onClick(View v) {
                 progressDialog.show();
                 persons.clear();
-                initializeData(userId, ageFrom.getText().toString(), ageTo.getText().toString(),
-                        distance.getText().toString());
+                if(ageFrom.getText().toString().length() != 0){
+                    castAgeFromString = ageFrom.getText().toString();
+                }
+                else{
+                    castAgeFromString = null;
+                }
+                if(ageTo.getText().toString().length() != 0){
+                    castAgeToString = ageTo.getText().toString();
+                }
+                else{
+                    castAgeToString = null;
+                }
+                if(distance.getText().toString().length() != 0){
+                    castDistanceString = distance.getText().toString();
+                }
+                else{
+                    castDistanceString = null;
+                }
+
+                initializeData(userId, castAgeFromString, castAgeToString,
+                        castDistanceString);
                 initializeAdapter();
 
                 progressDialog.dismiss();

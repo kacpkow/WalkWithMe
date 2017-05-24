@@ -1,11 +1,16 @@
 package com.example.kacper.walkwithme.MakeStrollActivity;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.icu.util.Calendar;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
@@ -13,9 +18,14 @@ import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -23,10 +33,19 @@ import android.widget.Toast;
 import com.example.kacper.walkwithme.MainActivity.PersonsList.Person;
 import com.example.kacper.walkwithme.MainActivity.PersonsList.SearchContent;
 import com.example.kacper.walkwithme.R;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -41,6 +60,7 @@ public class MakeStrollActivity extends AppCompatActivity {
     Button setTimeButton;
     Button setLocationButton;
     Button strollButton;
+    Button searchLocation;
     private int year, month, day, hour, minute;
     private Calendar calendar;
     private TextView timeView;
@@ -49,6 +69,7 @@ public class MakeStrollActivity extends AppCompatActivity {
     static final int DIALOG_DATE_ID = 0;
     private int currentUserId;
     private int userId;
+    private String locationSet;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -68,7 +89,7 @@ public class MakeStrollActivity extends AppCompatActivity {
         setTimeButton = (Button)findViewById(R.id.timeButton);
         setLocationButton = (Button)findViewById(R.id.locationButton);
         strollButton = (Button)findViewById(R.id.buttonStroll);
-        locationView.setText("Warsaw");
+        //locationView.setText("Warsaw");
 
         calendar = Calendar.getInstance();
 
@@ -107,6 +128,14 @@ public class MakeStrollActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 makeStroll();
+            }
+        });
+
+        setLocationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showMap();
+
             }
         });
     }
@@ -188,5 +217,107 @@ public class MakeStrollActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    public void showMap(){
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(
+                MakeStrollActivity.this);
+        final GoogleMap googleMap;
+        final EditText[] location_tf = new EditText[1];
+
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_map, null);
+        dialogBuilder.setView(dialogView);
+
+        dialogBuilder.setPositiveButton("SET LOCATION", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(MakeStrollActivity.this, "You clicked on OK", Toast.LENGTH_SHORT).show();
+            }
+        });
+        dialogBuilder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(MakeStrollActivity.this, "You cancelled", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+        final AlertDialog alertDialog = dialogBuilder.create();
+        alertDialog.show();
+
+        MapView mMapView = (MapView) alertDialog.findViewById(R.id.mapView);
+        MapsInitializer.initialize(MakeStrollActivity.this);
+
+        mMapView.onCreate(alertDialog.onSaveInstanceState());
+        mMapView.onResume();
+
+        mMapView = (MapView) alertDialog.findViewById(R.id.mapView);
+        mMapView.onCreate(alertDialog.onSaveInstanceState());
+        mMapView.onResume();// needed to get the map to display immediately
+
+        searchLocation = (Button)alertDialog.findViewById(R.id.Bsearch);
+        final MapView finalMMapView = mMapView;
+        searchLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                location_tf[0] = (EditText)alertDialog.findViewById(R.id.TFaddress);
+                finalMMapView.getMapAsync(new OnMapReadyCallback() {
+                    @Override
+                    public void onMapReady(GoogleMap googleMap) {
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+                        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+
+                        String location = location_tf[0].getText().toString();
+                        List<Address> addressList = null;
+                        if(location != null && !location.equals(""))
+                        {
+                            Geocoder geocoder = new Geocoder(MakeStrollActivity.this);
+                            try {
+                                addressList = geocoder.getFromLocationName(location, 1);
+
+
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                            Address address = addressList.get(0);
+                            LatLng latLng = new LatLng(address.getLatitude() , address.getLongitude());
+                            googleMap.clear();
+                            googleMap.addMarker(new MarkerOptions().position(latLng).title("Marker"));
+                            googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+                            StringBuilder str = new StringBuilder();
+                            int maxAddressLineIndex = address.getMaxAddressLineIndex();
+                            for(int i = 0; i <= maxAddressLineIndex; i++) {
+                                if(i != maxAddressLineIndex){
+                                    str.append(address.getAddressLine(i) + ", ");
+                                }
+                                else{
+                                    str.append(address.getAddressLine(i));
+                                }
+                            }
+
+                            locationSet = str.toString();
+                            locationView.setText(locationSet);
+
+                        }
+                    }
+                });
+
+        }});
+
+        mMapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap googleMap) {
+                SharedPreferences settings = getSharedPreferences("userLocation", Context.MODE_PRIVATE);
+                Float lat = settings.getFloat("latitude", 0.0f);
+                Float lng = settings.getFloat("longtitude", 0.0f);
+                LatLng coordinates = new LatLng(lat, lng); ////your lat lng
+                googleMap.addMarker(new MarkerOptions().position(coordinates).title("Marker"));
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coordinates, 15));
+                googleMap.getUiSettings().setZoomControlsEnabled(true);
+            }
+        });
+
     }
 }
