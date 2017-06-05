@@ -70,17 +70,16 @@ public class RegistrationPresenterImpl implements RegistrationPresenter{
                 @Override
                 public void onFailure(Call call, IOException e) {
                     progressDialog.dismiss();
-                    backgroundThreadShortToast(registrationView.getAppContext(),"Error in registration occured");
+                    backgroundThreadShortToast(registrationView.getAppContext(),"Connection error, try again...");
                 }
 
                 @Override
                 public void onResponse(Call call, okhttp3.Response response) throws IOException {
                     progressDialog.dismiss();
                     String json = response.body().string();
-                    //backgroundThreadShortToast(registrationView.getAppContext(),json);
 
                     if(!json.equals("error")){
-                        backgroundThreadShortToast(registrationView.getAppContext(),json);
+//                        backgroundThreadShortToast(registrationView.getAppContext(),json);
                         setFlag(1);
                     }
                     else{

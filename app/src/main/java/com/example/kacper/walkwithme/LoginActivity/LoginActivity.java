@@ -1,6 +1,7 @@
 package com.example.kacper.walkwithme.LoginActivity;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -37,6 +38,8 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
             @Override
             public void onClick(View v) {
                 presenter.validateCredentials(login.getText().toString(), password.getText().toString());
+                login.setText("");
+                password.setText("");
             }
         });
 
@@ -48,6 +51,13 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
             }
         });
 
+        SharedPreferences settings = getSharedPreferences("USER_ID", Context.MODE_PRIVATE);
+        Integer usrId = settings.getInt("userId", 0);
+        if(usrId != 0){
+            goToOptions(usrId);
+            finish();
+        }
+
     }
 
     public void showToast(String msg){
@@ -55,10 +65,11 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
         toast.show();
     }
 
-    public void goToOptions(){
+    public void goToOptions(Integer userId){
         login.setText("");
         password.setText("");
         Intent intent = new Intent(getApplicationContext(), MainView.class);
+        intent.putExtra("USER_ID", userId);
         startActivity(intent);
     }
 
@@ -70,6 +81,11 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
     @Override
     public Context getActivityContext() {
         return this;
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
     }
 
 }

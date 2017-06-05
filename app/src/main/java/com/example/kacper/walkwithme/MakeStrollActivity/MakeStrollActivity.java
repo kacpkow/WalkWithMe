@@ -192,7 +192,7 @@ public class MakeStrollActivity extends AppCompatActivity {
                 Gson retGson = new Gson();
                 String jsonResponse = response.body().toString();
                 MakeStrollResponse makeStrollResponse;
-                if(response.body().contentLength() != 0) {
+                if(response.body().contentLength() != 0 && response.code() == 500) {
                     try {
                         makeStrollResponse = retGson.fromJson(jsonResponse, MakeStrollResponse.class);
                         backgroundThreadShortToast(MakeStrollActivity.this, makeStrollResponse.getResponseContent());

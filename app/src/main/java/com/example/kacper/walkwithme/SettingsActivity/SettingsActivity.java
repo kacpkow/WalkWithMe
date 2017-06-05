@@ -2,7 +2,9 @@ package com.example.kacper.walkwithme.SettingsActivity;
 
 
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.media.Ringtone;
@@ -13,14 +15,19 @@ import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceScreen;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.ActionBar;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.example.kacper.walkwithme.AppCompatPreferenceActivity;
+import com.example.kacper.walkwithme.AppointmentDetails.AppointmentDetailsActivity;
 import com.example.kacper.walkwithme.MapsActivity;
 import com.example.kacper.walkwithme.R;
 
@@ -163,7 +170,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 || GeneralPreferenceFragment.class.getName().equals(fragmentName)
                 || DataSyncPreferenceFragment.class.getName().equals(fragmentName)
                 || NotificationPreferenceFragment.class.getName().equals(fragmentName)
-                || MapsPreferenceFragment.class.getName().equals(fragmentName);
+                || MapsPreferenceFragment.class.getName().equals(fragmentName)
+                || ProfileFragment.class.getName().equals(fragmentName)
+                || LogoutFragment.class.getName().equals(fragmentName);
     }
 
     /**
@@ -288,6 +297,80 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 return true;
             }
             return super.onOptionsItemSelected(item);
+        }
+    }
+
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public static class ProfileFragment extends PreferenceFragment {
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            addPreferencesFromResource(R.xml.pref_profile);
+            setHasOptionsMenu(true);
+            // Bind the summaries of EditText/List/Dialog/Ringtone preferences
+            // to their values. When their values change, their summaries are
+            // updated to reflect the new value, per the Android Design
+            // guidelines.
+            //bindPreferenceSummaryToValue(findPreference("localisation_values"));
+
+        }
+
+        @Override
+        public boolean onOptionsItemSelected(MenuItem item) {
+            int id = item.getItemId();
+            if (id == android.R.id.home) {
+                startActivity(new Intent(getActivity(), SettingsActivity.class));
+                return true;
+            }
+            return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public static class LogoutFragment extends PreferenceFragment {
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            addPreferencesFromResource(R.xml.pref_logout);
+            setHasOptionsMenu(false);
+            //setHasOptionsMenu(true);
+            // Bind the summaries of EditText/List/Dialog/Ringtone preferences
+            // to their values. When their values change, their summaries are
+            // updated to reflect the new value, per the Android Design
+            // guidelines.
+            //bindPreferenceSummaryToValue(findPreference("localisation_values"));
+
+        }
+
+    }
+
+    @Override
+    public void onHeaderClick(Header header, int position){
+        super.onHeaderClick(header, position);
+        if (header.id == R.id.logoutPreference) {
+            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(
+                    SettingsActivity.this);
+
+            dialogBuilder.setTitle("Are you sure you want to logout?");
+
+            dialogBuilder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //Toast.makeText(AppointmentDetailsActivity.this, "You cancelled a stroll", Toast.LENGTH_SHORT).show();
+
+                }
+            });
+            dialogBuilder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // Toast.makeText(AppointmentDetailsActivity.this, "You click no", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            final AlertDialog alertDialog = dialogBuilder.create();
+            alertDialog.show();
+
         }
     }
 

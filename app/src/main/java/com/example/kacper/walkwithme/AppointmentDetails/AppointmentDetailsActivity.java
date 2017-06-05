@@ -1,6 +1,8 @@
 package com.example.kacper.walkwithme.AppointmentDetails;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -8,11 +10,16 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.kacper.walkwithme.MakeStrollActivity.MakeStrollActivity;
 import com.example.kacper.walkwithme.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -21,12 +28,21 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.util.List;
 
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+
 public class AppointmentDetailsActivity extends FragmentActivity implements OnMapReadyCallback {
 
+    Integer strollId;
     Integer userId;
     String firstName;
     String lastName;
@@ -39,6 +55,10 @@ public class AppointmentDetailsActivity extends FragmentActivity implements OnMa
     TextView timeView;
     TextView locationView;
     ImageView personPhoto;
+
+    Button cancelStrollButton;
+    Button editStrollDetailsButton;
+
 
     private GoogleMap mMap;
     private Marker marker;
@@ -56,7 +76,10 @@ public class AppointmentDetailsActivity extends FragmentActivity implements OnMa
         timeView = (TextView)findViewById(R.id.appointmentTimeField);
         locationView = (TextView)findViewById(R.id.appointmentLocationField);
         personPhoto = (ImageView)findViewById(R.id.appointmentIcon);
+        cancelStrollButton = (Button)findViewById(R.id.cancelStrollButton);
+        editStrollDetailsButton = (Button)findViewById(R.id.editStrollButton);
 
+        strollId = b.getInt("STROLL_ID");
         userId = b.getInt("USER_ID");
         firstName = b.getString("USER_FIRST_NAME");
         lastName = b.getString("USER_LAST_NAME");
@@ -74,7 +97,82 @@ public class AppointmentDetailsActivity extends FragmentActivity implements OnMa
         locationView.setText(locationView.getText().toString() + location);
         Glide.with(this).load(mediumPhoto).into(personPhoto);
 
+        cancelStrollButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(
+                        AppointmentDetailsActivity.this);
+
+                dialogBuilder.setTitle("Are you sure that you want to cancel this stroll?");
+
+                dialogBuilder.setPositiveButton("CANCEL STROLL", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //Toast.makeText(AppointmentDetailsActivity.this, "You cancelled a stroll", Toast.LENGTH_SHORT).show();
+                        if(cancelStroll(strollId) == true){
+                            finish();
+                        }
+                        else{
+                            Toast.makeText(AppointmentDetailsActivity.this, "An error occured, try again", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+                dialogBuilder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(AppointmentDetailsActivity.this, "You click no", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                final AlertDialog alertDialog = dialogBuilder.create();
+                alertDialog.show();
+
+            }
+        });
+
     }
+
+    public boolean cancelStroll(Integer strollId){
+        String url ="http://10.0.2.2:8080/CancelStrollAndroid";
+        OkHttpClient client = new OkHttpClient();
+        final boolean[] flag = {false};
+        Gson gson = new Gson();
+
+        Integer id = strollId;
+        MediaType mediaType = MediaType.parse("application/json");
+        RequestBody requestBody = RequestBody.create(mediaType, gson.toJson(id));
+
+        final Request request;
+        request = new Request.Builder()
+                .url(url)
+                .post(requestBody)
+                .addHeader("content-type", "application/json")
+                .build();
+
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, okhttp3.Response response) throws IOException {
+                Gson retGson = new Gson();
+                int code = response.code();
+                if(code == 500){
+                    flag[0] = true;
+                }
+            }
+        });
+
+        if(flag[0] == true)
+            return true;
+
+        return false;
+
+    }
+
 
     @Override
     public void onMapReady(GoogleMap googleMap) {

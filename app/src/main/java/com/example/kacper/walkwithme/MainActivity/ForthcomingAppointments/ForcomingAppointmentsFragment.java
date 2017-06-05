@@ -81,7 +81,7 @@ public class ForcomingAppointmentsFragment extends Fragment {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 Gson retGson = new Gson();
-                String jsonResponse = response.body().toString();
+                String jsonResponse = response.body().String();
                 ForcomingAppointment forcomingAppointment;
                 for (int i = 0; i < response.body().contentLength(); i++) {
                     try {
@@ -95,7 +95,7 @@ public class ForcomingAppointmentsFragment extends Fragment {
             }
         });
 */
-        forcomingAppointments.add(new ForcomingAppointment(userId, "Brad", "Pitt", "Kraków", "23.05.2017", "17:00", "http://www.a-listinternational.com/wp-content/uploads/2016/06/brad-pitt-doesn-t-really-look-much-like-brad-pitt-in-these-photos-727400.jpg"));
+        forcomingAppointments.add(new ForcomingAppointment(1, userId, "Brad", "Pitt", "Kraków", "23.05.2017", "17:00", "http://www.a-listinternational.com/wp-content/uploads/2016/06/brad-pitt-doesn-t-really-look-much-like-brad-pitt-in-these-photos-727400.jpg"));
     }
 
     private void initializeAdapter(){

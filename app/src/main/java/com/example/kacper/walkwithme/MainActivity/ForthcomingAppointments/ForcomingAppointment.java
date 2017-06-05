@@ -5,6 +5,8 @@ package com.example.kacper.walkwithme.MainActivity.ForthcomingAppointments;
  */
 
 public class ForcomingAppointment {
+
+    Integer strollId;
     Integer userId;
     String firstName;
     String lastName;
@@ -13,7 +15,8 @@ public class ForcomingAppointment {
     String time;
     String mediumPhoto;
 
-    public ForcomingAppointment(Integer userId, String firstName, String lastName, String location, String date, String time, String mediumPhoto) {
+    public ForcomingAppointment(Integer strollId, Integer userId, String firstName, String lastName, String location, String date, String time, String mediumPhoto) {
+        this.strollId = strollId;
         this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -21,6 +24,14 @@ public class ForcomingAppointment {
         this.date = date;
         this.time = time;
         this.mediumPhoto = mediumPhoto;
+    }
+
+    public Integer getStrollId() {
+        return strollId;
+    }
+
+    public void setStrollId(Integer strollId) {
+        this.strollId = strollId;
     }
 
     public Integer getUserId() {

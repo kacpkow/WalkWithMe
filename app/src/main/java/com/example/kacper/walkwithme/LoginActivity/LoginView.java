@@ -8,7 +8,7 @@ import android.content.Context;
 
 public interface LoginView {
     void showToast(String msg);
-    void goToOptions();
+    void goToOptions(Integer userId);
     Context getAppContext();
     Context getActivityContext();
 }

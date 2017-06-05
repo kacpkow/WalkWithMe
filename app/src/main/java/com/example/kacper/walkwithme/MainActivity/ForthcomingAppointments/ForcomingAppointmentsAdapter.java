@@ -33,6 +33,7 @@ public class ForcomingAppointmentsAdapter extends RecyclerView.Adapter<Forcoming
         ImageView personPhoto;
         Button detailsButton;
 
+        Integer strollId;
         Integer userId;
         String firstName;
         String lastName;
@@ -58,6 +59,7 @@ public class ForcomingAppointmentsAdapter extends RecyclerView.Adapter<Forcoming
         public void onClick(View v) {
             context = v.getContext();
             Intent intent = new Intent(context, AppointmentDetailsActivity.class);
+            intent.putExtra("STROLL_ID", strollId);
             intent.putExtra("USER_ID", userId);
             intent.putExtra("LOCATION", location);
             intent.putExtra("DATE", date);
@@ -104,6 +106,7 @@ public class ForcomingAppointmentsAdapter extends RecyclerView.Adapter<Forcoming
         personViewHolder.date = forcomingAppointments.get(i).date;
         personViewHolder.time = forcomingAppointments.get(i).time;
         personViewHolder.mediumPhoto = forcomingAppointments.get(i).mediumPhoto;
+        personViewHolder.strollId = forcomingAppointments.get(i).strollId;
     }
 
     @Override

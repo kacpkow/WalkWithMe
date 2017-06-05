@@ -201,6 +201,7 @@ public class PersonsListFragment extends Fragment {
                 backgroundThreadInitializeAdapter(getActivity().getApplicationContext());
             }
         });
+        
     }
 
     private void initializeAdapter() {

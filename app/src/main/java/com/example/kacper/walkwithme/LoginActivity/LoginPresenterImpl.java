@@ -32,7 +32,6 @@ public class LoginPresenterImpl implements LoginPresenter {
     private LoginView loginView;
     ProgressDialog progressDialog;
     String json;
-
     public LoginPresenterImpl(LoginView loginView) {
         this.loginView = loginView;
     }
@@ -51,7 +50,7 @@ public class LoginPresenterImpl implements LoginPresenter {
             LoginContent log = new LoginContent(username, password);
             MediaType mediaType = MediaType.parse("application/json");
             RequestBody requestBody = RequestBody.create(mediaType, gson.toJson(log));
-            //backgroundThreadStartMainActivity(loginView.getAppContext(), 0);
+           // backgroundThreadStartMainActivity(loginView.getAppContext(), 0);
 
             final Request request;
             request = new Request.Builder()
@@ -113,7 +112,18 @@ public class LoginPresenterImpl implements LoginPresenter {
 
                 @Override
                 public void run() {
+//                    Intent intent = new Intent(context, MainView.class);
+//                    intent.putExtra("USER_ID", user_Id);
+//                    context.startActivity(intent);
+
+                    SharedPreferences settings = context.getSharedPreferences("USER_ID", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = settings.edit();
+                    editor.putInt("userId", user_Id);
+                    editor.commit();
+
                     Intent intent = new Intent(context, MainView.class);
+                    intent.addCategory(Intent.CATEGORY_HOME);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     intent.putExtra("USER_ID", user_Id);
                     context.startActivity(intent);
                 }
