@@ -70,6 +70,9 @@ public class MakeStrollActivity extends AppCompatActivity {
     private int currentUserId;
     private int userId;
     private String locationSet;
+    private String userName;
+    private Double latitudeSet = 0.0;
+    private Double longitudeSet = 0.0;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -79,8 +82,9 @@ public class MakeStrollActivity extends AppCompatActivity {
 
         SharedPreferences settings = getApplicationContext().getSharedPreferences("userId", Context.MODE_PRIVATE);
         currentUserId = settings.getInt("ID", 0);
-        final Bundle bundle = new Bundle();
+        Bundle bundle = getIntent().getExtras();
         userId = bundle.getInt("USER_ID", 0);
+        userName = getIntent().getExtras().getString("USER_NAME");
 
         dateView = (TextView) findViewById(R.id.dateField);
         timeView = (TextView) findViewById(R.id.timeField);
@@ -89,7 +93,6 @@ public class MakeStrollActivity extends AppCompatActivity {
         setTimeButton = (Button)findViewById(R.id.timeButton);
         setLocationButton = (Button)findViewById(R.id.locationButton);
         strollButton = (Button)findViewById(R.id.buttonStroll);
-        //locationView.setText("Warsaw");
 
         calendar = Calendar.getInstance();
 
@@ -127,7 +130,29 @@ public class MakeStrollActivity extends AppCompatActivity {
         strollButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                makeStroll();
+
+                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(
+                        MakeStrollActivity.this);
+
+                dialogBuilder.setTitle("Are you sure that you want to make a stroll with " + userName + "?");
+
+                dialogBuilder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //Toast.makeText(AppointmentDetailsActivity.this, "You cancelled a stroll", Toast.LENGTH_SHORT).show();
+                        makeStroll();
+                        finish();
+                    }
+                });
+                dialogBuilder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+
+                final AlertDialog alertDialog = dialogBuilder.create();
+                alertDialog.show();
             }
         });
 
@@ -138,6 +163,8 @@ public class MakeStrollActivity extends AppCompatActivity {
 
             }
         });
+
+        Toast.makeText(this, userName, Toast.LENGTH_SHORT).show();
     }
 
     public void showDialog(){
@@ -164,12 +191,12 @@ public class MakeStrollActivity extends AppCompatActivity {
     };
 
     public void makeStroll(){
-        /*
-        String url ="http://10.0.2.2:8080/MakeStrollAndroid";
+
+        String url ="http://10.0.2.2:8080/makeStroll";
         OkHttpClient client = new OkHttpClient();
         Gson gson = new Gson();
         MediaType mediaType = MediaType.parse("application/json");
-        StrollContent requestContent = new StrollContent(currentUserId, userId, dateView.getText().toString(), timeView.getText().toString(), locationView.getText().toString());
+        StrollContent requestContent = new StrollContent(currentUserId, userId, dateView.getText().toString(), timeView.getText().toString(), locationView.getText().toString(), longitudeSet, latitudeSet);
         RequestBody requestBody = RequestBody.create(mediaType, gson.toJson(requestContent));
 
         final Request request;
@@ -191,13 +218,10 @@ public class MakeStrollActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 Gson retGson = new Gson();
-                String jsonResponse = response.body().toString();
-                MakeStrollResponse makeStrollResponse;
-                if(response.body().contentLength() != 0 && response.code() == 500) {
+                String jsonResponse = response.body().string();
+                if(response.code() == 200) {
                     try {
-                        makeStrollResponse = retGson.fromJson(jsonResponse, MakeStrollResponse.class);
-                        backgroundThreadShortToast(MakeStrollActivity.this, makeStrollResponse.getResponseContent());
-                        finish();
+                        backgroundThreadShortToast(MakeStrollActivity.this, "The stroll propose has been sent");
 
                     } catch (JsonSyntaxException e) {
                         Log.e("error", "error in syntax in returning json");
@@ -205,7 +229,7 @@ public class MakeStrollActivity extends AppCompatActivity {
                 }
             }
         });
-        */
+
     }
 
     public static void backgroundThreadShortToast(final Context context,
@@ -285,6 +309,9 @@ public class MakeStrollActivity extends AppCompatActivity {
 
                             Address address = addressList.get(0);
                             LatLng latLng = new LatLng(address.getLatitude() , address.getLongitude());
+                            latitudeSet = address.getLatitude();
+                            longitudeSet = address.getLongitude();
+
                             googleMap.clear();
                             googleMap.addMarker(new MarkerOptions().position(latLng).title("Marker"));
                             googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));

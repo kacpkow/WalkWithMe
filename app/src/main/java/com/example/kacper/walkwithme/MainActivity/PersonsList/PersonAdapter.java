@@ -66,8 +66,7 @@ public class PersonAdapter extends RecyclerView.Adapter<PersonAdapter.PersonView
             intent.putExtra("USER_AGE", personAge.getText().toString());
             intent.putExtra("USER_LOCATION", personLocation);
             intent.putExtra("USER_DESCRIPTION", personDescription);
-            intent.putExtra("USER_FIRST_NAME", personFirstName);
-            intent.putExtra("USER_LAST_NAME", personLastName);
+            intent.putExtra("USER_NAME", personName.getText().toString());
             intent.putExtra("USER_IMAGE", personPhoto);
             context.startActivity(intent);
 

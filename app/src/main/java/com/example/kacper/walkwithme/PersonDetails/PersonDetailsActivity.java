@@ -28,8 +28,7 @@ public class PersonDetailsActivity extends AppCompatActivity {
     private String userLocation;
     private String userDescription;
     private String userNick;
-    private String userFirstName;
-    private String userLastName;
+    private String userName;
     private String userImageUrl;
 
     @Override
@@ -50,12 +49,11 @@ public class PersonDetailsActivity extends AppCompatActivity {
         userAge = b.getString("USER_AGE");
         userLocation = b.getString("USER_LOCATION");
         userDescription= b.getString("USER_DESCRIPTION");
-        userFirstName = b.getString("USER_FIRST_NAME");
-        userLastName = b.getString("USER_LAST_NAME");
+        userName = b.getString("USER_NAME");
         userImageUrl = b.getString("USER_IMAGE");
 
         nick.setText(userId.toString());
-        name.setText(userFirstName + " " +userLastName);
+        name.setText(userName);
         age.setText(userAge);
         location.setText(userLocation);
         description.setText(userDescription);
@@ -68,6 +66,7 @@ public class PersonDetailsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), MakeStrollActivity.class);
                 intent.putExtra("USER_ID", userId);
+                intent.putExtra("USER_NAME", userName);
                 startActivity(intent);
             }
         });

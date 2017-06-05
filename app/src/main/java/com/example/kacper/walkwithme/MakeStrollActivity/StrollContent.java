@@ -13,8 +13,6 @@ public class StrollContent {
     private double longitude;
     private double latitude;
 
-
-
     public Integer getUserId() {
         return userId;
     }
