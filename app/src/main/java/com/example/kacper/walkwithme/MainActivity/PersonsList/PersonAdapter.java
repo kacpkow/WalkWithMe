@@ -34,7 +34,7 @@ public class PersonAdapter extends RecyclerView.Adapter<PersonAdapter.PersonView
         String personFirstName;
         String personLastName;
         String personLocation;
-        String personLargePhoto;
+        String personPhoto;
         TextView distance;
         ImageView personMediumPhoto;
 
@@ -48,7 +48,7 @@ public class PersonAdapter extends RecyclerView.Adapter<PersonAdapter.PersonView
             distance = (TextView)itemView.findViewById(R.id.person_distance);
             personAge = (TextView)itemView.findViewById(R.id.person_age);
             personMediumPhoto = (ImageView)itemView.findViewById(R.id.person_photo);
-            personLargePhoto = "";
+            personPhoto = "";
             personLocation = "";
             personFirstName = "";
             personLastName = "";
@@ -68,13 +68,11 @@ public class PersonAdapter extends RecyclerView.Adapter<PersonAdapter.PersonView
             intent.putExtra("USER_DESCRIPTION", personDescription);
             intent.putExtra("USER_FIRST_NAME", personFirstName);
             intent.putExtra("USER_LAST_NAME", personLastName);
-            intent.putExtra("USER_IMAGE", personLargePhoto);
-
+            intent.putExtra("USER_IMAGE", personPhoto);
             context.startActivity(intent);
 
         }
     }
-
 
     PersonAdapter(List<com.example.kacper.walkwithme.MainActivity.PersonsList.Person> persons, Context context){
         this.persons = persons;
@@ -98,16 +96,15 @@ public class PersonAdapter extends RecyclerView.Adapter<PersonAdapter.PersonView
         personViewHolder.personName.setText(persons.get(i).getFirstName() + " "+persons.get(i).getLastName());
         personViewHolder.personAge.setText(persons.get(i).getAge().toString() + " years");
         personViewHolder.distance.setText(persons.get(i).getDistance() + " km");
-        personViewHolder.userId = persons.get(i).getId();
+        personViewHolder.userId = persons.get(i).getUser_id();
         personViewHolder.personFirstName = persons.get(i).getFirstName();
         personViewHolder.personLastName = persons.get(i).getLastName();
-        personViewHolder.personDescription = persons.get(i).getPersonDescription();
+        personViewHolder.personDescription = persons.get(i).getDescription();
         personViewHolder.personLocation = persons.get(i).getCity();
-        personViewHolder.personLargePhoto = persons.get(i).getLargeImage();
-        Glide.with(mContext).load(persons.get(i).getMediumImage())
+        personViewHolder.personPhoto = persons.get(i).getPhoto_url();
+        Glide.with(mContext).load(persons.get(i).getPhoto_url())
                 .into(personViewHolder.personMediumPhoto);
     }
-
 
     @Override
     public int getItemCount() {

@@ -36,6 +36,8 @@
 
     <string name="pref_header_localisation">Localisation</string>
     <string name="pref_localisation">Your localisation</string>
+    <string name="pref_edit_user">Edit user data</string>
+    <string name="pref_log_out">Log out</string>
     <string name="not_set">Not set</string>
 
     <string name="pref_title_sync_frequency">Sync frequency</string>

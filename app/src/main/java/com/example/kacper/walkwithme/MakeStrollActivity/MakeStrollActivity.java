@@ -164,6 +164,7 @@ public class MakeStrollActivity extends AppCompatActivity {
     };
 
     public void makeStroll(){
+        /*
         String url ="http://10.0.2.2:8080/MakeStrollAndroid";
         OkHttpClient client = new OkHttpClient();
         Gson gson = new Gson();
@@ -204,6 +205,7 @@ public class MakeStrollActivity extends AppCompatActivity {
                 }
             }
         });
+        */
     }
 
     public static void backgroundThreadShortToast(final Context context,

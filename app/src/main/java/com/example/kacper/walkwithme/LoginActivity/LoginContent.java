@@ -5,20 +5,20 @@ package com.example.kacper.walkwithme.LoginActivity;
  */
 
 public class LoginContent {
-    private String nick;
+    private String username;
     private String password;
 
-    public LoginContent(String nick, String password){
-        this.nick = nick;
+    public LoginContent(String username, String password) {
+        this.username = username;
         this.password = password;
     }
 
-    public String getNick() {
-        return nick;
+    public String getUsername() {
+        return username;
     }
 
-    public void setNick(String nick) {
-        this.nick = nick;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {

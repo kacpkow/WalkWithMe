@@ -9,15 +9,11 @@ public class StrollContent {
     private Integer userId;
     private String date;
     private String time;
-    private String location;
+    private String locationName;
+    private double longitude;
+    private double latitude;
 
-    public StrollContent(Integer currentUserId, Integer userId, String date, String time, String location) {
-        this.currentUserId = currentUserId;
-        this.userId = userId;
-        this.date = date;
-        this.time = time;
-        this.location = location;
-    }
+
 
     public Integer getUserId() {
         return userId;
@@ -51,11 +47,38 @@ public class StrollContent {
         this.time = time;
     }
 
-    public String getLocation() {
-        return location;
+    public StrollContent(Integer currentUserId, Integer userId, String date, String time, String locationName, double longitude, double latitude) {
+        this.currentUserId = currentUserId;
+        this.userId = userId;
+        this.date = date;
+        this.time = time;
+        this.locationName = locationName;
+        this.longitude = longitude;
+        this.latitude = latitude;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public String getLocationName() {
+
+        return locationName;
+    }
+
+    public void setLocationName(String locationName) {
+        this.locationName = locationName;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
     }
 }

@@ -24,7 +24,7 @@ public class PersonDetailsActivity extends AppCompatActivity {
     private ImageView image;
     private Button strollButton;
     private Integer userId;
-    private Integer userAge;
+    private String userAge;
     private String userLocation;
     private String userDescription;
     private String userNick;
@@ -47,7 +47,7 @@ public class PersonDetailsActivity extends AppCompatActivity {
         Bundle b = getIntent().getExtras();
 
         userId = b.getInt("USER_ID");
-        userAge = b.getInt("USER_AGE");
+        userAge = b.getString("USER_AGE");
         userLocation = b.getString("USER_LOCATION");
         userDescription= b.getString("USER_DESCRIPTION");
         userFirstName = b.getString("USER_FIRST_NAME");
@@ -56,7 +56,7 @@ public class PersonDetailsActivity extends AppCompatActivity {
 
         nick.setText(userId.toString());
         name.setText(userFirstName + " " +userLastName);
-        age.setText(userAge.toString());
+        age.setText(userAge);
         location.setText(userLocation);
         description.setText(userDescription);
 

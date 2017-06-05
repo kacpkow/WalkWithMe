@@ -7,22 +7,25 @@ import java.io.Serializable;
  */
 
 public class Person implements Serializable{
-    private Integer id;
+    private Integer user_id;
     private String nick;
     private String firstName;
     private String lastName;
     private String city;
+    private String birth_date;
+    private Double latitude;
+    private Double longtitude;
+    private String description;
+    private String photo_url;
     private Integer age;
     private Integer distance; //distance from user based on maps location
-    private String mediumImage, largeImage;
-    private String personDescription;
 
-    public String getPersonDescription() {
-        return personDescription;
+    public Integer getUser_id() {
+        return user_id;
     }
 
-    public void setPersonDescription(String personDescription) {
-        this.personDescription = personDescription;
+    public void setUser_id(Integer user_id) {
+        this.user_id = user_id;
     }
 
     public String getNick() {
@@ -57,12 +60,44 @@ public class Person implements Serializable{
         this.city = city;
     }
 
-    public Integer getId() {
-        return id;
+    public String getBirth_date() {
+        return birth_date;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setBirth_date(String birth_date) {
+        this.birth_date = birth_date;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongtitude() {
+        return longtitude;
+    }
+
+    public void setLongtitude(Double longtitude) {
+        this.longtitude = longtitude;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getPhoto_url() {
+        return photo_url;
+    }
+
+    public void setPhoto_url(String photo_url) {
+        this.photo_url = photo_url;
     }
 
     public Integer getAge() {
@@ -80,21 +115,4 @@ public class Person implements Serializable{
     public void setDistance(Integer distance) {
         this.distance = distance;
     }
-
-    public String getMediumImage() {
-        return mediumImage;
-    }
-
-    public void setMediumImage(String mediumImage) {
-        this.mediumImage = mediumImage;
-    }
-
-    public String getLargeImage() {
-        return largeImage;
-    }
-
-    public void setLargeImage(String largeImage) {
-        this.largeImage = largeImage;
-    }
-
 }

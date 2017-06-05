@@ -5,14 +5,29 @@ package com.example.kacper.walkwithme.Model;
  */
 
 public class User {
+    private int user_id;
     private String nick;
     private String firstName;
     private String lastName;
-    //private Double geoLat;  // user location longtitude
-    //private Double geoLng;  // user location latitude
-    private String email;
-    private String sessionId;
-    private int user_id;
+    private String city;
+    private String birth_date;
+    private Double latitude;  // user location longtitude
+    private Double longtitude;  // user location latitude
+    private String description;
+    private String photo_url;
+
+    public User(int user_id, String nick, String firstName, String lastName, String city, String birth_date, Double latitude, Double longtitude, String description, String photo_url) {
+        this.user_id = user_id;
+        this.nick = nick;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.city = city;
+        this.birth_date = birth_date;
+        this.latitude = latitude;
+        this.longtitude = longtitude;
+        this.description = description;
+        this.photo_url = photo_url;
+    }
 
     public int getUser_id() {
         return user_id;
@@ -20,14 +35,6 @@ public class User {
 
     public void setUser_id(int user_id) {
         this.user_id = user_id;
-    }
-
-    public User(String nick, String firstName, String lastName, String email, String sessionId) {
-        this.nick = nick;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.sessionId = sessionId;
     }
 
     public String getNick() {
@@ -54,36 +61,51 @@ public class User {
         this.lastName = lastName;
     }
 
-//    public Double getGeoLat() {
-//        return geoLat;
-//    }
-//
-//    public void setGeoLat(Double geoLat) {
-//        this.geoLat = geoLat;
-//    }
-//
-//    public Double getGeoLng() {
-//        return geoLng;
-//    }
-//
-//    public void setGeoLng(Double geoLng) {
-//        this.geoLng = geoLng;
-//    }
-
-    public String getEmail() {
-        return email;
+    public String getCity() {
+        return city;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setCity(String city) {
+        this.city = city;
     }
 
-    public String getSessionId() {
-        return sessionId;
+    public String getBirth_date() {
+        return birth_date;
     }
 
-    public void setSessionId(String sessionId) {
-        this.sessionId = sessionId;
+    public void setBirth_date(String birth_date) {
+        this.birth_date = birth_date;
     }
 
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongtitude() {
+        return longtitude;
+    }
+
+    public void setLongtitude(Double longtitude) {
+        this.longtitude = longtitude;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getPhoto_url() {
+        return photo_url;
+    }
+
+    public void setPhoto_url(String photo_url) {
+        this.photo_url = photo_url;
+    }
 }

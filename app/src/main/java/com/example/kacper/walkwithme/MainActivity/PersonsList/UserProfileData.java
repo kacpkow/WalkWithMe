@@ -11,13 +11,13 @@ public class UserProfileData {
     private String lastName;
     private String city;
     private String birth_date;
-    private double latitude;
-    private double longtitude;
+    private Double latitude;
+    private Double longtitude;
     private String description;
     private String photo_url;
 
     public UserProfileData(int user_id, String nick, String firstName, String lastName, String city,
-                           String birth_date, double latitude, double longtitude, String description, String photo_url) {
+                           String birth_date, Double latitude, Double longtitude, String description, String photo_url) {
         this.user_id = user_id;
         this.nick = nick;
         this.firstName = firstName;
@@ -29,6 +29,7 @@ public class UserProfileData {
         this.description = description;
         this.photo_url = photo_url;
     }
+
 
     public int getUser_id() {
         return user_id;
@@ -78,19 +79,19 @@ public class UserProfileData {
         this.birth_date = birth_date;
     }
 
-    public double getLatitude() {
+    public Double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(double latitude) {
+    public void setLatitude(Double latitude) {
         this.latitude = latitude;
     }
 
-    public double getLongtitude() {
+    public Double getLongtitude() {
         return longtitude;
     }
 
-    public void setLongtitude(double longtitude) {
+    public void setLongtitude(Double longtitude) {
         this.longtitude = longtitude;
     }
 

@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.example.kacper.walkwithme.MainActivity.MainView;
@@ -42,7 +43,7 @@ public class LoginPresenterImpl implements LoginPresenter {
             progressDialog = new ProgressDialog(loginView.getActivityContext());
             progressDialog.setTitle("Logging, please wait ...");
             progressDialog.show();
-            String url ="http://10.0.2.2:8080/LoginAndroid";
+            String url ="http://10.0.2.2:8080/rest/login";
             OkHttpClient client = new OkHttpClient();
 
             Gson gson = new Gson();
@@ -50,7 +51,6 @@ public class LoginPresenterImpl implements LoginPresenter {
             LoginContent log = new LoginContent(username, password);
             MediaType mediaType = MediaType.parse("application/json");
             RequestBody requestBody = RequestBody.create(mediaType, gson.toJson(log));
-           // backgroundThreadStartMainActivity(loginView.getAppContext(), 0);
 
             final Request request;
             request = new Request.Builder()
@@ -71,26 +71,70 @@ public class LoginPresenterImpl implements LoginPresenter {
                 public void onResponse(Call call, okhttp3.Response response) throws IOException {
                     Gson retGson = new Gson();
                     progressDialog.dismiss();
-                    json = response.body().string();
 
-                    String jsonString = "{\"error\":\"notAnUser\"}";
-                    if(json.equals(jsonString) == false){
-
-                        User usr = retGson.fromJson(json, User.class);
-                        SharedPreferences settings = loginView.getActivityContext().getSharedPreferences("userId", Context.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = settings.edit();
-                        editor.putInt("ID", usr.getUser_id());
-                        editor.commit();
-                        backgroundThreadStartMainActivity(loginView.getAppContext(), usr.getUser_id());
+                    if(response.code() == 200){
+                        getUser();
                     }
                     else{
-                        backgroundThreadShortToast(loginView.getAppContext(),"bad logging data");
+                        backgroundThreadShortToast(loginView.getAppContext(),"bad logging data 1");
                     }
 
                 }
             });
 
         }
+    }
+
+    public void getUser(){
+
+        String url ="http://10.0.2.2:8080/user";
+        OkHttpClient client = new OkHttpClient();
+
+        Gson gson = new Gson();
+
+        MediaType mediaType = MediaType.parse("application/json");
+
+        final Request request;
+        request = new Request.Builder()
+                .url(url)
+                .addHeader("content-type", "application/json")
+                .build();
+
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                progressDialog.dismiss();
+                backgroundThreadShortToast(loginView.getAppContext(), "Error in logging occured");
+            }
+
+            @Override
+            public void onResponse(Call call, okhttp3.Response response) throws IOException {
+                Gson retGson = new Gson();
+                progressDialog.dismiss();
+                json = response.body().string();
+
+                if(response.code() == 200){
+
+                        User usr = retGson.fromJson(json, User.class);
+
+                        SharedPreferences settings = loginView.getActivityContext().getSharedPreferences("userId", Context.MODE_PRIVATE);
+                        if(settings != null){
+                            SharedPreferences.Editor editor = settings.edit();
+                            editor.putInt("ID", usr.getUser_id());
+                            editor.commit();
+                        }
+
+                        backgroundThreadStartMainActivity(loginView.getAppContext(), usr.getUser_id());
+
+                }
+                else{
+                    backgroundThreadShortToast(loginView.getAppContext(),"here");
+                }
+
+            }
+        });
+
     }
 
     public static void backgroundThreadShortToast(final Context context,
@@ -112,9 +156,6 @@ public class LoginPresenterImpl implements LoginPresenter {
 
                 @Override
                 public void run() {
-//                    Intent intent = new Intent(context, MainView.class);
-//                    intent.putExtra("USER_ID", user_Id);
-//                    context.startActivity(intent);
 
                     SharedPreferences settings = context.getSharedPreferences("USER_ID", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = settings.edit();
@@ -123,7 +164,7 @@ public class LoginPresenterImpl implements LoginPresenter {
 
                     Intent intent = new Intent(context, MainView.class);
                     intent.addCategory(Intent.CATEGORY_HOME);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     intent.putExtra("USER_ID", user_Id);
                     context.startActivity(intent);
                 }

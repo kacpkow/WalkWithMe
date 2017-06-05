@@ -27,10 +27,4 @@
         android:icon="@drawable/person_icon_small_black"
         android:title="@string/profile_title" />
 
-    <header
-        android:id="@+id/logoutPreference"
-        android:fragment="com.example.kacper.walkwithme.SettingsActivity.SettingsActivity$LogoutFragment"
-        android:icon="@drawable/exit_icon"
-        android:title="@string/logout" />
-
 </preference-headers>

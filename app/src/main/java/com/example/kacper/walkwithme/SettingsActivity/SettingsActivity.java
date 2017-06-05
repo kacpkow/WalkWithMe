@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -28,6 +29,7 @@ import android.widget.Toast;
 
 import com.example.kacper.walkwithme.AppCompatPreferenceActivity;
 import com.example.kacper.walkwithme.AppointmentDetails.AppointmentDetailsActivity;
+import com.example.kacper.walkwithme.LoginActivity.LoginActivity;
 import com.example.kacper.walkwithme.MapsActivity;
 import com.example.kacper.walkwithme.R;
 
@@ -156,6 +158,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      * {@inheritDoc}
      */
     @Override
+
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public void onBuildHeaders(List<Header> target) {
         loadHeadersFromResource(R.xml.pref_headers, target);
@@ -171,8 +174,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 || DataSyncPreferenceFragment.class.getName().equals(fragmentName)
                 || NotificationPreferenceFragment.class.getName().equals(fragmentName)
                 || MapsPreferenceFragment.class.getName().equals(fragmentName)
-                || ProfileFragment.class.getName().equals(fragmentName)
-                || LogoutFragment.class.getName().equals(fragmentName);
+                || ProfileFragment.class.getName().equals(fragmentName);
     }
 
     /**
@@ -308,6 +310,23 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_profile);
             setHasOptionsMenu(true);
+
+            Preference myPreference = (Preference) findPreference("log_out");
+            myPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    SharedPreferences settings = getActivity().getApplicationContext().getSharedPreferences("USER_ID", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = settings.edit();
+                    editor.remove("userId");
+                    editor.commit();
+
+                    Intent intent = new Intent(getActivity().getApplicationContext(), LoginActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    getActivity().finish();
+                    startActivity(intent);
+                    return false;
+                }
+            });
             // Bind the summaries of EditText/List/Dialog/Ringtone preferences
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
@@ -324,53 +343,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 return true;
             }
             return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class LogoutFragment extends PreferenceFragment {
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.pref_logout);
-            setHasOptionsMenu(false);
-            //setHasOptionsMenu(true);
-            // Bind the summaries of EditText/List/Dialog/Ringtone preferences
-            // to their values. When their values change, their summaries are
-            // updated to reflect the new value, per the Android Design
-            // guidelines.
-            //bindPreferenceSummaryToValue(findPreference("localisation_values"));
-
-        }
-
-    }
-
-    @Override
-    public void onHeaderClick(Header header, int position){
-        super.onHeaderClick(header, position);
-        if (header.id == R.id.logoutPreference) {
-            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(
-                    SettingsActivity.this);
-
-            dialogBuilder.setTitle("Are you sure you want to logout?");
-
-            dialogBuilder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    //Toast.makeText(AppointmentDetailsActivity.this, "You cancelled a stroll", Toast.LENGTH_SHORT).show();
-
-                }
-            });
-            dialogBuilder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    // Toast.makeText(AppointmentDetailsActivity.this, "You click no", Toast.LENGTH_SHORT).show();
-                }
-            });
-
-            final AlertDialog alertDialog = dialogBuilder.create();
-            alertDialog.show();
-
         }
     }
 

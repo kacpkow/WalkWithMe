@@ -22,6 +22,7 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
     private Button registerButton;
     private EditText login;
     private EditText password;
+    Integer usrId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,8 +52,9 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
             }
         });
 
-        SharedPreferences settings = getSharedPreferences("USER_ID", Context.MODE_PRIVATE);
-        Integer usrId = settings.getInt("userId", 0);
+        SharedPreferences settings = getSharedPreferences
+                ("USER_ID", Context.MODE_PRIVATE);
+        usrId = settings.getInt("userId", 0);
         if(usrId != 0){
             goToOptions(usrId);
             finish();
@@ -86,6 +88,10 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
     @Override
     protected void onResume(){
         super.onResume();
+        if(usrId != 0){
+            goToOptions(usrId);
+        }
+
     }
 
 }

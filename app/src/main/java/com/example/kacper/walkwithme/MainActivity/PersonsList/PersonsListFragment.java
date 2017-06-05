@@ -107,7 +107,7 @@ public class PersonsListFragment extends Fragment {
         persons = new ArrayList<>();
 
         progressDialog.show();
-        initializeData(userId, null, null, null);
+        initializeData(userId, "0", "100", "100");
         //Toast.makeText(getActivity().getApplicationContext(), persons.get(0).getFirstName() , Toast.LENGTH_SHORT).show();
         initializeAdapter();
         progressDialog.dismiss();
@@ -123,7 +123,7 @@ public class PersonsListFragment extends Fragment {
         latitude = settings.getFloat("latitude", 0.0f);
         longtitude = settings.getFloat("longtitude", 0.0f);
 
-        String url = "http://10.0.2.2:8080/GetPersonsAndroid";
+        String url = "http://10.0.2.2:8080/search";
         OkHttpClient client = new OkHttpClient();
         Gson gson = new Gson();
         MediaType mediaType = MediaType.parse("application/json");
@@ -177,20 +177,42 @@ public class PersonsListFragment extends Fragment {
                 Gson objGson = new GsonBuilder().setPrettyPrinting().create();
                 Type listType = new TypeToken<List<UserProfileData>>() {
                 }.getType();
+//                backgroundThreadShortToast(getActivity().getApplicationContext(), jsonResponse);
+
                 List<UserProfileData> readFromJson = objGson.fromJson(jsonResponse, listType);
+
+                DistanceCalculator calculator = new DistanceCalculator();
+                Double distance;
+                Double userLatitude;
+                Double userLongtitude;
+                SharedPreferences settings = getContext().getSharedPreferences("userLocation", Context.MODE_PRIVATE);
+                userLatitude = (double)settings.getFloat("latitude", 0.0f);
+                userLongtitude = (double)settings.getFloat("longtitude", 0.0f);
+
+
+
                 for (UserProfileData userProfileData:readFromJson
                      ) {
                     try {
                         Person person = new Person();
 
                         person.setCity(userProfileData.getCity());
-                        person.setPersonDescription(userProfileData.getDescription());
-                        person.setLargeImage(userProfileData.getPhoto_url());
-                        person.setMediumImage(userProfileData.getPhoto_url());
-                        person.setId(userProfileData.getUser_id());
+                        person.setDescription(userProfileData.getDescription());
+                        person.setPhoto_url(userProfileData.getPhoto_url());
+                        person.setUser_id(userProfileData.getUser_id());
                         person.setFirstName(userProfileData.getFirstName());
                         person.setLastName(userProfileData.getLastName());
-                        person.setAge(42);
+                        person.setCity(userProfileData.getCity());
+                        person.setBirth_date(userProfileData.getBirth_date());
+                        person.setLatitude(userProfileData.getLatitude());
+                        person.setLongtitude(userProfileData.getLongtitude());
+                        person.setNick(userProfileData.getNick());
+
+                        distance = calculator.distance(person.getLongtitude(), person.getLongtitude(), userLongtitude, userLatitude, "K");
+                        person.setDistance(distance.intValue());
+                        String year = person.getBirth_date().substring(0, Math.min(person.getBirth_date().length(), 4));
+                        Integer ages = 2017 - Integer.valueOf(year);
+                        person.setAge(ages);
 
                         persons.add(person);
 
@@ -207,6 +229,19 @@ public class PersonsListFragment extends Fragment {
     private void initializeAdapter() {
         PersonAdapter adapter = new PersonAdapter(persons, this.getContext());
         rv.setAdapter(adapter);
+    }
+
+    public static void backgroundThreadShortToast(final Context context,
+                                                  final String msg) {
+        if (context != null && msg != null) {
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+
+                @Override
+                public void run() {
+                    Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
     public void backgroundThreadInitializeAdapter(final Context context) {
