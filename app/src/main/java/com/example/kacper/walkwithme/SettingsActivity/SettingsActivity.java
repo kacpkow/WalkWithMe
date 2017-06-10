@@ -2,9 +2,7 @@ package com.example.kacper.walkwithme.SettingsActivity;
 
 
 import android.annotation.TargetApi;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -16,21 +14,17 @@ import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceScreen;
-import android.support.annotation.RequiresApi;
 import android.support.v7.app.ActionBar;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.example.kacper.walkwithme.AppCompatPreferenceActivity;
-import com.example.kacper.walkwithme.AppointmentDetails.AppointmentDetailsActivity;
 import com.example.kacper.walkwithme.LoginActivity.LoginActivity;
 import com.example.kacper.walkwithme.MapsActivity;
+import com.example.kacper.walkwithme.PersonProfileSettings;
 import com.example.kacper.walkwithme.R;
 
 import java.util.List;
@@ -325,6 +319,18 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     getActivity().finish();
                     startActivity(intent);
                     return false;
+                }
+            });
+
+            myPreference = (Preference) findPreference("edit_profile");
+            myPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+
+                    Intent intent = new Intent(getActivity().getApplicationContext(), PersonProfileSettings.class);
+                    startActivity(intent);
+                    return false;
+
                 }
             });
             // Bind the summaries of EditText/List/Dialog/Ringtone preferences

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cvStrollRequest"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardElevation="5dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <ImageView
+            android:id="@+id/sr_person_photo"
+            android:layout_width="250px"
+            android:layout_height="250px"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="16dp" />
+
+        <TextView
+            android:id="@+id/sr_person_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/sr_person_photo"
+            android:textSize="30sp" />
+
+        <TextView
+            android:id="@+id/sr_datetime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/sr_person_name"
+            android:layout_toRightOf="@+id/sr_person_photo" />
+
+        <TextView
+            android:id="@+id/sr_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/sr_datetime"
+            android:layout_toRightOf="@+id/sr_person_photo" />
+
+        <ImageButton
+            android:id="@+id/buttonAccept"
+            android:layout_width="120px"
+            android:layout_height="120px"
+            android:background="@drawable/button_accept"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true" />
+
+        <ImageButton
+            android:id="@+id/buttonDecline"
+            android:layout_width="120px"
+            android:layout_height="120px"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@+id/buttonAccept"
+            android:layout_marginTop="17dp"
+            android:background="@drawable/button_decline" />
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>
+

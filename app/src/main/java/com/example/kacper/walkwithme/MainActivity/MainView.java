@@ -8,11 +8,10 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
-import android.widget.TextView;
 
 import com.example.kacper.walkwithme.MainActivity.ForthcomingAppointments.ForcomingAppointmentsFragment;
-import com.example.kacper.walkwithme.MainActivity.PersonProfile.PersonProfileSettings;
 import com.example.kacper.walkwithme.MainActivity.PersonsList.PersonsListFragment;
+import com.example.kacper.walkwithme.MainActivity.StrollRequests.StrollRequestsFragment;
 import com.example.kacper.walkwithme.R;
 import com.example.kacper.walkwithme.SettingsActivity.SettingsActivity;
 
@@ -22,8 +21,8 @@ public class MainView extends AppCompatActivity {
     private ImageButton settingsButton;
     private ImageButton peopleButton;
     private ImageButton homeButton;
-    private ImageButton profileButton;
-    private TextView chatNotificationsView;
+    private ImageButton notificationsButton;
+
     private int userId;
 
     @Override
@@ -37,7 +36,7 @@ public class MainView extends AppCompatActivity {
         chatButton = (ImageButton) findViewById(R.id.chatButton);
         settingsButton = (ImageButton) findViewById(R.id.settingsButton);
         //chatNotificationsView = (TextView) findViewById(R.id.chatNotification);
-        profileButton = (ImageButton) findViewById(R.id.notificationsButton);
+        notificationsButton = (ImageButton) findViewById(R.id.notificationsButton);
         peopleButton = (ImageButton) findViewById(R.id.personButton);
         homeButton = (ImageButton) findViewById(R.id.homeButton);
         final Animation animScalePeopleButton = AnimationUtils.loadAnimation(this, R.anim.anim_press_menu_button);
@@ -167,7 +166,7 @@ public class MainView extends AppCompatActivity {
             }
         });
 
-        profileButton.setOnClickListener(new View.OnClickListener() {
+        notificationsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 v.startAnimation(animScalePeopleButton);
@@ -179,12 +178,12 @@ public class MainView extends AppCompatActivity {
 
                     @Override
                     public void onAnimationEnd(Animation animation) {
-                        PersonProfileSettings newFragment = new PersonProfileSettings();
+                        StrollRequestsFragment newFragment = new StrollRequestsFragment();
                         newFragment.setArguments(bundle);
                         android.support.v4.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
                         android.support.v4.app.Fragment f = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-                        if (!(f instanceof PersonsListFragment)){
+                        if (!(f instanceof StrollRequestsFragment)){
                             transaction.replace(R.id.fragment_container, newFragment);
                             transaction.addToBackStack(null);
                             transaction.commit();

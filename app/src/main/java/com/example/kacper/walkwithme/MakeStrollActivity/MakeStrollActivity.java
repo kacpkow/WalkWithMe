@@ -212,7 +212,6 @@ public class MakeStrollActivity extends AppCompatActivity {
             public void onFailure(Call call, IOException e) {
                 Log.e("error", "error while connecting with server, try again");
                 backgroundThreadShortToast(MakeStrollActivity.this, "Error in making stroll occured");
-
             }
 
             @Override

@@ -1,20 +1,11 @@
-package com.example.kacper.walkwithme.MainActivity.PersonProfile;
+package com.example.kacper.walkwithme;
 
-import android.Manifest;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,19 +19,18 @@ import java.io.InputStream;
 
 import static android.app.Activity.RESULT_OK;
 
-public class PersonProfileSettings extends Fragment {
+public class PersonProfileSettings extends AppCompatActivity {
 
     private Button uploadImgButton;
     private ImageView imageView;
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_person_profile_settings, container, false);
-
-        imageView = (ImageView)rootView.findViewById(R.id.userImage);
-        uploadImgButton = (Button) rootView.findViewById(R.id.uploadPhotoButton);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_person_profile_settings);
+        imageView = (ImageView)findViewById(R.id.userImage);
+        uploadImgButton = (Button)findViewById(R.id.uploadPhotoButton);
 
         uploadImgButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,8 +43,6 @@ public class PersonProfileSettings extends Fragment {
             }
         });
 
-        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
-        return rootView;
     }
 
     @Override
@@ -67,7 +55,7 @@ public class PersonProfileSettings extends Fragment {
                     InputStream inputStream;
 
                     try{
-                        inputStream = getActivity().getContentResolver().openInputStream(selectedImage);
+                        inputStream = getContentResolver().openInputStream(selectedImage);
                         Bitmap image = BitmapFactory.decodeStream(inputStream);
                         //imageView.setImageBitmap(image);
                     }
@@ -84,7 +72,7 @@ public class PersonProfileSettings extends Fragment {
                     InputStream inputStream;
 
                     try{
-                        inputStream = getActivity().getContentResolver().openInputStream(selectedImage);
+                        inputStream = getContentResolver().openInputStream(selectedImage);
                         Bitmap image = BitmapFactory.decodeStream(inputStream);
                         //imageView.setImageBitmap(image);
                     }
