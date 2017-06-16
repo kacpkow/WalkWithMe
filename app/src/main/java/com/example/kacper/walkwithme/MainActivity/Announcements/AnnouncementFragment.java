@@ -1,0 +1,233 @@
+package com.example.kacper.walkwithme.MainActivity.Announcements;
+
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
+import android.widget.Spinner;
+import android.widget.Toast;
+
+import com.example.kacper.walkwithme.MainActivity.Announcements.MakeAnnouncement.MakeAnnouncementFragment;
+import com.example.kacper.walkwithme.MainActivity.ForthcomingAppointments.ForcomingAppointment;
+import com.example.kacper.walkwithme.MainActivity.ForthcomingAppointments.ForcomingAppointmentsAdapter;
+import com.example.kacper.walkwithme.MainActivity.ForthcomingAppointments.ForcomingAppointmentsFragment;
+import com.example.kacper.walkwithme.MainActivity.PersonsList.PersonsListFragment;
+import com.example.kacper.walkwithme.MainActivity.SimpleDividerItemDecoration;
+import com.example.kacper.walkwithme.R;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
+
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
+public class AnnouncementFragment extends Fragment {
+    private RecyclerView rv;
+    private Integer userId;
+    private List<Announcement> announcementList;
+    private Spinner spinner;
+    private Integer selection;
+    private FloatingActionButton addAnnouncementButton;
+
+    @Override
+    public View onCreateView(LayoutInflater inflater,
+                             ViewGroup container, Bundle savedInstanceState) {
+
+        View rootView = inflater.inflate(R.layout.fragment_announcement, container, false);
+
+        rv = (RecyclerView) rootView.findViewById(R.id.rvAnnouncements);
+        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+        rv.setLayoutManager(llm);
+        rv.setHasFixedSize(true);
+        rv.addItemDecoration(new SimpleDividerItemDecoration(getResources()));
+
+        announcementList = new ArrayList<>();
+        selection = 0;
+
+        spinner = (Spinner)rootView.findViewById(R.id.announcementsTypeSpinner);
+        final Animation animScaleButton = AnimationUtils.loadAnimation(getContext(), R.anim.anim_press_menu_button);
+        addAnnouncementButton = (FloatingActionButton)rootView.findViewById(R.id.fabAddAnnouncement);
+        addAnnouncementButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.startAnimation(animScaleButton);
+                animScaleButton.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        showAnnouncementDialog();
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
+            }
+        });
+        if(spinner != null) {
+            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    selection = position;
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+        }
+
+        SharedPreferences settings = this.getActivity().getSharedPreferences("userId", Context.MODE_PRIVATE);
+        userId = settings.getInt("ID", 0);
+
+        initializeData();
+        initializeAdapter();
+
+        return rootView;
+    }
+
+    private void initializeData(){
+        SharedPreferences settings = this.getActivity().getSharedPreferences("userId", Context.MODE_PRIVATE);
+        userId = settings.getInt("ID", 0);
+
+        String url ="http://10.0.2.2:8080/adv";
+        OkHttpClient client = new OkHttpClient();
+        Gson gson = new Gson();
+        MediaType mediaType = MediaType.parse("application/json");
+
+        final Request request;
+        request = new Request.Builder()
+                .url(url)
+                .addHeader("content-type", "application/json")
+                .build();
+
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e("error", "error while connectinh with server");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Gson retGson = new Gson();
+                String jsonResponse = response.body().string();
+
+                Gson objGson = new GsonBuilder().setPrettyPrinting().create();
+                Type listType = new TypeToken<List<Announcement>>() {
+                }.getType();
+//                backgroundThreadShortToast(getActivity().getApplicationContext(), jsonResponse);
+
+                List<Announcement> readFromJson = objGson.fromJson(jsonResponse, listType);
+                for (Announcement announcementData:readFromJson
+                        ) {
+                    try {
+                        Announcement announcement = new Announcement();
+
+                        announcement.setStrollStartTime(announcementData.getStrollStartTime());
+                        announcement.setStrollEndTime(announcementData.getStrollEndTime());
+                        announcement.setLocation(announcementData.getLocation());
+                        announcement.setUserId(announcementData.getUserId());
+                        announcement.setAdId(announcementData.getAdId());
+                        announcement.setAdEndTime(announcementData.getAdEndTime());
+                        announcement.setDescription(announcementData.getDescription());
+
+                        announcementList.add(announcement);
+
+                    } catch (JsonSyntaxException e) {
+                        Log.e("error", "error in syntax in returning json");
+                    }
+
+                    backgroundThreadInitializeAdapter(getActivity().getApplicationContext());
+                }
+            }
+        });
+
+        //forcomingAppointments.add(new ForcomingAppointment(1, userId, "Brad", "Pitt", "Kraków", "23.05.2017", "17:00", "http://www.a-listinternational.com/wp-content/uploads/2016/06/brad-pitt-doesn-t-really-look-much-like-brad-pitt-in-these-photos-727400.jpg"));
+    }
+
+
+    private void initializeAdapter(){
+        AnnouncementsAdapter adapter = new AnnouncementsAdapter(announcementList, this.getContext());
+        rv.setAdapter(adapter);
+    }
+
+    public void backgroundThreadInitializeAdapter(final Context context) {
+        if (context != null) {
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+
+                @Override
+                public void run() {
+                    initializeAdapter();
+                }
+            });
+        }
+    }
+
+    public void showAnnouncementDialog(){
+//        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(
+//                getContext());
+//
+//        LayoutInflater inflater = getActivity().getLayoutInflater();
+//        View dialogView = inflater.inflate(R.layout.activity_make_stroll, null);
+//        dialogBuilder.setView(dialogView);
+//
+//        dialogBuilder.setPositiveButton("ADD ANNOUNCEMENT", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                //Toast.makeText(MakeStrollActivity.this, "You clicked on OK", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//        dialogBuilder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                //Toast.makeText(MakeStrollActivity.this, "You cancelled", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//
+//
+//        final AlertDialog alertDialog = dialogBuilder.create();
+//        alertDialog.show();
+        FragmentManager fm = getFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        MakeAnnouncementFragment newFragment = new MakeAnnouncementFragment();
+        Fragment f = getFragmentManager().findFragmentById(R.id.fragment_container);
+        ft.replace(R.id.fragment_container, newFragment);
+        ft.addToBackStack(null);
+        ft.commit();
+
+    }
+}

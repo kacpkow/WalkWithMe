@@ -9,6 +9,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 
+import com.example.kacper.walkwithme.MainActivity.Announcements.AnnouncementFragment;
 import com.example.kacper.walkwithme.MainActivity.ForthcomingAppointments.ForcomingAppointmentsFragment;
 import com.example.kacper.walkwithme.MainActivity.PersonsList.PersonsListFragment;
 import com.example.kacper.walkwithme.MainActivity.StrollRequests.StrollRequestsFragment;
@@ -22,6 +23,7 @@ public class MainView extends AppCompatActivity {
     private ImageButton peopleButton;
     private ImageButton homeButton;
     private ImageButton notificationsButton;
+    private ImageButton getAnnouncementsButton;
 
     private int userId;
 
@@ -39,11 +41,8 @@ public class MainView extends AppCompatActivity {
         notificationsButton = (ImageButton) findViewById(R.id.notificationsButton);
         peopleButton = (ImageButton) findViewById(R.id.personButton);
         homeButton = (ImageButton) findViewById(R.id.homeButton);
-        final Animation animScalePeopleButton = AnimationUtils.loadAnimation(this, R.anim.anim_press_menu_button);
-        final Animation animScaleHomeButton = AnimationUtils.loadAnimation(this, R.anim.anim_press_menu_button);
-        final Animation animScaleChatButton = AnimationUtils.loadAnimation(this, R.anim.anim_press_menu_button);
-        final Animation animScaleProfileButton = AnimationUtils.loadAnimation(this, R.anim.anim_press_menu_button);
-        final Animation animScaleSettingsButton = AnimationUtils.loadAnimation(this, R.anim.anim_press_menu_button);
+        getAnnouncementsButton = (ImageButton)findViewById(R.id.getAnnouncementsButton);
+        final Animation animScaleButton = AnimationUtils.loadAnimation(this, R.anim.anim_press_menu_button);
 
         final Bundle bundle = new Bundle();
         bundle.putInt("USER_ID", userId);
@@ -61,8 +60,8 @@ public class MainView extends AppCompatActivity {
         peopleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                v.startAnimation(animScalePeopleButton);
-                animScalePeopleButton.setAnimationListener(new Animation.AnimationListener() {
+                v.startAnimation(animScaleButton);
+                animScaleButton.setAnimationListener(new Animation.AnimationListener() {
                     @Override
                     public void onAnimationStart(Animation animation) {
 
@@ -90,11 +89,34 @@ public class MainView extends AppCompatActivity {
             }
         });
 
+        chatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.startAnimation(animScaleButton);
+                animScaleButton.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
+            }
+        });
+
         settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                v.startAnimation(animScalePeopleButton);
-                animScalePeopleButton.setAnimationListener(new Animation.AnimationListener() {
+                v.startAnimation(animScaleButton);
+                animScaleButton.setAnimationListener(new Animation.AnimationListener() {
                     @Override
                     public void onAnimationStart(Animation animation) {
 
@@ -117,8 +139,8 @@ public class MainView extends AppCompatActivity {
         chatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                v.startAnimation(animScalePeopleButton);
-                animScalePeopleButton.setAnimationListener(new Animation.AnimationListener() {
+                v.startAnimation(animScaleButton);
+                animScaleButton.setAnimationListener(new Animation.AnimationListener() {
                     @Override
                     public void onAnimationStart(Animation animation) {
 
@@ -140,8 +162,8 @@ public class MainView extends AppCompatActivity {
         homeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                v.startAnimation(animScalePeopleButton);
-                animScalePeopleButton.setAnimationListener(new Animation.AnimationListener() {
+                v.startAnimation(animScaleButton);
+                animScaleButton.setAnimationListener(new Animation.AnimationListener() {
                     @Override
                     public void onAnimationStart(Animation animation) {
 
@@ -169,8 +191,8 @@ public class MainView extends AppCompatActivity {
         notificationsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                v.startAnimation(animScalePeopleButton);
-                animScalePeopleButton.setAnimationListener(new Animation.AnimationListener() {
+                v.startAnimation(animScaleButton);
+                animScaleButton.setAnimationListener(new Animation.AnimationListener() {
                     @Override
                     public void onAnimationStart(Animation animation) {
 
@@ -184,6 +206,38 @@ public class MainView extends AppCompatActivity {
 
                         android.support.v4.app.Fragment f = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
                         if (!(f instanceof StrollRequestsFragment)){
+                            transaction.replace(R.id.fragment_container, newFragment);
+                            transaction.addToBackStack(null);
+                            transaction.commit();
+                        }
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
+            }
+        });
+
+        getAnnouncementsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.startAnimation(animScaleButton);
+                animScaleButton.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        AnnouncementFragment newFragment = new AnnouncementFragment();
+                        newFragment.setArguments(bundle);
+                        android.support.v4.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+                        android.support.v4.app.Fragment f = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+                        if (!(f instanceof AnnouncementFragment)){
                             transaction.replace(R.id.fragment_container, newFragment);
                             transaction.addToBackStack(null);
                             transaction.commit();

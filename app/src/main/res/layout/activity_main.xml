@@ -75,21 +75,41 @@
                 app:layout_constraintVertical_bias="0.0" />
 
             <ImageButton
-                android:id="@+id/notificationsButton"
+            android:id="@+id/notificationsButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:maxHeight="30dp"
+            android:scaleType="fitCenter"
+            android:layout_marginBottom="4dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginTop="4dp"
+            android:background="#00ffffff"
+            android:src="@drawable/notification_outline"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="@+id/guideline10"
+            app:layout_constraintRight_toLeftOf="@+id/guideline10"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
+            <ImageButton
+                android:id="@+id/getAnnouncementsButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                android:maxHeight="30dp"
-                android:scaleType="fitCenter"
                 android:layout_marginBottom="4dp"
                 android:layout_marginLeft="0dp"
                 android:layout_marginRight="0dp"
                 android:layout_marginTop="4dp"
+                android:adjustViewBounds="true"
                 android:background="#00ffffff"
+                android:elevation="0dp"
+                android:maxHeight="30dp"
+                android:scaleType="fitCenter"
                 android:src="@drawable/notification_icon_small"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toLeftOf="@+id/guideline10"
-                app:layout_constraintRight_toLeftOf="@+id/guideline10"
+                app:layout_constraintLeft_toLeftOf="@+id/guideline13"
+                app:layout_constraintRight_toLeftOf="@+id/guideline13"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.0" />
 
@@ -117,21 +137,21 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.5" />
+                app:layout_constraintGuide_percent="0.42" />
 
             <android.support.constraint.Guideline
                 android:id="@+id/guideline9"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.3" />
+                app:layout_constraintGuide_percent="0.26" />
 
             <android.support.constraint.Guideline
                 android:id="@+id/guideline10"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.7" />
+                app:layout_constraintGuide_percent="0.58" />
 
             <android.support.constraint.Guideline
                 android:id="@+id/guideline11"
@@ -146,6 +166,13 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 app:layout_constraintGuide_percent="0.9" />
+
+            <android.support.constraint.Guideline
+                android:id="@+id/guideline13"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.74" />
 
             <!--<TextView-->
                 <!--android:id="@+id/chatNotification"-->

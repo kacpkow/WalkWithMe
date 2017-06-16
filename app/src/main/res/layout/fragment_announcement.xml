@@ -1,0 +1,68 @@
+<LinearLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.kacper.walkwithme.MainActivity.Announcements.AnnouncementFragment"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_gravity="center"
+        android:id="@+id/personsListTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginLeft="8dp"
+        android:text="Select announcement searching criteria"
+        android:textSize="16dp"
+        android:fontFamily="sans-serif-medium"
+        android:visibility="visible" />
+
+    <LinearLayout
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+
+        <Spinner
+            android:id="@+id/announcementsTypeSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawSelectorOnTop="true"
+            android:entries="@array/spinner_entries"
+            />
+
+        <Button
+            android:layout_marginLeft="10dp"
+            android:id="@+id/searchWithCriteriaButton"
+            android:layout_width="80dp"
+            android:layout_height="25dp"
+            android:background="@drawable/button_register_rounded"
+            android:textColor="#FFFFFF"
+            android:text="Search"/>
+
+
+    </LinearLayout>
+
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/fab_margin"
+            android:src="@android:drawable/ic_menu_add"
+            app:backgroundTint="#009000"
+            android:id="@+id/fabAddAnnouncement"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rvAnnouncements"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
+    </android.support.design.widget.CoordinatorLayout>
+
+</LinearLayout>

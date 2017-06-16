@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cv_announcements"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardElevation="5dp">
+
+
+    private Integer adId;
+    private Location location;
+    private String description;
+    private String strollStartTime;
+    private String strollEndTime;
+    private String adEndTime;
+    private String privacy;
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/announcement_location_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:textSize="30sp" />
+
+        <TextView
+            android:id="@+id/announcement_stroll_start_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/announcement_location_label"/>
+
+        <TextView
+            android:id="@+id/announcement_stroll_end_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/announcement_stroll_start_time"/>
+
+        <TextView
+            android:id="@+id/announcement_ad_end_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/announcement_stroll_end_time"/>
+
+        <Button
+            android:id="@+id/announcement_edit_Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button_register_rounded"
+            android:layout_below="@+id/announcement_ad_end_time"
+            android:layout_alignParentRight="true"
+            android:textColor="#FFFFFF"
+            android:text="Details"/>
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>
+
