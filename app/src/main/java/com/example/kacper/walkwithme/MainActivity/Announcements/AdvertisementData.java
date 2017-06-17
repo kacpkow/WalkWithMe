@@ -4,57 +4,11 @@ package com.example.kacper.walkwithme.MainActivity.Announcements;
  * Created by kacper on 2017-06-13.
  */
 
-public class Announcement {
-
-    public class Location{
-        private Integer locationId;
-        private Double latidute;
-        private Double longtitude;
-        private String description;
-
-        public Location(Integer locationId, Double latidute, Double longtitude, String description) {
-            this.locationId = locationId;
-            this.latidute = latidute;
-            this.longtitude = longtitude;
-            this.description = description;
-        }
-
-        public Integer getLocationId() {
-            return locationId;
-        }
-
-        public void setLocationId(Integer locationId) {
-            this.locationId = locationId;
-        }
-
-        public Double getLatidute() {
-            return latidute;
-        }
-
-        public void setLatidute(Double latidute) {
-            this.latidute = latidute;
-        }
-
-        public Double getLongtitude() {
-            return longtitude;
-        }
-
-        public void setLongtitude(Double longtitude) {
-            this.longtitude = longtitude;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public void setDescription(String description) {
-            this.description = description;
-        }
-    }
+public class AdvertisementData {
 
     private Integer adId;
     private Integer userId;
-    private Location location;
+    private LocationData location;
     private String description;
     private String strollStartTime;
     private String strollEndTime;
@@ -77,11 +31,11 @@ public class Announcement {
         this.userId = userId;
     }
 
-    public Location getLocation() {
+    public LocationData getLocation() {
         return location;
     }
 
-    public void setLocation(Location location) {
+    public void setLocation(LocationData location) {
         this.location = location;
     }
 

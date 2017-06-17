@@ -92,9 +92,14 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string-array name="spinner_entries">
-        <item>Only your announcements</item>
-        <item>All announcements</item>
-        <item>Your friends announcements</item>
+        <item>Only your advertisements</item>
+        <item>All advertisements</item>
+        <item>Your friends advertisements</item>
+    </string-array>
+
+    <string-array name="spinner_privacy_entries">
+        <item>All</item>
+        <item>Friends</item>
     </string-array>
 
 </resources>

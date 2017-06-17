@@ -48,7 +48,7 @@ public class ForcomingAppointmentsAdapter extends RecyclerView.Adapter<Forcoming
             super(itemView);
             cv = (CardView)itemView.findViewById(R.id.cv);
             personName = (TextView)itemView.findViewById(R.id.person_name);
-            locationView = (TextView)itemView.findViewById(R.id.location);
+            locationView = (TextView)itemView.findViewById(R.id.locationData);
             datetime = (TextView)itemView.findViewById(R.id.datetime);
             personPhoto = (ImageView)itemView.findViewById(R.id.person_photo);
             detailsButton = (Button)itemView.findViewById(R.id.editButton);

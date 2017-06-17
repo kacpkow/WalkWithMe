@@ -1,9 +1,7 @@
 package com.example.kacper.walkwithme.MainActivity.Announcements;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -11,7 +9,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -22,13 +19,8 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.example.kacper.walkwithme.MainActivity.Announcements.MakeAnnouncement.MakeAnnouncementFragment;
-import com.example.kacper.walkwithme.MainActivity.ForthcomingAppointments.ForcomingAppointment;
-import com.example.kacper.walkwithme.MainActivity.ForthcomingAppointments.ForcomingAppointmentsAdapter;
-import com.example.kacper.walkwithme.MainActivity.ForthcomingAppointments.ForcomingAppointmentsFragment;
-import com.example.kacper.walkwithme.MainActivity.PersonsList.PersonsListFragment;
 import com.example.kacper.walkwithme.MainActivity.SimpleDividerItemDecoration;
 import com.example.kacper.walkwithme.R;
 import com.google.gson.Gson;
@@ -51,7 +43,7 @@ import okhttp3.Response;
 public class AnnouncementFragment extends Fragment {
     private RecyclerView rv;
     private Integer userId;
-    private List<Announcement> announcementList;
+    private List<AdvertisementData> advertisementDataList;
     private Spinner spinner;
     private Integer selection;
     private FloatingActionButton addAnnouncementButton;
@@ -68,7 +60,7 @@ public class AnnouncementFragment extends Fragment {
         rv.setHasFixedSize(true);
         rv.addItemDecoration(new SimpleDividerItemDecoration(getResources()));
 
-        announcementList = new ArrayList<>();
+        advertisementDataList = new ArrayList<>();
         selection = 0;
 
         spinner = (Spinner)rootView.findViewById(R.id.announcementsTypeSpinner);
@@ -135,6 +127,7 @@ public class AnnouncementFragment extends Fragment {
                 .build();
 
         Call call = client.newCall(request);
+        Log.e("good", "good");
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -146,42 +139,41 @@ public class AnnouncementFragment extends Fragment {
                 Gson retGson = new Gson();
                 String jsonResponse = response.body().string();
 
-                Gson objGson = new GsonBuilder().setPrettyPrinting().create();
-                Type listType = new TypeToken<List<Announcement>>() {
-                }.getType();
-//                backgroundThreadShortToast(getActivity().getApplicationContext(), jsonResponse);
+                if(jsonResponse != null){
+                    Gson objGson = new GsonBuilder().setPrettyPrinting().create();
+                    Type listType = new TypeToken<List<AdvertisementData>>() {
+                    }.getType();
 
-                List<Announcement> readFromJson = objGson.fromJson(jsonResponse, listType);
-                for (Announcement announcementData:readFromJson
-                        ) {
-                    try {
-                        Announcement announcement = new Announcement();
+                    List<AdvertisementData> readFromJson = objGson.fromJson(jsonResponse, listType);
+                    for (AdvertisementData advertisementDataData :readFromJson
+                            ) {
+                        try {
+                            AdvertisementData advertisementData = new AdvertisementData();
+                            advertisementData.setLocation(advertisementDataData.getLocation());
+                            advertisementData.setStrollStartTime(advertisementDataData.getStrollStartTime());
+                            advertisementData.setStrollEndTime(advertisementDataData.getStrollEndTime());
+                            advertisementData.setUserId(advertisementDataData.getUserId());
+                            advertisementData.setAdId(advertisementDataData.getAdId());
+                            advertisementData.setAdEndTime(advertisementDataData.getAdEndTime());
+                            advertisementData.setDescription(advertisementDataData.getDescription());
+                            advertisementData.setPrivacy(advertisementDataData.getPrivacy());
 
-                        announcement.setStrollStartTime(announcementData.getStrollStartTime());
-                        announcement.setStrollEndTime(announcementData.getStrollEndTime());
-                        announcement.setLocation(announcementData.getLocation());
-                        announcement.setUserId(announcementData.getUserId());
-                        announcement.setAdId(announcementData.getAdId());
-                        announcement.setAdEndTime(announcementData.getAdEndTime());
-                        announcement.setDescription(announcementData.getDescription());
+                            advertisementDataList.add(advertisementData);
 
-                        announcementList.add(announcement);
+                        } catch (JsonSyntaxException e) {
+                            Log.e("error", "error in syntax in returning json");
+                        }
 
-                    } catch (JsonSyntaxException e) {
-                        Log.e("error", "error in syntax in returning json");
+                        backgroundThreadInitializeAdapter(getActivity().getApplicationContext());
                     }
-
-                    backgroundThreadInitializeAdapter(getActivity().getApplicationContext());
                 }
             }
         });
-
-        //forcomingAppointments.add(new ForcomingAppointment(1, userId, "Brad", "Pitt", "Kraków", "23.05.2017", "17:00", "http://www.a-listinternational.com/wp-content/uploads/2016/06/brad-pitt-doesn-t-really-look-much-like-brad-pitt-in-these-photos-727400.jpg"));
     }
 
 
     private void initializeAdapter(){
-        AnnouncementsAdapter adapter = new AnnouncementsAdapter(announcementList, this.getContext());
+        AnnouncementsAdapter adapter = new AnnouncementsAdapter(advertisementDataList, this.getContext(), userId);
         rv.setAdapter(adapter);
     }
 

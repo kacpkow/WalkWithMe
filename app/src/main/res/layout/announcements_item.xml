@@ -6,15 +6,6 @@
     android:layout_height="wrap_content"
     app:cardElevation="5dp">
 
-
-    private Integer adId;
-    private Location location;
-    private String description;
-    private String strollStartTime;
-    private String strollEndTime;
-    private String adEndTime;
-    private String privacy;
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -46,7 +37,7 @@
             android:layout_below="@+id/announcement_stroll_end_time"/>
 
         <Button
-            android:id="@+id/announcement_edit_Button"
+            android:id="@+id/announcement_details_Button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/button_register_rounded"
@@ -54,6 +45,30 @@
             android:layout_alignParentRight="true"
             android:textColor="#FFFFFF"
             android:text="Details"/>
+
+        <Button
+            android:id="@+id/announcement_edit_Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button_register_rounded"
+            android:layout_toLeftOf="@id/announcement_details_Button"
+            android:layout_marginRight="10dp"
+            android:visibility="gone"
+            android:layout_below="@id/announcement_ad_end_time"
+            android:textColor="#FFFFFF"
+            android:text="Edit"/>
+
+        <Button
+            android:id="@+id/announcement_delete_Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button_register_rounded"
+            android:layout_toLeftOf="@id/announcement_edit_Button"
+            android:layout_marginRight="10dp"
+            android:visibility="gone"
+            android:layout_below="@id/announcement_ad_end_time"
+            android:textColor="#FFFFFF"
+            android:text="Delete"/>
 
     </RelativeLayout>
 

@@ -30,9 +30,7 @@ public class MainView extends AppCompatActivity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.e("good", "good");
         userId = getIntent().getIntExtra("USER_ID", 0);
-        Log.e("good", "good");
         setContentView(R.layout.activity_main);
 
         chatButton = (ImageButton) findViewById(R.id.chatButton);
@@ -76,7 +74,6 @@ public class MainView extends AppCompatActivity {
                         android.support.v4.app.Fragment f = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
                         if (!(f instanceof PersonsListFragment)){
                             transaction.replace(R.id.fragment_container, newFragment);
-                            transaction.addToBackStack(null);
                             transaction.commit();
                         }
                     }
@@ -207,7 +204,6 @@ public class MainView extends AppCompatActivity {
                         android.support.v4.app.Fragment f = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
                         if (!(f instanceof StrollRequestsFragment)){
                             transaction.replace(R.id.fragment_container, newFragment);
-                            transaction.addToBackStack(null);
                             transaction.commit();
                         }
                     }
@@ -239,7 +235,6 @@ public class MainView extends AppCompatActivity {
                         android.support.v4.app.Fragment f = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
                         if (!(f instanceof AnnouncementFragment)){
                             transaction.replace(R.id.fragment_container, newFragment);
-                            transaction.addToBackStack(null);
                             transaction.commit();
                         }
                     }
