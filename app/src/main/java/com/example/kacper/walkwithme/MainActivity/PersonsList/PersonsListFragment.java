@@ -70,7 +70,7 @@ public class PersonsListFragment extends Fragment {
         ageTo = (EditText) rootView.findViewById(R.id.AgeTo);
         distance = (EditText) rootView.findViewById(R.id.Distance);
         searchButton = (Button) rootView.findViewById(R.id.searchWithCriteriaButton);
-        progressDialog = new ProgressDialog(rootView.getContext());
+        progressDialog = new ProgressDialog(getContext());
         progressDialog.setTitle("Searching, please wait ...");
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -179,47 +179,51 @@ public class PersonsListFragment extends Fragment {
                 }.getType();
 //                backgroundThreadShortToast(getActivity().getApplicationContext(), jsonResponse);
 
-                List<UserProfileData> readFromJson = objGson.fromJson(jsonResponse, listType);
+                try {
+                    List<UserProfileData> readFromJson = objGson.fromJson(jsonResponse, listType);
+                    DistanceCalculator calculator = new DistanceCalculator();
+                    Double distance;
+                    Double userLatitude;
+                    Double userLongtitude;
+                    SharedPreferences settings = getContext().getSharedPreferences("userLocation", Context.MODE_PRIVATE);
+                    userLatitude = (double)settings.getFloat("latitude", 0.0f);
+                    userLongtitude = (double)settings.getFloat("longtitude", 0.0f);
 
-                DistanceCalculator calculator = new DistanceCalculator();
-                Double distance;
-                Double userLatitude;
-                Double userLongtitude;
-                SharedPreferences settings = getContext().getSharedPreferences("userLocation", Context.MODE_PRIVATE);
-                userLatitude = (double)settings.getFloat("latitude", 0.0f);
-                userLongtitude = (double)settings.getFloat("longtitude", 0.0f);
 
 
+                    for (UserProfileData userProfileData:readFromJson
+                            ) {
+                        try {
+                            Person person = new Person();
 
-                for (UserProfileData userProfileData:readFromJson
-                     ) {
-                    try {
-                        Person person = new Person();
+                            person.setCity(userProfileData.getCity());
+                            person.setDescription(userProfileData.getDescription());
+                            person.setPhoto_url(userProfileData.getPhoto_url());
+                            person.setUser_id(userProfileData.getUser_id());
+                            person.setFirstName(userProfileData.getFirstName());
+                            person.setLastName(userProfileData.getLastName());
+                            person.setCity(userProfileData.getCity());
+                            person.setBirth_date(userProfileData.getBirth_date());
+                            person.setLatitude(userProfileData.getLatitude());
+                            person.setLongtitude(userProfileData.getLongtitude());
+                            person.setNick(userProfileData.getNick());
 
-                        person.setCity(userProfileData.getCity());
-                        person.setDescription(userProfileData.getDescription());
-                        person.setPhoto_url(userProfileData.getPhoto_url());
-                        person.setUser_id(userProfileData.getUser_id());
-                        person.setFirstName(userProfileData.getFirstName());
-                        person.setLastName(userProfileData.getLastName());
-                        person.setCity(userProfileData.getCity());
-                        person.setBirth_date(userProfileData.getBirth_date());
-                        person.setLatitude(userProfileData.getLatitude());
-                        person.setLongtitude(userProfileData.getLongtitude());
-                        person.setNick(userProfileData.getNick());
+                            distance = calculator.distance(person.getLongtitude(), person.getLongtitude(), userLongtitude, userLatitude, "K");
+                            person.setDistance(distance.intValue());
+                            String year = person.getBirth_date().substring(0, Math.min(person.getBirth_date().length(), 4));
+                            Integer ages = 2017 - Integer.valueOf(year);
+                            person.setAge(ages);
 
-                        distance = calculator.distance(person.getLongtitude(), person.getLongtitude(), userLongtitude, userLatitude, "K");
-                        person.setDistance(distance.intValue());
-                        String year = person.getBirth_date().substring(0, Math.min(person.getBirth_date().length(), 4));
-                        Integer ages = 2017 - Integer.valueOf(year);
-                        person.setAge(ages);
+                            persons.add(person);
 
-                        persons.add(person);
-
-                    } catch (JsonSyntaxException e) {
-                        Log.e("error", "error in syntax in returning json");
+                        } catch (JsonSyntaxException e) {
+                            Log.e("error", "error in syntax in returning json");
+                        }
                     }
+                }catch (JsonSyntaxException e){
+                    Log.e("Json Syntax exception", e.getLocalizedMessage());
                 }
+
                 backgroundThreadInitializeAdapter(getActivity().getApplicationContext());
             }
         });

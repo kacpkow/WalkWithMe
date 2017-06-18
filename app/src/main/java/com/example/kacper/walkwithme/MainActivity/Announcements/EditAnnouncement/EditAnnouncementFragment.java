@@ -5,9 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.icu.util.Calendar;
 import android.location.Address;
 import android.location.Geocoder;
@@ -120,6 +118,9 @@ public class EditAnnouncementFragment extends Fragment {
         hour = calendar.get(Calendar.HOUR_OF_DAY);
         minute = calendar.get(Calendar.MINUTE);
 
+        latitudeSet = getArguments().getDouble("latitude");
+        longitudeSet = getArguments().getDouble("longtitude");
+
         editStartTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -230,10 +231,10 @@ public class EditAnnouncementFragment extends Fragment {
         locationData.setDescription(strollLocationView.getText().toString());
 
         //DO ZMIANY!
-        locationData.setLocation_id(0);
+        locationData.setLocation_id(getArguments().getInt("locationId"));
 
-        locationData.setLatitude(getArguments().getDouble("latitude"));
-        locationData.setLongtitude(getArguments().getDouble("longtidude"));
+        locationData.setLatitude(latitudeSet);
+        locationData.setLongtitude(longitudeSet);
 
         changedAdvertisementData.setLocation(locationData);
 
@@ -264,7 +265,7 @@ public class EditAnnouncementFragment extends Fragment {
                 String jsonResponse = response.body().string();
 
                 if(jsonResponse != null){
-
+                    Log.e("error", jsonResponse);
                 }
 
             }
@@ -279,7 +280,7 @@ public class EditAnnouncementFragment extends Fragment {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay,
                                           int minute) {
-                        String str = String.format("%02d:%02d:00:00", hourOfDay, minute);
+                        String str = String.format("%02d:%02d:00", hourOfDay, minute);
                         textView.setText(textView.getText() + " "+ str);
                     }
                 }, hour, minute, false);
@@ -425,9 +426,8 @@ public class EditAnnouncementFragment extends Fragment {
         mMapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
-                SharedPreferences settings = getActivity().getSharedPreferences("userLocation", Context.MODE_PRIVATE);
-                Float lat = settings.getFloat("latitude", 0.0f);
-                Float lng = settings.getFloat("longtitude", 0.0f);
+                Float lat = latitudeSet.floatValue();
+                Float lng = longitudeSet.floatValue();
                 LatLng coordinates = new LatLng(lat, lng); ////your lat lng
                 googleMap.addMarker(new MarkerOptions().position(coordinates).title("Marker"));
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coordinates, 15));

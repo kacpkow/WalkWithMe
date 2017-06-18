@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.Spinner;
 
 import com.example.kacper.walkwithme.MainActivity.Announcements.MakeAnnouncement.MakeAnnouncementFragment;
@@ -47,6 +48,7 @@ public class AnnouncementFragment extends Fragment {
     private Spinner spinner;
     private Integer selection;
     private FloatingActionButton addAnnouncementButton;
+    private Button searchButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -63,6 +65,7 @@ public class AnnouncementFragment extends Fragment {
         advertisementDataList = new ArrayList<>();
         selection = 0;
 
+        searchButton = (Button)rootView.findViewById(R.id.searchWithCriteriaButton);
         spinner = (Spinner)rootView.findViewById(R.id.announcementsTypeSpinner);
         final Animation animScaleButton = AnimationUtils.loadAnimation(getContext(), R.anim.anim_press_menu_button);
         addAnnouncementButton = (FloatingActionButton)rootView.findViewById(R.id.fabAddAnnouncement);
@@ -108,14 +111,36 @@ public class AnnouncementFragment extends Fragment {
         initializeData();
         initializeAdapter();
 
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                initializeData();
+                initializeAdapter();
+            }
+        });
+
         return rootView;
+
     }
 
     private void initializeData(){
+        advertisementDataList.clear();
         SharedPreferences settings = this.getActivity().getSharedPreferences("userId", Context.MODE_PRIVATE);
         userId = settings.getInt("ID", 0);
 
-        String url ="http://10.0.2.2:8080/adv";
+        String url;
+        Log.e("selection", selection.toString());
+
+        if(selection == 0){
+            url ="http://10.0.2.2:8080/adv";
+        }
+        else if(selection == 1){
+            url ="http://10.0.2.2:8080/adv/all";
+        }
+        else{
+            url ="http://10.0.2.2:8080/adv/friends";
+        }
+
         OkHttpClient client = new OkHttpClient();
         Gson gson = new Gson();
         MediaType mediaType = MediaType.parse("application/json");
@@ -136,7 +161,6 @@ public class AnnouncementFragment extends Fragment {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                Gson retGson = new Gson();
                 String jsonResponse = response.body().string();
 
                 if(jsonResponse != null){
@@ -144,28 +168,30 @@ public class AnnouncementFragment extends Fragment {
                     Type listType = new TypeToken<List<AdvertisementData>>() {
                     }.getType();
 
-                    List<AdvertisementData> readFromJson = objGson.fromJson(jsonResponse, listType);
-                    for (AdvertisementData advertisementDataData :readFromJson
-                            ) {
-                        try {
-                            AdvertisementData advertisementData = new AdvertisementData();
-                            advertisementData.setLocation(advertisementDataData.getLocation());
-                            advertisementData.setStrollStartTime(advertisementDataData.getStrollStartTime());
-                            advertisementData.setStrollEndTime(advertisementDataData.getStrollEndTime());
-                            advertisementData.setUserId(advertisementDataData.getUserId());
-                            advertisementData.setAdId(advertisementDataData.getAdId());
-                            advertisementData.setAdEndTime(advertisementDataData.getAdEndTime());
-                            advertisementData.setDescription(advertisementDataData.getDescription());
-                            advertisementData.setPrivacy(advertisementDataData.getPrivacy());
+                    try{
+                        List<AdvertisementData> readFromJson = objGson.fromJson(jsonResponse, listType);
+                        if(readFromJson != null){
+                            for (AdvertisementData advertisementDataData :readFromJson
+                                    ) {
+                                AdvertisementData advertisementData = new AdvertisementData();
+                                advertisementData.setLocation(advertisementDataData.getLocation());
+                                advertisementData.setStrollStartTime(advertisementDataData.getStrollStartTime());
+                                advertisementData.setStrollEndTime(advertisementDataData.getStrollEndTime());
+                                advertisementData.setUserId(advertisementDataData.getUserId());
+                                advertisementData.setAdId(advertisementDataData.getAdId());
+                                advertisementData.setAdEndTime(advertisementDataData.getAdEndTime());
+                                advertisementData.setDescription(advertisementDataData.getDescription());
+                                advertisementData.setPrivacy(advertisementDataData.getPrivacy());
 
-                            advertisementDataList.add(advertisementData);
-
-                        } catch (JsonSyntaxException e) {
-                            Log.e("error", "error in syntax in returning json");
+                                advertisementDataList.add(advertisementData);
+                            }
+                            backgroundThreadInitializeAdapter(getActivity().getApplicationContext());
                         }
 
-                        backgroundThreadInitializeAdapter(getActivity().getApplicationContext());
+                    }  catch (JsonSyntaxException e) {
+                        Log.e("error", "error in syntax in returning json");
                     }
+
                 }
             }
         });

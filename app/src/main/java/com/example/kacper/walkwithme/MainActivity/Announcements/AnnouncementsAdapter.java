@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.kacper.walkwithme.MainActivity.Announcements.AnnouncementDetails.AnnouncementDetailsFragment;
 import com.example.kacper.walkwithme.MainActivity.Announcements.EditAnnouncement.EditAnnouncementFragment;
 import com.example.kacper.walkwithme.R;
 
@@ -122,6 +123,33 @@ public class AnnouncementsAdapter extends RecyclerView.Adapter<AnnouncementsAdap
                     ft.commit();
                 }
             });
+
+            detailsButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    FragmentManager fm = ((AppCompatActivity)mContext).getSupportFragmentManager();
+                    FragmentTransaction ft = fm.beginTransaction();
+                    AnnouncementDetailsFragment newFragment = new AnnouncementDetailsFragment();
+                    Fragment f = ((AppCompatActivity)mContext).getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+
+                    Bundle args = new Bundle();
+                    args.putInt("adId", adId);
+                    args.putInt("userId", userId);
+                    args.putString("privacy", privacy);
+                    args.putInt("locationId", locationId);
+                    args.putDouble("latitude", latidute);
+                    args.putDouble("longtitude", longtitude);
+                    args.putString("startTime", startTime);
+                    args.putString("endTime", endTime);
+                    args.putString("location", location);
+                    args.putString("description", description);
+                    newFragment.setArguments(args);
+
+                    ft.replace(R.id.fragment_container, newFragment);
+                    ft.addToBackStack(null);
+                    ft.commit();
+                }
+            });
         }
 
 
@@ -191,10 +219,10 @@ public class AnnouncementsAdapter extends RecyclerView.Adapter<AnnouncementsAdap
 
     @Override
     public void onBindViewHolder(AnnouncementViewHolder announcementViewHolder, int i) {
-        announcementViewHolder.locationView.setText("LocationData: " + advertisementDatas.get(i).getLocation().getDescription());
+        announcementViewHolder.locationView.setText("Location: " + advertisementDatas.get(i).getLocation().getDescription());
         announcementViewHolder.strollStartTime.setText("Stroll starts at: " + advertisementDatas.get(i).getStrollStartTime());
         announcementViewHolder.strollEndTime.setText("Stroll ends at: " + advertisementDatas.get(i).getStrollEndTime());
-        announcementViewHolder.adEndTime.setText("AdvertisementData ends at: " + advertisementDatas.get(i).getAdEndTime());
+        announcementViewHolder.adEndTime.setText("Advertisement ends at: " + advertisementDatas.get(i).getAdEndTime());
         announcementViewHolder.adId = advertisementDatas.get(i).getAdId();
         announcementViewHolder.userId = advertisementDatas.get(i).getUserId();
         announcementViewHolder.privacy= advertisementDatas.get(i).getPrivacy();
@@ -209,6 +237,7 @@ public class AnnouncementsAdapter extends RecyclerView.Adapter<AnnouncementsAdap
         if(advertisementDatas.get(i).getUserId() == userId){
             announcementViewHolder.editButton.setVisibility(View.VISIBLE);
             announcementViewHolder.deleteButton.setVisibility(View.VISIBLE);
+            announcementViewHolder.detailsButton.setVisibility(View.GONE);
         }
 
     }
