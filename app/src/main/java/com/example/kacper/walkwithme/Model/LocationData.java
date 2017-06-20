@@ -1,4 +1,4 @@
-package com.example.kacper.walkwithme.MainActivity.Announcements;
+package com.example.kacper.walkwithme.Model;
 
 /**
  * Created by kacper on 2017-06-17.

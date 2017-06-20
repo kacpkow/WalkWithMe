@@ -27,8 +27,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import com.example.kacper.walkwithme.MainActivity.Announcements.AdvertisementData;
-import com.example.kacper.walkwithme.MainActivity.Announcements.LocationData;
+import com.example.kacper.walkwithme.Model.AdvertisementData;
+import com.example.kacper.walkwithme.Model.LocationData;
 import com.example.kacper.walkwithme.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -108,6 +108,9 @@ public class EditAnnouncementFragment extends Fragment {
         strollDescriptionView.setText(getArguments().getString("description"));
         if(getArguments().getString("privacy").equals("Friends")){
             privacySpinner.setSelection(1);
+        }
+        else if(getArguments().getString("privacy").equals("hide")){
+            privacySpinner.setSelection(2);
         }
 
         calendar = Calendar.getInstance();
@@ -202,11 +205,15 @@ public class EditAnnouncementFragment extends Fragment {
         privacySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if(position == 1){
+                if(position == 0){
+                    privacy = "All";
+                }
+                else if(position == 1){
                     privacy = "Friends";
                 }
-                else
-                    privacy = "All";
+                else {
+                    privacy = "hide";
+                }
             }
 
             @Override

@@ -48,8 +48,6 @@
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps" />
         <activity android:name=".MainActivity.MainView" />
-        <activity android:name=".PersonDetails.PersonDetailsActivity" />
-        <activity android:name=".MakeStrollActivity.MakeStrollActivity" />
         <activity android:name=".AppointmentDetails.AppointmentDetailsActivity" />
         <activity android:name=".PersonProfileSettings"></activity>
     </application>

@@ -23,11 +23,13 @@ import android.widget.Spinner;
 
 import com.example.kacper.walkwithme.MainActivity.Announcements.MakeAnnouncement.MakeAnnouncementFragment;
 import com.example.kacper.walkwithme.MainActivity.SimpleDividerItemDecoration;
+import com.example.kacper.walkwithme.Model.AdvertisementData;
 import com.example.kacper.walkwithme.R;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
+
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -39,6 +41,7 @@ import okhttp3.Callback;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class AnnouncementFragment extends Fragment {
@@ -65,10 +68,10 @@ public class AnnouncementFragment extends Fragment {
         advertisementDataList = new ArrayList<>();
         selection = 0;
 
-        searchButton = (Button)rootView.findViewById(R.id.searchWithCriteriaButton);
-        spinner = (Spinner)rootView.findViewById(R.id.announcementsTypeSpinner);
+        searchButton = (Button) rootView.findViewById(R.id.searchWithCriteriaButton);
+        spinner = (Spinner) rootView.findViewById(R.id.announcementsTypeSpinner);
         final Animation animScaleButton = AnimationUtils.loadAnimation(getContext(), R.anim.anim_press_menu_button);
-        addAnnouncementButton = (FloatingActionButton)rootView.findViewById(R.id.fabAddAnnouncement);
+        addAnnouncementButton = (FloatingActionButton) rootView.findViewById(R.id.fabAddAnnouncement);
         addAnnouncementButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -91,7 +94,7 @@ public class AnnouncementFragment extends Fragment {
                 });
             }
         });
-        if(spinner != null) {
+        if (spinner != null) {
             spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -114,6 +117,7 @@ public class AnnouncementFragment extends Fragment {
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                advertisementDataList.clear();
                 initializeData();
                 initializeAdapter();
             }
@@ -123,82 +127,7 @@ public class AnnouncementFragment extends Fragment {
 
     }
 
-    private void initializeData(){
-        advertisementDataList.clear();
-        SharedPreferences settings = this.getActivity().getSharedPreferences("userId", Context.MODE_PRIVATE);
-        userId = settings.getInt("ID", 0);
-
-        String url;
-        Log.e("selection", selection.toString());
-
-        if(selection == 0){
-            url ="http://10.0.2.2:8080/adv";
-        }
-        else if(selection == 1){
-            url ="http://10.0.2.2:8080/adv/all";
-        }
-        else{
-            url ="http://10.0.2.2:8080/adv/friends";
-        }
-
-        OkHttpClient client = new OkHttpClient();
-        Gson gson = new Gson();
-        MediaType mediaType = MediaType.parse("application/json");
-
-        final Request request;
-        request = new Request.Builder()
-                .url(url)
-                .addHeader("content-type", "application/json")
-                .build();
-
-        Call call = client.newCall(request);
-        Log.e("good", "good");
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Log.e("error", "error while connectinh with server");
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                String jsonResponse = response.body().string();
-
-                if(jsonResponse != null){
-                    Gson objGson = new GsonBuilder().setPrettyPrinting().create();
-                    Type listType = new TypeToken<List<AdvertisementData>>() {
-                    }.getType();
-
-                    try{
-                        List<AdvertisementData> readFromJson = objGson.fromJson(jsonResponse, listType);
-                        if(readFromJson != null){
-                            for (AdvertisementData advertisementDataData :readFromJson
-                                    ) {
-                                AdvertisementData advertisementData = new AdvertisementData();
-                                advertisementData.setLocation(advertisementDataData.getLocation());
-                                advertisementData.setStrollStartTime(advertisementDataData.getStrollStartTime());
-                                advertisementData.setStrollEndTime(advertisementDataData.getStrollEndTime());
-                                advertisementData.setUserId(advertisementDataData.getUserId());
-                                advertisementData.setAdId(advertisementDataData.getAdId());
-                                advertisementData.setAdEndTime(advertisementDataData.getAdEndTime());
-                                advertisementData.setDescription(advertisementDataData.getDescription());
-                                advertisementData.setPrivacy(advertisementDataData.getPrivacy());
-
-                                advertisementDataList.add(advertisementData);
-                            }
-                            backgroundThreadInitializeAdapter(getActivity().getApplicationContext());
-                        }
-
-                    }  catch (JsonSyntaxException e) {
-                        Log.e("error", "error in syntax in returning json");
-                    }
-
-                }
-            }
-        });
-    }
-
-
-    private void initializeAdapter(){
+    private void initializeAdapter() {
         AnnouncementsAdapter adapter = new AnnouncementsAdapter(advertisementDataList, this.getContext(), userId);
         rv.setAdapter(adapter);
     }
@@ -215,30 +144,7 @@ public class AnnouncementFragment extends Fragment {
         }
     }
 
-    public void showAnnouncementDialog(){
-//        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(
-//                getContext());
-//
-//        LayoutInflater inflater = getActivity().getLayoutInflater();
-//        View dialogView = inflater.inflate(R.layout.activity_make_stroll, null);
-//        dialogBuilder.setView(dialogView);
-//
-//        dialogBuilder.setPositiveButton("ADD ANNOUNCEMENT", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                //Toast.makeText(MakeStrollActivity.this, "You clicked on OK", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//        dialogBuilder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                //Toast.makeText(MakeStrollActivity.this, "You cancelled", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//
-//
-//        final AlertDialog alertDialog = dialogBuilder.create();
-//        alertDialog.show();
+    public void showAnnouncementDialog() {
         FragmentManager fm = getFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         MakeAnnouncementFragment newFragment = new MakeAnnouncementFragment();
@@ -247,5 +153,71 @@ public class AnnouncementFragment extends Fragment {
         ft.addToBackStack(null);
         ft.commit();
 
+    }
+
+    public void initializeData() {
+        String url;
+        Log.e("selection", selection.toString());
+
+        if (selection == 0) {
+            url = "http://10.0.2.2:8080/adv";
+        } else if (selection == 1) {
+            url = "http://10.0.2.2:8080/adv/all";
+        } else {
+            url = "http://10.0.2.2:8080/adv/friends";
+        }
+
+        OkHttpClient client = new OkHttpClient();
+        Gson gson = new Gson();
+        MediaType mediaType = MediaType.parse("application/json");
+
+        final Request request;
+        request = new Request.Builder()
+                .url(url)
+                .addHeader("content-type", "application/json")
+                .build();
+
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e("error", "error while connectinh with server");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String jsonResponse = response.body().string();
+
+                if (jsonResponse != null) {
+                    Gson objGson = new GsonBuilder().setPrettyPrinting().create();
+                    Type listType = new TypeToken<List<AdvertisementData>>() {
+                    }.getType();
+
+                    try {
+                        List<AdvertisementData> readFromJson = objGson.fromJson(jsonResponse, listType);
+                        if (readFromJson != null) {
+                            for (AdvertisementData advertisementDataData : readFromJson
+                                    ) {
+                                AdvertisementData advertisementData = new AdvertisementData();
+                                advertisementData.setLocation(advertisementDataData.getLocation());
+                                advertisementData.setStrollStartTime(advertisementDataData.getStrollStartTime());
+                                advertisementData.setStrollEndTime(advertisementDataData.getStrollEndTime());
+                                advertisementData.setUserId(advertisementDataData.getUserId());
+                                advertisementData.setAdId(advertisementDataData.getAdId());
+                                advertisementData.setAdEndTime(advertisementDataData.getAdEndTime());
+                                advertisementData.setDescription(advertisementDataData.getDescription());
+                                advertisementData.setPrivacy(advertisementDataData.getPrivacy());
+
+                                advertisementDataList.add(advertisementData);
+                            }
+                            backgroundThreadInitializeAdapter(getActivity().getApplicationContext());
+                        }
+
+                    } catch (JsonSyntaxException e) {
+                        Log.e("error", "error in syntax in returning json");
+                    }
+                }
+            }
+        });
     }
 }

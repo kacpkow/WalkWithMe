@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.example.kacper.walkwithme.MainActivity.Announcements.AnnouncementDetails.AnnouncementDetailsFragment;
 import com.example.kacper.walkwithme.MainActivity.Announcements.EditAnnouncement.EditAnnouncementFragment;
+import com.example.kacper.walkwithme.Model.AdvertisementData;
 import com.example.kacper.walkwithme.R;
 
 import java.io.IOException;

@@ -29,8 +29,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import com.example.kacper.walkwithme.MainActivity.Announcements.AdvertisementData;
-import com.example.kacper.walkwithme.MainActivity.Announcements.LocationData;
+import com.example.kacper.walkwithme.Model.AdvertisementData;
+import com.example.kacper.walkwithme.Model.LocationData;
 import com.example.kacper.walkwithme.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;

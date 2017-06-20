@@ -14,6 +14,9 @@ import com.example.kacper.walkwithme.MainActivity.MainView;
 import com.example.kacper.walkwithme.R;
 import com.example.kacper.walkwithme.RegistrationActivity.RegistrationActivity;
 
+import java.net.CookieHandler;
+import java.net.CookieManager;
+
 public class LoginActivity extends AppCompatActivity implements LoginView {
 
     private LoginPresenter presenter;
@@ -32,6 +35,8 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
         registerButton = (Button) findViewById(R.id.registerButton);
         login = (EditText) findViewById(R.id.loginField);
         password = (EditText) findViewById(R.id.passwordField);
+
+        CookieHandler.setDefault(new CookieManager());
 
         presenter = new LoginPresenterImpl(this);
 

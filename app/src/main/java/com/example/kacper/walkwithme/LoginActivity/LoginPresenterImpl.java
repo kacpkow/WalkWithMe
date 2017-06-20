@@ -13,12 +13,20 @@ import android.widget.Toast;
 import com.example.kacper.walkwithme.MainActivity.MainView;
 import com.example.kacper.walkwithme.MapsActivity;
 import com.example.kacper.walkwithme.Model.User;
+import com.franmontiel.persistentcookiejar.ClearableCookieJar;
+import com.franmontiel.persistentcookiejar.PersistentCookieJar;
+import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
+import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
 import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.net.CookieHandler;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.JavaNetCookieJar;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -44,7 +52,9 @@ public class LoginPresenterImpl implements LoginPresenter {
             progressDialog.setTitle("Logging, please wait ...");
             progressDialog.show();
             String url ="http://10.0.2.2:8080/rest/login";
-            OkHttpClient client = new OkHttpClient();
+
+            JavaNetCookieJar javaNetCookieJar = new JavaNetCookieJar(CookieHandler.getDefault());
+            OkHttpClient client = new OkHttpClient.Builder().cookieJar(javaNetCookieJar).build();
 
             Gson gson = new Gson();
 
@@ -88,7 +98,14 @@ public class LoginPresenterImpl implements LoginPresenter {
     public void getUser(){
 
         String url ="http://10.0.2.2:8080/user";
-        OkHttpClient client = new OkHttpClient();
+
+        //ClearableCookieJar cookieJar = new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(loginView.getActivityContext()));
+
+        //OkHttpClient client = new OkHttpClient.Builder().cookieJar(cookieJar).build();
+//        CookieManager cookieManager = new CookieManager();
+//        cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
+        JavaNetCookieJar javaNetCookieJar = new JavaNetCookieJar(CookieHandler.getDefault());
+        OkHttpClient client = new OkHttpClient.Builder().cookieJar(javaNetCookieJar).build();
 
         Gson gson = new Gson();
 
@@ -114,6 +131,9 @@ public class LoginPresenterImpl implements LoginPresenter {
                 progressDialog.dismiss();
                 json = response.body().string();
 
+                Log.e("response login", "was response in get data");
+                Log.e("response get data", json);
+
                 if(response.code() == 200){
 
                         User usr = retGson.fromJson(json, User.class);
@@ -130,6 +150,7 @@ public class LoginPresenterImpl implements LoginPresenter {
                 }
                 else{
                     backgroundThreadShortToast(loginView.getAppContext(),json);
+                    Log.e("get data", json);
                 }
 
             }

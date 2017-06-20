@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.example.kacper.walkwithme.MainActivity.StrollRequests.StrollRequestsFragment">
+    tools:context="com.example.kacper.walkwithme.MainActivity.Notifications.NotificationsFragment">
 
     <TextView
         android:layout_gravity="center"

@@ -1,10 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    tools:context="com.example.kacper.walkwithme.MakeStrollActivity.MakeStrollActivity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.kacper.walkwithme.MakeStrollActivity.MakeStrollFragment"
     android:orientation="vertical"
     android:layout_gravity="center">
 
@@ -16,9 +14,9 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Date"/>
+            android:text="Stroll start time"/>
         <TextView
-            android:id="@+id/dateField"
+            android:id="@+id/makeStrollStartTimeField"
             android:layout_marginLeft="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -27,11 +25,11 @@
 
 
     <Button
-        android:id="@+id/dateButton"
+        android:id="@+id/startTimeButton"
         android:layout_width="wrap_content"
         android:layout_height="30dp"
         android:layout_marginTop="10dp"
-        android:text="Choose date"
+        android:text="Choose"
         android:layout_gravity="center"
         android:background="@drawable/button_register_rounded"
         />
@@ -45,9 +43,9 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Time"/>
+            android:text="Stroll end time"/>
         <TextView
-            android:id="@+id/timeField"
+            android:id="@+id/makeStrollEndTImeField"
             android:layout_marginLeft="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -55,11 +53,11 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/timeButton"
+        android:id="@+id/strollEndTimeButton"
         android:layout_width="wrap_content"
         android:layout_height="30dp"
         android:layout_marginTop="10dp"
-        android:text="Choose time"
+        android:text="Choose"
         android:background="@drawable/button_register_rounded"
         android:layout_gravity="center"
         />

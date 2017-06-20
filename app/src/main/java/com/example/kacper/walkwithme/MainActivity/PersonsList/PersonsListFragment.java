@@ -17,9 +17,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.kacper.walkwithme.MainActivity.MainView;
 import com.example.kacper.walkwithme.MainActivity.SimpleDividerItemDecoration;
-import com.example.kacper.walkwithme.MakeStrollActivity.MakeStrollActivity;
+import com.example.kacper.walkwithme.Model.Person;
+import com.example.kacper.walkwithme.Model.UserProfileData;
 import com.example.kacper.walkwithme.R;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -29,6 +29,7 @@ import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import okhttp3.Call;
@@ -40,7 +41,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class PersonsListFragment extends Fragment {
-    private List<com.example.kacper.walkwithme.MainActivity.PersonsList.Person> persons;
+    private List<Person> persons;
     private RecyclerView rv;
     private int userId;
     String jsonResponse;
@@ -129,32 +130,6 @@ public class PersonsListFragment extends Fragment {
         MediaType mediaType = MediaType.parse("application/json");
         SearchContent requestContent = new SearchContent(userId, ageFrom, ageTo, distance, (double) latitude, (double) longtitude);
         RequestBody requestBody = RequestBody.create(mediaType, gson.toJson(requestContent));
-/*
-        Person person = new Person();
-        person.setId(101);
-        person.setAge(19);
-        person.setDistance(12);
-        person.setFirstName("Donald");
-        person.setLastName("Trump");
-        person.setCity("Washington DC");
-        person.setLargeImage("http://static4.businessinsider.com/image/56c640526e97c625048b822a-480/donald-trump.jpg");
-        person.setPersonDescription("I'm a fckin boss...");
-        person.setMediumImage("https://pbs.twimg.com/profile_images/622622832103587840/tUKC5wZD.jpg");
-        persons.add(person);
-
-        Person person1 = new Person();
-        person1.setId(45);
-        person1.setAge(46);
-        person1.setDistance(50);
-        person1.setFirstName("Angelina");
-        person1.setLastName("Jolie");
-        person1.setPersonDescription("Brad Pitt is a dumbass for real");
-        person1.setCity("NY");
-        person1.setLargeImage("https://pbs.twimg.com/profile_images/740895191003975681/kTD5CP9x.jpg");
-        person1.setMediumImage("https://pbs.twimg.com/profile_images/740895191003975681/kTD5CP9x.jpg");
-        persons.add(person1);
-*/
-
 
         final Request request;
         request = new Request.Builder()
@@ -177,7 +152,6 @@ public class PersonsListFragment extends Fragment {
                 Gson objGson = new GsonBuilder().setPrettyPrinting().create();
                 Type listType = new TypeToken<List<UserProfileData>>() {
                 }.getType();
-//                backgroundThreadShortToast(getActivity().getApplicationContext(), jsonResponse);
 
                 try {
                     List<UserProfileData> readFromJson = objGson.fromJson(jsonResponse, listType);
@@ -211,8 +185,19 @@ public class PersonsListFragment extends Fragment {
                             distance = calculator.distance(person.getLongtitude(), person.getLongtitude(), userLongtitude, userLatitude, "K");
                             person.setDistance(distance.intValue());
                             String year = person.getBirth_date().substring(0, Math.min(person.getBirth_date().length(), 4));
-                            Integer ages = 2017 - Integer.valueOf(year);
-                            person.setAge(ages);
+                            String month = person.getBirth_date().substring(5, Math.min(person.getBirth_date().length(), 7));
+                            String day = person.getBirth_date().substring(9, Math.min(person.getBirth_date().length(), 11));
+
+                            Calendar c = Calendar.getInstance();
+                            int actualYear = c.get(Calendar.YEAR);
+                            int actualMonth = c.get(Calendar.MONTH);
+                            int actualDay = c.get(Calendar.DAY_OF_MONTH);
+
+                            Double calcAge =Double.valueOf(year) + Double.valueOf(month)/100.0 + Double.valueOf(day)/10000.0;
+                            Double actCalcAge = actualYear + actualMonth/100.0 + actualDay/10000.0;
+                            Double calc = Math.floor(actCalcAge - calcAge);
+
+                            person.setAge(calc.intValue());
 
                             persons.add(person);
 
@@ -227,7 +212,7 @@ public class PersonsListFragment extends Fragment {
                 backgroundThreadInitializeAdapter(getActivity().getApplicationContext());
             }
         });
-        
+
     }
 
     private void initializeAdapter() {

@@ -6,29 +6,15 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.kacper.walkwithme.MainActivity.PersonsList.Person;
-import com.example.kacper.walkwithme.MainActivity.PersonsList.SearchContent;
 import com.example.kacper.walkwithme.MainActivity.SimpleDividerItemDecoration;
 import com.example.kacper.walkwithme.R;
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 public class ForcomingAppointmentsFragment extends Fragment {
     private List<ForcomingAppointment> forcomingAppointments;

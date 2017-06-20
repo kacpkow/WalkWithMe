@@ -1,11 +1,13 @@
-package com.example.kacper.walkwithme.MainActivity.PersonsList;
+package com.example.kacper.walkwithme.Model;
+
+import java.io.Serializable;
 
 /**
- * Created by kacper on 2017-05-23.
+ * Created by kacper on 2017-04-06.
  */
 
-public class UserProfileData {
-    private int user_id;
+public class Person implements Serializable{
+    private Integer user_id;
     private String nick;
     private String firstName;
     private String lastName;
@@ -15,27 +17,14 @@ public class UserProfileData {
     private Double longtitude;
     private String description;
     private String photo_url;
+    private Integer age;
+    private Integer distance; //distance from user based on maps location
 
-    public UserProfileData(int user_id, String nick, String firstName, String lastName, String city,
-                           String birth_date, Double latitude, Double longtitude, String description, String photo_url) {
-        this.user_id = user_id;
-        this.nick = nick;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.city = city;
-        this.birth_date = birth_date;
-        this.latitude = latitude;
-        this.longtitude = longtitude;
-        this.description = description;
-        this.photo_url = photo_url;
-    }
-
-
-    public int getUser_id() {
+    public Integer getUser_id() {
         return user_id;
     }
 
-    public void setUser_id(int user_id) {
+    public void setUser_id(Integer user_id) {
         this.user_id = user_id;
     }
 
@@ -109,5 +98,21 @@ public class UserProfileData {
 
     public void setPhoto_url(String photo_url) {
         this.photo_url = photo_url;
+    }
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
+    }
+
+    public Integer getDistance() {
+        return distance;
+    }
+
+    public void setDistance(Integer distance) {
+        this.distance = distance;
     }
 }

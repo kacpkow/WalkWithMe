@@ -1,7 +1,11 @@
 package com.example.kacper.walkwithme.MainActivity.PersonsList;
 
 import android.content.Context;
-import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,7 +15,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.example.kacper.walkwithme.PersonDetails.PersonDetailsActivity;
+import com.example.kacper.walkwithme.Model.Person;
+import com.example.kacper.walkwithme.PersonDetails.PersonDetailsFragment;
 import com.example.kacper.walkwithme.R;
 
 import java.util.List;
@@ -22,7 +27,7 @@ import java.util.List;
 
 public class PersonAdapter extends RecyclerView.Adapter<PersonAdapter.PersonViewHolder> {
     private Context mContext;
-    private List<com.example.kacper.walkwithme.MainActivity.PersonsList.Person> persons;
+    private List<Person> persons;
 
     public static class PersonViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         CardView cv;
@@ -60,20 +65,30 @@ public class PersonAdapter extends RecyclerView.Adapter<PersonAdapter.PersonView
 
         @Override
         public void onClick(View v) {
-            context = v.getContext();
-            Intent intent = new Intent(context, PersonDetailsActivity.class);
-            intent.putExtra("USER_ID", userId);
-            intent.putExtra("USER_AGE", personAge.getText().toString());
-            intent.putExtra("USER_LOCATION", personLocation);
-            intent.putExtra("USER_DESCRIPTION", personDescription);
-            intent.putExtra("USER_NAME", personName.getText().toString());
-            intent.putExtra("USER_IMAGE", personPhoto);
-            context.startActivity(intent);
+
+            FragmentManager fm = ((AppCompatActivity)v.getContext()).getSupportFragmentManager();
+            FragmentTransaction ft = fm.beginTransaction();
+            PersonDetailsFragment newFragment = new PersonDetailsFragment();
+            Fragment f = ((AppCompatActivity)v.getContext()).getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+
+            Bundle args = new Bundle();
+            args.putInt("USER_ID", userId);
+            args.putString("USER_AGE", personAge.getText().toString());
+            args.putString("USER_LOCATION", personLocation);
+            args.putString("USER_DESCRIPTION", personDescription);
+            args.putString("USER_NAME", personName.getText().toString());
+            args.putString("USER_IMAGE", personPhoto);
+
+            newFragment.setArguments(args);
+
+            ft.replace(R.id.fragment_container, newFragment);
+            ft.addToBackStack(null);
+            ft.commit();
 
         }
     }
 
-    PersonAdapter(List<com.example.kacper.walkwithme.MainActivity.PersonsList.Person> persons, Context context){
+    PersonAdapter(List<Person> persons, Context context){
         this.persons = persons;
         mContext = context;
     }

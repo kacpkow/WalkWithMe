@@ -3,7 +3,6 @@ package com.example.kacper.walkwithme.MainActivity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -12,7 +11,7 @@ import android.widget.ImageButton;
 import com.example.kacper.walkwithme.MainActivity.Announcements.AnnouncementFragment;
 import com.example.kacper.walkwithme.MainActivity.ForthcomingAppointments.ForcomingAppointmentsFragment;
 import com.example.kacper.walkwithme.MainActivity.PersonsList.PersonsListFragment;
-import com.example.kacper.walkwithme.MainActivity.StrollRequests.StrollRequestsFragment;
+import com.example.kacper.walkwithme.MainActivity.Notifications.NotificationsFragment;
 import com.example.kacper.walkwithme.R;
 import com.example.kacper.walkwithme.SettingsActivity.SettingsActivity;
 
@@ -197,12 +196,12 @@ public class MainView extends AppCompatActivity {
 
                     @Override
                     public void onAnimationEnd(Animation animation) {
-                        StrollRequestsFragment newFragment = new StrollRequestsFragment();
+                        NotificationsFragment newFragment = new NotificationsFragment();
                         newFragment.setArguments(bundle);
                         android.support.v4.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
                         android.support.v4.app.Fragment f = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-                        if (!(f instanceof StrollRequestsFragment)){
+                        if (!(f instanceof NotificationsFragment)){
                             transaction.replace(R.id.fragment_container, newFragment);
                             transaction.commit();
                         }
