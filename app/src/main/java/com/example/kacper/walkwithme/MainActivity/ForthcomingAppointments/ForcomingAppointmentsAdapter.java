@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.kacper.walkwithme.AppointmentDetails.AppointmentDetailsActivity;
+import com.example.kacper.walkwithme.Model.StrollData;
 import com.example.kacper.walkwithme.R;
 
 import java.util.List;
@@ -27,10 +28,9 @@ public class ForcomingAppointmentsAdapter extends RecyclerView.Adapter<Forcoming
     public static class AppointmentViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         CardView cv;
-        TextView personName;
+        TextView strollStartTime;
+        TextView strollEndTime;
         TextView locationView;
-        TextView datetime;
-        ImageView personPhoto;
         Button detailsButton;
 
         Integer strollId;
@@ -47,11 +47,10 @@ public class ForcomingAppointmentsAdapter extends RecyclerView.Adapter<Forcoming
         AppointmentViewHolder(View itemView) {
             super(itemView);
             cv = (CardView)itemView.findViewById(R.id.cv);
-            personName = (TextView)itemView.findViewById(R.id.person_name);
             locationView = (TextView)itemView.findViewById(R.id.locationData);
-            datetime = (TextView)itemView.findViewById(R.id.datetime);
-            personPhoto = (ImageView)itemView.findViewById(R.id.person_photo);
-            detailsButton = (Button)itemView.findViewById(R.id.editButton);
+            strollStartTime = (TextView)itemView.findViewById(R.id.strollStartTime);
+            strollEndTime = (TextView)itemView.findViewById(R.id.strollEndTime);
+            detailsButton = (Button)itemView.findViewById(R.id.detailsButton);
             detailsButton.setOnClickListener(this);
         }
 
@@ -73,10 +72,10 @@ public class ForcomingAppointmentsAdapter extends RecyclerView.Adapter<Forcoming
         }
     }
 
-    List<ForcomingAppointment> forcomingAppointments;
+    List<StrollData> strollDataList;
 
-    ForcomingAppointmentsAdapter(List<ForcomingAppointment> forcomingAppointments, Context mContext){
-        this.forcomingAppointments = forcomingAppointments;
+    ForcomingAppointmentsAdapter(List<StrollData> strollData, Context mContext){
+        this.strollDataList = strollData;
         this.mContext = mContext;
     }
 
@@ -93,24 +92,14 @@ public class ForcomingAppointmentsAdapter extends RecyclerView.Adapter<Forcoming
     }
 
     @Override
-    public void onBindViewHolder(AppointmentViewHolder personViewHolder, int i) {
-        personViewHolder.personName.setText(forcomingAppointments.get(i).firstName + " " + forcomingAppointments.get(i).lastName);
-        personViewHolder.locationView.setText(forcomingAppointments.get(i).location);
-        personViewHolder.datetime.setText(forcomingAppointments.get(i).date + " at " + forcomingAppointments.get(i).time);
-        Glide.with(mContext).load(forcomingAppointments.get(i).getMediumPhoto())
-                .into(personViewHolder.personPhoto);
-        personViewHolder.userId = forcomingAppointments.get(i).userId;
-        personViewHolder.firstName = forcomingAppointments.get(i).firstName;
-        personViewHolder.lastName = forcomingAppointments.get(i).lastName;
-        personViewHolder.location= forcomingAppointments.get(i).location;
-        personViewHolder.date = forcomingAppointments.get(i).date;
-        personViewHolder.time = forcomingAppointments.get(i).time;
-        personViewHolder.mediumPhoto = forcomingAppointments.get(i).mediumPhoto;
-        personViewHolder.strollId = forcomingAppointments.get(i).strollId;
+    public void onBindViewHolder(AppointmentViewHolder appointmentViewHolder, int i) {
+        appointmentViewHolder.strollStartTime.setText(appointmentViewHolder.strollStartTime.getText().toString() + strollDataList.get(i).getData_start());
+        appointmentViewHolder.strollEndTime.setText(appointmentViewHolder.strollEndTime.getText().toString() + strollDataList.get(i).getData_end());
+        appointmentViewHolder.locationView.setText(appointmentViewHolder.locationView.getText().toString() + strollDataList.get(i).getLocation().getDescription());
     }
 
     @Override
     public int getItemCount() {
-        return forcomingAppointments.size();
+        return strollDataList.size();
     }
 }

@@ -14,7 +14,7 @@
         android:layout_marginBottom="4dp"
         android:layout_marginTop="4dp"
         android:fontFamily="sans-serif-medium"
-        android:text="Your forcoming appointments:"
+        android:text="Your forcoming strolls:"
         android:textSize="16dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Subtitle"
         android:visibility="visible" />

@@ -11,38 +11,28 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
-        <ImageView
-            android:id="@+id/person_photo"
-            android:layout_width="250px"
-            android:layout_height="250px"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginRight="16dp" />
-
-        <TextView
-            android:id="@+id/person_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/person_photo"
-            android:textSize="30sp" />
-
-        <TextView
-            android:id="@+id/datetime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/person_name"
-            android:layout_toRightOf="@+id/person_photo" />
-
         <TextView
             android:id="@+id/locationData"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/datetime"
-            android:layout_toRightOf="@+id/person_photo" />
+            android:text="Location: "/>
+
+        <TextView
+            android:id="@+id/strollStartTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/locationData"
+            android:text="Stroll starts at: " />
+
+        <TextView
+            android:id="@+id/strollEndTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/strollStartTime"
+            android:text="Stroll ends at: "/>
 
         <Button
-            android:id="@+id/editButton"
+            android:id="@+id/detailsButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/button_register_rounded"
