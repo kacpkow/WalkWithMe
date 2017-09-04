@@ -16,6 +16,10 @@ import android.view.ViewGroup;
 import com.example.kacper.walkwithme.MainActivity.SimpleDividerItemDecoration;
 import com.example.kacper.walkwithme.Model.StrollData;
 import com.example.kacper.walkwithme.R;
+import com.example.kacper.walkwithme.RequestController;
+import com.franmontiel.persistentcookiejar.PersistentCookieJar;
+import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
+import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
@@ -24,10 +28,12 @@ import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.CookieJar;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -38,6 +44,8 @@ public class ForcomingAppointmentsFragment extends Fragment {
     private List<StrollData> strollDataList;
     private RecyclerView rv;
     private Integer userId;
+
+    OkHttpClient client;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -51,6 +59,7 @@ public class ForcomingAppointmentsFragment extends Fragment {
         rv.addItemDecoration(new SimpleDividerItemDecoration(getResources()));
         userId = 0;
         strollDataList = new ArrayList<>();
+        client = RequestController.getInstance().getClient();
         initializeData();
         initializeAdapter();
 
@@ -62,18 +71,15 @@ public class ForcomingAppointmentsFragment extends Fragment {
         userId = settings.getInt("ID", 0);
 
         String url ="http://10.0.2.2:8080/stroll/get";
-        OkHttpClient client = new OkHttpClient();
-        Gson gson = new Gson();
+        final Gson gson = new Gson();
         MediaType mediaType = MediaType.parse("application/json");
         AppointmentsContent requestContent = new AppointmentsContent(userId);
         RequestBody requestBody = RequestBody.create(mediaType, gson.toJson(requestContent));
-
         final Request request;
         request = new Request.Builder()
                 .url(url)
                 .addHeader("content-type", "application/json")
                 .build();
-
         Call call = client.newCall(request);
         call.enqueue(new Callback() {
             @Override
@@ -86,6 +92,7 @@ public class ForcomingAppointmentsFragment extends Fragment {
                 Gson retGson = new Gson();
                 String jsonResponse = response.body().string();
                 Log.e("jsonResp", jsonResponse);
+                Log.e("jsonResp", String.valueOf(response.code()));
                 if (jsonResponse != null) {
                     Gson objGson = new GsonBuilder().setPrettyPrinting().create();
                     Type listType = new TypeToken<List<StrollData>>() {
@@ -94,23 +101,37 @@ public class ForcomingAppointmentsFragment extends Fragment {
                     try {
                         List<StrollData> readFromJson = objGson.fromJson(jsonResponse, listType);
                         if (readFromJson != null) {
-                            for (StrollData strollData : readFromJson
-                                    ) {
-                                StrollData newStrollData = new StrollData();
-                                newStrollData = strollData;
-                                strollDataList.add(newStrollData);
+//                            for (StrollData strollData : readFromJson
+//                                    ) {
+//                                Log.e("str idd", strollData.getData_start());
+//
+//                                StrollData newStrollData = new StrollData();
+//                                newStrollData = strollData;
+//                                strollDataList.add(newStrollData);
+//                            }
+                            StrollData[] strollArray = gson.fromJson(jsonResponse, StrollData[].class);
+                            strollDataList = Arrays.asList(strollArray);
+                            Log.e("str idd", Integer.toString(strollDataList.get(0).getStrollId()));
+                            if(getActivity().getApplicationContext() != null){
+                                backgroundThreadInitializeAdapter(getActivity().getApplicationContext());
                             }
-                            backgroundThreadInitializeAdapter(getActivity().getApplicationContext());
                         }
 
                     } catch (JsonSyntaxException e) {
                         Log.e("error", "error in syntax in returning json");
+                        backgroundThreadFinishActivity(getActivity().getApplicationContext());
                     }
+
                 }
             }
         });
 
-        //forcomingAppointments.add(new ForcomingAppointment(1, userId, "Brad", "Pitt", "Kraków", "23.05.2017", "17:00", "http://www.a-listinternational.com/wp-content/uploads/2016/06/brad-pitt-doesn-t-really-look-much-like-brad-pitt-in-these-photos-727400.jpg"));
+    }
+
+    @Override
+    public void onResume(){
+        initializeData();
+        super.onResume();
     }
 
     private void initializeAdapter(){
@@ -125,6 +146,18 @@ public class ForcomingAppointmentsFragment extends Fragment {
                 @Override
                 public void run() {
                     initializeAdapter();
+                }
+            });
+        }
+    }
+
+    public void backgroundThreadFinishActivity(final Context context) {
+        if (context != null) {
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+
+                @Override
+                public void run() {
+                    getActivity().onBackPressed();
                 }
             });
         }

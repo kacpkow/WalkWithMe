@@ -8,6 +8,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,10 +17,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.kacper.walkwithme.Model.Person;
 import com.example.kacper.walkwithme.PersonDetails.PersonDetailsFragment;
 import com.example.kacper.walkwithme.R;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.sql.Blob;
 import java.util.List;
 
 /**
@@ -53,7 +60,6 @@ public class PersonAdapter extends RecyclerView.Adapter<PersonAdapter.PersonView
             distance = (TextView)itemView.findViewById(R.id.person_distance);
             personAge = (TextView)itemView.findViewById(R.id.person_age);
             personMediumPhoto = (ImageView)itemView.findViewById(R.id.person_photo);
-            personPhoto = "";
             personLocation = "";
             personFirstName = "";
             personLastName = "";
@@ -116,8 +122,23 @@ public class PersonAdapter extends RecyclerView.Adapter<PersonAdapter.PersonView
         personViewHolder.personDescription = persons.get(i).getDescription();
         personViewHolder.personLocation = persons.get(i).getCity();
         personViewHolder.personPhoto = persons.get(i).getPhoto_url();
-        Glide.with(mContext).load(persons.get(i).getPhoto_url())
-                .into(personViewHolder.personMediumPhoto);
+//        Glide.with(mContext).load(persons.get(i).getPhoto_url())
+//                .into(personViewHolder.personMediumPhoto);
+
+//        Log.e("photo",  String.valueOf(persons.get(i).getPhoto_url().toString().getBytes(StandardCharsets.UTF_8)));
+        //Log.e("photo",  String.valueOf(persons.get(i).getPhoto_url().toString()));
+
+        try{
+//            Log.e("photo1",  array.toString());
+            Glide.with(mContext)
+                    .load(Base64.decode(persons.get(i).getPhoto_url(), Base64.DEFAULT))
+                    .apply(new RequestOptions()
+                            .diskCacheStrategy(DiskCacheStrategy.NONE))
+                    .into(personViewHolder.personMediumPhoto);
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+
     }
 
     @Override

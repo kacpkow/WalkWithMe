@@ -1,21 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.example.kacper.walkwithme.RegistrationActivity.RegistrationActivity"
-    tools:layout_editor_absoluteY="25dp"
-    tools:layout_editor_absoluteX="0dp">
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    tools:context="com.example.kacper.walkwithme.RegistrationActivity.RegistrationActivity">
 
-    <ScrollView
-        android:layout_width="395dp"
-        android:layout_height="643dp"
-        tools:layout_editor_absoluteY="8dp"
-        tools:layout_editor_absoluteX="8dp">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_gravity="center">
@@ -45,7 +37,7 @@
                 android:id="@+id/textView20"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Please type here your login" />
+                android:text="Please type here your nick" />
 
             <EditText
                 android:id="@+id/firstNameTextField"
@@ -91,6 +83,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Please type here your city" />
+
+            <EditText
+                android:id="@+id/dateOfBirthTextField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ems="10"
+                android:hint="date of birth"
+                android:inputType="date" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Date of birth in YYYY-MM-DD format" />
 
             <EditText
                 android:id="@+id/firstPasswordTextField"
@@ -151,6 +157,5 @@
                 android:text="Register"
                 android:visibility="visible" />
         </LinearLayout>
-    </ScrollView>
 
-</android.support.constraint.ConstraintLayout>
+</ScrollView>

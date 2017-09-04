@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.kacper.walkwithme.R;
+import com.example.kacper.walkwithme.RequestController;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -61,12 +62,14 @@ public class AppointmentDetailsActivity extends FragmentActivity implements OnMa
     float latitude;
     float longtitude;
 
+    OkHttpClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_appointment_details);
         Bundle b = getIntent().getExtras();
+        client = RequestController.getInstance().getClient();
 
         dateView = (TextView)findViewById(R.id.appointmentDateField);
         timeView = (TextView)findViewById(R.id.appointmentTimeField);
@@ -130,7 +133,6 @@ public class AppointmentDetailsActivity extends FragmentActivity implements OnMa
 
     public boolean cancelStroll(Integer strollId){
         String url ="http://10.0.2.2:8080/CancelStrollAndroid";
-        OkHttpClient client = new OkHttpClient();
         final boolean[] flag = {false};
         Gson gson = new Gson();
 

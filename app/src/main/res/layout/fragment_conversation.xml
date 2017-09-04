@@ -1,0 +1,46 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.kacper.walkwithme.MainActivity.Conversation.ConversationFragment"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/text_side"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true">
+
+        <ImageButton
+            android:id="@+id/sendIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button_send"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="15dp"/>
+
+        <EditText
+            android:id="@+id/edit_text_conversation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/sendIcon"
+            android:hint="Type here your message..."
+            android:inputType="text"
+            android:clickable="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true"/>
+
+
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvConversation"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/text_side">
+    </android.support.v7.widget.RecyclerView>
+
+
+
+</RelativeLayout>

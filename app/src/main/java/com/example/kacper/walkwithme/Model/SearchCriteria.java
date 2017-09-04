@@ -1,18 +1,18 @@
-package com.example.kacper.walkwithme.MainActivity.PersonsList;
+package com.example.kacper.walkwithme.Model;
 
 /**
  * Created by kacper on 2017-05-22.
  */
 
-public class SearchContent {
-    Integer userId;
-    String ageFrom;
-    String ageTo;
-    String distance;
+public class SearchCriteria {
+    int userId;
+    int ageFrom;
+    int ageTo;
+    Double distance;
     Double userLatitude;
     Double userLongtitude;
 
-    public SearchContent(Integer userId, String ageFrom, String ageTo, String distance, Double userLatitude, Double userLongtitude) {
+    public SearchCriteria(int userId, int ageFrom, int ageTo, double distance, Double userLatitude, Double userLongtitude) {
         this.userId = userId;
         this.ageFrom = ageFrom;
         this.ageTo = ageTo;
@@ -37,36 +37,36 @@ public class SearchContent {
         this.userLongtitude = userLongtitude;
     }
 
-    public String getAgeFrom() {
+    public int getAgeFrom() {
         return ageFrom;
     }
 
-    public void setAgeFrom(String ageFrom) {
+    public void setAgeFrom(int ageFrom) {
         this.ageFrom = ageFrom;
     }
 
-    public String getAgeTo() {
+    public int getAgeTo() {
         return ageTo;
     }
 
-    public void setAgeTo(String ageTo) {
+    public void setAgeTo(int ageTo) {
         this.ageTo = ageTo;
     }
 
-    public String getDistance() {
+    public double getDistance() {
         return distance;
     }
 
-    public void setDistance(String distance) {
+    public void setDistance(double distance) {
         this.distance = distance;
     }
 
-    public Integer getUserId() {
+    public int getUserId() {
 
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(int userId) {
         this.userId = userId;
     }
 }

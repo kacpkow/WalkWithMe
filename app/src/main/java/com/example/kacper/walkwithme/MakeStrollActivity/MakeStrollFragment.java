@@ -35,6 +35,7 @@ import android.widget.Toast;
 import com.example.kacper.walkwithme.Model.AdvertisementData;
 import com.example.kacper.walkwithme.Model.LocationData;
 import com.example.kacper.walkwithme.R;
+import com.example.kacper.walkwithme.RequestController;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -80,6 +81,8 @@ public class MakeStrollFragment extends Fragment {
     private Double latitudeSet = 0.0;
     private Double longitudeSet = 0.0;
 
+    OkHttpClient client;
+
 
     public MakeStrollFragment() {
         // Required empty public constructor
@@ -92,6 +95,8 @@ public class MakeStrollFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_make_stroll, container, false);
+
+        client = RequestController.getInstance().getClient();
 
         SharedPreferences settings = getContext().getSharedPreferences("userId", Context.MODE_PRIVATE);
         currentUserId = settings.getInt("ID", 0);
@@ -106,6 +111,13 @@ public class MakeStrollFragment extends Fragment {
         setLocationButton = (Button)v.findViewById(R.id.locationButton);
         strollButton = (Button)v.findViewById(R.id.buttonStroll);
         calendar = Calendar.getInstance();
+
+        strollEndTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setTime(strollEndTime);
+            }
+        });
 
         year = calendar.get(Calendar.YEAR);
         month = calendar.get(Calendar.MONTH);
@@ -126,9 +138,10 @@ public class MakeStrollFragment extends Fragment {
                 dialogBuilder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        //Toast.makeText(AppointmentDetailsActivity.this, "You cancelled a stroll", Toast.LENGTH_SHORT).show();
+
                         makeStroll();
                         getFragmentManager().popBackStack();
+
                     }
                 });
                 dialogBuilder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
@@ -207,7 +220,6 @@ public class MakeStrollFragment extends Fragment {
     public void makeStroll(){
 
         String url ="http://10.0.2.2:8080/adv/" + toString().valueOf(userId);
-        OkHttpClient client = new OkHttpClient();
         Gson gson = new Gson();
         MediaType mediaType = MediaType.parse("application/json");
         AdvertisementData requestContent = new AdvertisementData();
@@ -372,7 +384,7 @@ public class MakeStrollFragment extends Fragment {
                 SharedPreferences settings = getActivity().getSharedPreferences("userLocation", Context.MODE_PRIVATE);
                 Float lat = settings.getFloat("latitude", 0.0f);
                 Float lng = settings.getFloat("longtitude", 0.0f);
-                LatLng coordinates = new LatLng(lat, lng); ////your lat lng
+                LatLng coordinates = new LatLng(lat, lng); //your lat lng
                 googleMap.addMarker(new MarkerOptions().position(coordinates).title("Marker"));
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coordinates, 15));
                 googleMap.getUiSettings().setZoomControlsEnabled(true);

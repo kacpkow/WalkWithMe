@@ -5,6 +5,7 @@ package com.example.kacper.walkwithme.Model;
  */
 
 public class UserData {
+
     private int user_id;
     private String firstName;
     private String lastName;
@@ -67,4 +68,3 @@ public class UserData {
         return "id=" + user_id + ", firstName=" + firstName + ", lastName=" + lastName + ", country=" + city + ", date=" + date;
     }
 }
-

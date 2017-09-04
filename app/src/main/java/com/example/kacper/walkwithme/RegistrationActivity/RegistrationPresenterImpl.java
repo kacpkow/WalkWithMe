@@ -1,12 +1,17 @@
 package com.example.kacper.walkwithme.RegistrationActivity;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Toast;
 
+import com.example.kacper.walkwithme.Model.RegistrationForm;
+import com.example.kacper.walkwithme.RequestController;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -26,37 +31,30 @@ public class RegistrationPresenterImpl implements RegistrationPresenter{
     private RegistrationView registrationView;
     ProgressDialog progressDialog;
 
-    public Integer getFlag() {
-        return flag;
-    }
-
-    @Override
-    public void setFlag(Integer flag) {
-        this.flag = flag;
-    }
-
-    private Integer flag;
+    OkHttpClient client;
 
     public RegistrationPresenterImpl(RegistrationView registrationView) {
         this.registrationView = registrationView;
-        setFlag(0);
         progressDialog = new ProgressDialog(registrationView.getActivityContext());
+        client = RequestController.getInstance().getClient();
     }
 
     @Override
-    public Boolean register(String username, String password, String confirmation, String email) {
-        if(validateFields(username, password, confirmation, email)){
+    public void register(RegistrationForm form) {
+        if(validateFields(form)){
             progressDialog = new ProgressDialog(registrationView.getActivityContext());
-            String url ="http://10.0.2.2:8080/RegisterAndroid";
+            String url ="http://10.0.2.2:8080/registration";
             progressDialog.setTitle("Account registering, please wait ...");
             progressDialog.show();
             OkHttpClient client = new OkHttpClient();
+            Log.e("form", form.getNick().toString() + " " + form.getFirstName().toString() + " "+ form.getLastName().toString());
 
             Gson gson = new Gson();
 
-            RegistrationContent reg = new RegistrationContent(username,password,email, "Jan", "Kowalski", "Warsaw");
             MediaType mediaType = MediaType.parse("application/json");
-            RequestBody requestBody = RequestBody.create(mediaType, gson.toJson(reg));
+            RequestBody requestBody = RequestBody.create(mediaType, gson.toJson(form));
+
+            Log.e("form", gson.toJson(form));
 
             Request request;
             request = new Request.Builder()
@@ -70,30 +68,27 @@ public class RegistrationPresenterImpl implements RegistrationPresenter{
                 @Override
                 public void onFailure(Call call, IOException e) {
                     progressDialog.dismiss();
-                    backgroundThreadShortToast(registrationView.getAppContext(),"Connection error, try again...");
+                    backgroundThreadShowDialog(registrationView.getAppContext(),"Connection error, try again...");
                 }
 
                 @Override
                 public void onResponse(Call call, okhttp3.Response response) throws IOException {
                     progressDialog.dismiss();
                     String json = response.body().string();
+                    Log.e("resp code", String.valueOf(response.code()));
 
-                    if(!json.equals("error")){
-//                        backgroundThreadShortToast(registrationView.getAppContext(),json);
-                        setFlag(1);
+                    if(response.code() == 409){
+                        backgroundThreadShowDialog(registrationView.getAppContext(), "Login busy. Your account has not been registered. Please try again.");
                     }
                     else{
-                        backgroundThreadShortToast(registrationView.getAppContext(),"error");
+                        backgroundThreadCloseActivity(registrationView.getAppContext(), registrationView);
+                        backgroundThreadShortToast(registrationView.getAppContext(), "Your account has been registered.");
                     }
 
                 }
             });
 
         }
-        if(getFlag() == 1)
-            return true;
-
-        return false;
     }
 
     public static void backgroundThreadShortToast(final Context context,
@@ -109,20 +104,55 @@ public class RegistrationPresenterImpl implements RegistrationPresenter{
         }
     }
 
-    public Boolean validateFields(String username, String password, String confirmation, String email){
-        if(TextUtils.isEmpty(username)){
+    public static void backgroundThreadCloseActivity(final Context context, final RegistrationView view) {
+        if (context != null) {
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+
+                @Override
+                public void run() {
+                    view.finishActivity();
+                }
+            });
+        }
+    }
+
+    public void backgroundThreadShowDialog(final Context context, final String msg) {
+        if (context != null && msg != null) {
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+
+                @Override
+                public void run() {
+                    AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(
+                            registrationView.getAppContext());
+
+                    dialogBuilder.setTitle(msg);
+
+                    dialogBuilder.setPositiveButton("CANCEL", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+
+                    final AlertDialog alertDialog = dialogBuilder.create();
+                    alertDialog.show();
+                }
+            });
+        }
+    }
+
+
+    public Boolean validateFields(RegistrationForm form){
+        if(TextUtils.isEmpty(form.getNick())){
             registrationView.showToast("Empty nick field\nTry again");
             return false;
         }
-        if (TextUtils.isEmpty(password) || (password.length() < 6) || password.length() > 15){
+        if (TextUtils.isEmpty(form.getPassword()) || (form.getPassword().length() < 6) || form.getPassword().length() > 15){
             registrationView.showToast("Your password does not match to the requirements\nTry again");
             return false;
         }
-        if(TextUtils.isEmpty(confirmation) || !TextUtils.equals(password, confirmation)){
-            registrationView.showToast("Your password confirmation is not the same as the password\nTry again");
-            return false;
-        }
-        if(!isValidEmail(email)){
+
+        if(!isValidEmail(form.getMail())){
             registrationView.showToast("Your email is not correct\nTry again");
             return false;
         }

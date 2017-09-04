@@ -11,4 +11,5 @@ public interface RegistrationView {
     void goToLoginScreen();
     Context getActivityContext();
     Context getAppContext();
+    void finishActivity();
 }

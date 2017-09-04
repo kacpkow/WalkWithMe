@@ -21,6 +21,7 @@ import com.example.kacper.walkwithme.MainActivity.Announcements.AnnouncementDeta
 import com.example.kacper.walkwithme.MainActivity.Announcements.EditAnnouncement.EditAnnouncementFragment;
 import com.example.kacper.walkwithme.Model.AdvertisementData;
 import com.example.kacper.walkwithme.R;
+import com.example.kacper.walkwithme.RequestController;
 
 import java.io.IOException;
 import java.util.List;
@@ -38,6 +39,7 @@ import okhttp3.Response;
 public class AnnouncementsAdapter extends RecyclerView.Adapter<AnnouncementsAdapter.AnnouncementViewHolder>{
     Integer userId;
     private Context mContext;
+    OkHttpClient client;
 
     public class AnnouncementViewHolder extends RecyclerView.ViewHolder {
 
@@ -66,6 +68,7 @@ public class AnnouncementsAdapter extends RecyclerView.Adapter<AnnouncementsAdap
 
         AnnouncementViewHolder(final View itemView) {
             super(itemView);
+            client = RequestController.getInstance().getClient();
             cv = (CardView)itemView.findViewById(R.id.cv_announcements);
             locationView = (TextView)itemView.findViewById(R.id.announcement_location_label);
             strollStartTime = (TextView)itemView.findViewById(R.id.announcement_stroll_start_time);
@@ -175,7 +178,6 @@ public class AnnouncementsAdapter extends RecyclerView.Adapter<AnnouncementsAdap
     private void deleteAnnouncement(Integer adId, final Integer position){
         String url ="http://10.0.2.2:8080/adv/"+adId.toString();
         Log.e("url:", url);
-        OkHttpClient client = new OkHttpClient();
 
         final Request request;
         request = new Request.Builder()
@@ -199,11 +201,13 @@ public class AnnouncementsAdapter extends RecyclerView.Adapter<AnnouncementsAdap
     }
 
     List<AdvertisementData> advertisementDatas;
+    AnnouncementsPresenter presenter;
 
-    AnnouncementsAdapter(List<AdvertisementData> advertisementDatas, Context mContext, Integer userId){
+    AnnouncementsAdapter(List<AdvertisementData> advertisementDatas, Context mContext, Integer userId, AnnouncementsPresenter presenter){
         this.advertisementDatas = advertisementDatas;
         this.mContext = mContext;
         this.userId = userId;
+        this.presenter = presenter;
     }
 
     @Override

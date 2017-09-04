@@ -1,9 +1,8 @@
 package com.example.kacper.walkwithme.Model;
-
 /**
- * Created by kacper on 2017-05-23.
+ * @author Marek Makowski
+ * @version 1.0
  */
-
 public class UserProfileData {
     private int user_id;
     private String nick;
@@ -11,13 +10,14 @@ public class UserProfileData {
     private String lastName;
     private String city;
     private String birth_date;
-    private Double latitude;
-    private Double longtitude;
+    private double latitude;
+    private double longtitude;
     private String description;
     private String photo_url;
+    private String email;
 
     public UserProfileData(int user_id, String nick, String firstName, String lastName, String city,
-                           String birth_date, Double latitude, Double longtitude, String description, String photo_url) {
+                           String birth_date, double latitude, double longtitude, String description, String photo_url, String email) {
         this.user_id = user_id;
         this.nick = nick;
         this.firstName = firstName;
@@ -28,8 +28,11 @@ public class UserProfileData {
         this.longtitude = longtitude;
         this.description = description;
         this.photo_url = photo_url;
+        this.email = email;
     }
 
+    public UserProfileData() {
+    }
 
     public int getUser_id() {
         return user_id;
@@ -79,19 +82,19 @@ public class UserProfileData {
         this.birth_date = birth_date;
     }
 
-    public Double getLatitude() {
+    public double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(Double latitude) {
+    public void setLatitude(double latitude) {
         this.latitude = latitude;
     }
 
-    public Double getLongtitude() {
+    public double getLongtitude() {
         return longtitude;
     }
 
-    public void setLongtitude(Double longtitude) {
+    public void setLongtitude(double longtitude) {
         this.longtitude = longtitude;
     }
 
@@ -109,5 +112,13 @@ public class UserProfileData {
 
     public void setPhoto_url(String photo_url) {
         this.photo_url = photo_url;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

@@ -26,6 +26,7 @@ import com.example.kacper.walkwithme.LoginActivity.LoginActivity;
 import com.example.kacper.walkwithme.MapsActivity;
 import com.example.kacper.walkwithme.PersonProfileSettings;
 import com.example.kacper.walkwithme.R;
+import com.example.kacper.walkwithme.RequestController;
 
 import java.util.List;
 
@@ -312,7 +313,12 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     SharedPreferences settings = getActivity().getApplicationContext().getSharedPreferences("USER_ID", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = settings.edit();
                     editor.remove("userId");
+                    editor.remove("state");
+                    editor.putString("state", "logged out");
                     editor.commit();
+
+                    RequestController.getInstance().setState(false);
+                    RequestController.getInstance().newClient();
 
                     Intent intent = new Intent(getActivity().getApplicationContext(), LoginActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK);

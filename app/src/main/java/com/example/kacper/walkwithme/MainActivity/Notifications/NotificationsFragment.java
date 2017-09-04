@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import com.example.kacper.walkwithme.MainActivity.SimpleDividerItemDecoration;
 import com.example.kacper.walkwithme.Model.NotificationData;
 import com.example.kacper.walkwithme.R;
+import com.example.kacper.walkwithme.RequestController;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
@@ -34,10 +35,13 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class NotificationsFragment extends Fragment {
+public class NotificationsFragment extends Fragment implements NotificationsView {
+    private NotificationsPresenter notificationsPresenter;
     private List<NotificationData> notificationDataList;
     private RecyclerView rv;
     private Integer userId;
+    private NotificationsAdapter adapter;
+    OkHttpClient client;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -48,9 +52,15 @@ public class NotificationsFragment extends Fragment {
         rv.setLayoutManager(llm);
         rv.setHasFixedSize(true);
         rv.addItemDecoration(new SimpleDividerItemDecoration(getResources()));
-        //userId = 0;
+
         notificationDataList = new ArrayList<>();
+        notificationsPresenter = new NotificationsPresenterImpl(this);
+
+        client = RequestController.getInstance().getClient();
+
+        Log.e("err", "initializing data");
         initializeData();
+        Log.e("err", "initializing adapter");
         initializeAdapter();
 
         return rootView;
@@ -61,9 +71,10 @@ public class NotificationsFragment extends Fragment {
         userId = settings.getInt("ID", 0);
 
         String url ="http://10.0.2.2:8080/notification";
-        OkHttpClient client = new OkHttpClient();
         Gson gson = new Gson();
         MediaType mediaType = MediaType.parse("application/json");
+
+        Log.e("err", "initializing in 1");
 
 
         final Request request;
@@ -81,8 +92,11 @@ public class NotificationsFragment extends Fragment {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
+                Log.e("err", "err");
                 Gson retGson = new Gson();
                 String jsonResponse = response.body().string();
+                Log.e("err", "err1");
+                Log.e("responsecode", toString().valueOf(response.code()));
                 if(jsonResponse != null){
                     Gson objGson = new GsonBuilder().setPrettyPrinting().create();
                     Type listType = new TypeToken<List<NotificationData>>() {
@@ -133,14 +147,20 @@ public class NotificationsFragment extends Fragment {
 
                 @Override
                 public void run() {
-                    initializeAdapter();
+                    adapter.notifyDataSetChanged();
                 }
             });
         }
     }
 
     private void initializeAdapter(){
-        NotificationsAdapter adapter = new NotificationsAdapter(notificationDataList, this.getContext());
+        adapter = new NotificationsAdapter(notificationDataList, this.getContext(), notificationsPresenter);
         rv.setAdapter(adapter);
+    }
+
+    @Override
+    public void refreshElements() {
+        notificationDataList.clear();
+        initializeData();
     }
 }

@@ -11,19 +11,13 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.kacper.walkwithme.MainActivity.MainView;
-import com.example.kacper.walkwithme.MapsActivity;
 import com.example.kacper.walkwithme.Model.User;
-import com.franmontiel.persistentcookiejar.ClearableCookieJar;
-import com.franmontiel.persistentcookiejar.PersistentCookieJar;
-import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
-import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
-import com.google.gson.Gson;
+import com.example.kacper.walkwithme.RequestController;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import java.io.IOException;
 import java.net.CookieHandler;
-import java.net.CookieManager;
-import java.net.CookiePolicy;
-
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.JavaNetCookieJar;
@@ -37,12 +31,16 @@ import okhttp3.RequestBody;
  * Created by kacper on 2017-03-31.
  */
 
-public class LoginPresenterImpl implements LoginPresenter {
+public class LoginPresenterImpl implements LoginPresenter{
     private LoginView loginView;
     ProgressDialog progressDialog;
     String json;
+
+    OkHttpClient client;
+
     public LoginPresenterImpl(LoginView loginView) {
         this.loginView = loginView;
+        client = RequestController.getInstance().getClient();
     }
 
     @Override
@@ -53,12 +51,8 @@ public class LoginPresenterImpl implements LoginPresenter {
             progressDialog.show();
             String url ="http://10.0.2.2:8080/rest/login";
 
-            JavaNetCookieJar javaNetCookieJar = new JavaNetCookieJar(CookieHandler.getDefault());
-            OkHttpClient client = new OkHttpClient.Builder().cookieJar(javaNetCookieJar).build();
-
-            Gson gson = new Gson();
-
             LoginContent log = new LoginContent(username, password);
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
             MediaType mediaType = MediaType.parse("application/json");
             RequestBody requestBody = RequestBody.create(mediaType, gson.toJson(log));
 
@@ -68,6 +62,8 @@ public class LoginPresenterImpl implements LoginPresenter {
                     .post(requestBody)
                     .addHeader("content-type", "application/json")
                     .build();
+
+            client = RequestController.getInstance().getClient();
 
             Call call = client.newCall(request);
             call.enqueue(new Callback() {
@@ -98,15 +94,6 @@ public class LoginPresenterImpl implements LoginPresenter {
     public void getUser(){
 
         String url ="http://10.0.2.2:8080/user";
-
-        //ClearableCookieJar cookieJar = new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(loginView.getActivityContext()));
-
-        //OkHttpClient client = new OkHttpClient.Builder().cookieJar(cookieJar).build();
-//        CookieManager cookieManager = new CookieManager();
-//        cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
-        JavaNetCookieJar javaNetCookieJar = new JavaNetCookieJar(CookieHandler.getDefault());
-        OkHttpClient client = new OkHttpClient.Builder().cookieJar(javaNetCookieJar).build();
-
         Gson gson = new Gson();
 
         MediaType mediaType = MediaType.parse("application/json");
@@ -136,20 +123,21 @@ public class LoginPresenterImpl implements LoginPresenter {
 
                 if(response.code() == 200){
 
-                        User usr = retGson.fromJson(json, User.class);
+                    User usr = retGson.fromJson(json, User.class);
 
-                        SharedPreferences settings = loginView.getActivityContext().getSharedPreferences("userId", Context.MODE_PRIVATE);
-                        if(settings != null){
-                            SharedPreferences.Editor editor = settings.edit();
-                            editor.putInt("ID", usr.getUser_id());
-                            editor.commit();
-                        }
+                    SharedPreferences settings = loginView.getActivityContext().getSharedPreferences("userId", Context.MODE_PRIVATE);
+                    if(settings != null){
+                        SharedPreferences.Editor editor = settings.edit();
+                        editor.putInt("ID", usr.getUser_id());
+                        editor.putString("state", "logged in");
+                        editor.commit();
+                    }
+                    RequestController.getInstance().setState(true);
 
-                        backgroundThreadStartMainActivity(loginView.getAppContext(), usr.getUser_id());
+                    backgroundThreadStartMainActivity(loginView.getAppContext(), usr.getUser_id());
 
                 }
                 else{
-                    backgroundThreadShortToast(loginView.getAppContext(),json);
                     Log.e("get data", json);
                 }
 

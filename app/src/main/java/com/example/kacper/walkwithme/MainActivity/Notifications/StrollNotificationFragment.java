@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -28,6 +29,7 @@ import com.example.kacper.walkwithme.Model.AdvertisementData;
 import com.example.kacper.walkwithme.Model.StrollData;
 import com.example.kacper.walkwithme.Model.UserProfileData;
 import com.example.kacper.walkwithme.R;
+import com.example.kacper.walkwithme.RequestController;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -41,6 +43,7 @@ import com.google.gson.JsonSyntaxException;
 
 import java.io.IOException;
 import java.net.CookieHandler;
+import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.Call;
@@ -78,6 +81,8 @@ public class StrollNotificationFragment extends Fragment implements OnMapReadyCa
     float longtitude;
     private MapView mapView;
 
+    OkHttpClient client;
+
 
     public StrollNotificationFragment() {
         // Required empty public constructor
@@ -101,13 +106,20 @@ public class StrollNotificationFragment extends Fragment implements OnMapReadyCa
         userId = getArguments().getInt("senderId");
         strollId = getArguments().getInt("strollId");
 
+        client = RequestController.getInstance().getClient();
+
         initializeSenderData();
         initializeStrollData();
 
-        mapView = (MapView)v.findViewById(R.id.mapDetailsAppointment);
-        mapView.onCreate(savedInstanceState);
-        mapView.onResume();
-        mapView.getMapAsync(this);
+        try{
+            mapView = (MapView)v.findViewById(R.id.mapDetailsAppointment);
+            mapView.onCreate(savedInstanceState);
+            mapView.onResume();
+            mapView.getMapAsync(this);
+        }catch (Exception ex){
+            Log.d("exception", "map exception");
+        }
+
 
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -156,20 +168,23 @@ public class StrollNotificationFragment extends Fragment implements OnMapReadyCa
         {
             Geocoder geocoder = new Geocoder(getContext());
             try {
-                addressList = geocoder.getFromLocationName(location, 1);
-
+                //addressList = geocoder.getFromLocationName(location, 1);
+                addressList = geocoder.getFromLocation(latitude, longtitude, 1);
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            Address address = addressList.get(0);
-            LatLng latLng = new LatLng(address.getLatitude() , address.getLongitude());
-            mMap.clear();
-            mMap.addMarker(new MarkerOptions().position(latLng).title("Marker"));
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
-            latitude = (float)address.getLatitude();
-            longtitude = (float)address.getLongitude();
+            if(addressList.size() != 0){
+                Address address = addressList.get(0);
+                LatLng latLng = new LatLng(address.getLatitude() , address.getLongitude());
+                mMap.clear();
+                mMap.addMarker(new MarkerOptions().position(latLng).title("Marker"));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+                latitude = (float)address.getLatitude();
+                longtitude = (float)address.getLongitude();
+            }
+
         }
 
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -185,7 +200,7 @@ public class StrollNotificationFragment extends Fragment implements OnMapReadyCa
             mMap.clear();
         }
 
-        List<Address> addressList = null;
+        List<Address> addressList = new ArrayList<>();
         if(location != null && !location.equals(""))
         {
             Geocoder geocoder = new Geocoder(getContext());
@@ -218,8 +233,6 @@ public class StrollNotificationFragment extends Fragment implements OnMapReadyCa
 
             String url ="http://10.0.2.2:8080/user/"+ toString().valueOf(userId);
         Log.e("url", url);
-            JavaNetCookieJar javaNetCookieJar = new JavaNetCookieJar(CookieHandler.getDefault());
-            OkHttpClient client = new OkHttpClient.Builder().cookieJar(javaNetCookieJar).build();
 
             Gson gson = new Gson();
 
@@ -263,8 +276,6 @@ public class StrollNotificationFragment extends Fragment implements OnMapReadyCa
     public void initializeStrollData(){
 
         String url ="http://10.0.2.2:8080/adv/"+ toString().valueOf(strollId);
-        JavaNetCookieJar javaNetCookieJar = new JavaNetCookieJar(CookieHandler.getDefault());
-        OkHttpClient client = new OkHttpClient.Builder().cookieJar(javaNetCookieJar).build();
 
         Gson gson = new Gson();
 
@@ -307,8 +318,6 @@ public class StrollNotificationFragment extends Fragment implements OnMapReadyCa
     public void makeStroll(){
 
         String url ="http://10.0.2.2:8080/stroll/makeStroll";
-        JavaNetCookieJar javaNetCookieJar = new JavaNetCookieJar(CookieHandler.getDefault());
-        OkHttpClient client = new OkHttpClient.Builder().cookieJar(javaNetCookieJar).build();
 
         Gson gson = new Gson();
 
@@ -384,11 +393,17 @@ public class StrollNotificationFragment extends Fragment implements OnMapReadyCa
                 @Override
                 public void run() {
                     advData = advertisementData;
+                    Log.e("adv id", advData.getUserId().toString());
                     strollStartTimeView.setText(strollStartTimeView.getText().toString() + " " + advData.getStrollStartTime());
                     strollEndTimeView.setText(strollEndTimeView.getText().toString() + " " + advData.getStrollEndTime());
                     locationView.setText(locationView.getText().toString()+" " + advData.getLocation().getDescription());
                     location = advData.getLocation().getDescription();
-                    updateMap();
+                    try {
+                        updateMap();
+                    }catch (Exception ex){
+                        Log.d("err", "err");
+                    }
+
                 }
             });
         }

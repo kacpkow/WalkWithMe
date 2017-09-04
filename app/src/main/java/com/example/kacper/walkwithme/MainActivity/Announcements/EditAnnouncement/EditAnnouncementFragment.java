@@ -30,6 +30,7 @@ import android.widget.TimePicker;
 import com.example.kacper.walkwithme.Model.AdvertisementData;
 import com.example.kacper.walkwithme.Model.LocationData;
 import com.example.kacper.walkwithme.R;
+import com.example.kacper.walkwithme.RequestController;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -70,6 +71,8 @@ public class EditAnnouncementFragment extends Fragment {
     TextView strollEndTimeView;
     TextView strollDescriptionView;
 
+    OkHttpClient client;
+
     private Calendar calendar;
     private int year, month, day, hour, minute;
 
@@ -88,6 +91,7 @@ public class EditAnnouncementFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View v = inflater.inflate(R.layout.fragment_edit_announcement, container, false);
+        client = RequestController.getInstance().getClient();
         editStartTimeButton = (ImageButton)v.findViewById(R.id.strollStartTimeButton);
         editEndTimeButton = (ImageButton)v.findViewById(R.id.strollEndTimeButton);
         editLocationButton = (ImageButton)v.findViewById(R.id.strollLocationButton);
@@ -111,6 +115,9 @@ public class EditAnnouncementFragment extends Fragment {
         }
         else if(getArguments().getString("privacy").equals("hide")){
             privacySpinner.setSelection(2);
+        }
+        else{
+            privacySpinner.setSelection(0);
         }
 
         calendar = Calendar.getInstance();
@@ -237,6 +244,7 @@ public class EditAnnouncementFragment extends Fragment {
         LocationData locationData = new LocationData();
         locationData.setDescription(strollLocationView.getText().toString());
 
+        //TO DO
         //DO ZMIANY!
         locationData.setLocation_id(getArguments().getInt("locationId"));
 
@@ -246,7 +254,6 @@ public class EditAnnouncementFragment extends Fragment {
         changedAdvertisementData.setLocation(locationData);
 
         String url ="http://10.0.2.2:8080/adv";
-        OkHttpClient client = new OkHttpClient();
         Gson gson = new Gson();
         MediaType mediaType = MediaType.parse("application/json");
 

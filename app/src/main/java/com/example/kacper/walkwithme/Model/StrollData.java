@@ -5,7 +5,7 @@ package com.example.kacper.walkwithme.Model;
  */
 
 public class StrollData {
-    private int StrollId;
+    private int strollId;
     private LocationData location;
     private String info;
     private String data_start;
@@ -18,7 +18,7 @@ public class StrollData {
     }
 
     public StrollData(int strollId, LocationData location, String info, String data_start, String data_end, String status, String privacy, int[] users) {
-        StrollId = strollId;
+        this.strollId = strollId;
         this.location = location;
         this.info = info;
         this.data_start = data_start;
@@ -86,10 +86,10 @@ public class StrollData {
     }
 
     public int getStrollId() {
-        return StrollId;
+        return strollId;
     }
 
     public void setStrollId(int strollId) {
-        StrollId = strollId;
+        this.strollId = strollId;
     }
 }

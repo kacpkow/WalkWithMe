@@ -25,6 +25,7 @@ import com.example.kacper.walkwithme.MainActivity.Announcements.MakeAnnouncement
 import com.example.kacper.walkwithme.MainActivity.SimpleDividerItemDecoration;
 import com.example.kacper.walkwithme.Model.AdvertisementData;
 import com.example.kacper.walkwithme.R;
+import com.example.kacper.walkwithme.RequestController;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
@@ -44,7 +45,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class AnnouncementFragment extends Fragment {
+public class AnnouncementFragment extends Fragment implements AnnouncementsView {
     private RecyclerView rv;
     private Integer userId;
     private List<AdvertisementData> advertisementDataList;
@@ -52,12 +53,19 @@ public class AnnouncementFragment extends Fragment {
     private Integer selection;
     private FloatingActionButton addAnnouncementButton;
     private Button searchButton;
+    private AnnouncementsAdapter adapter;
+    private AnnouncementsPresenter presenter;
+
+    OkHttpClient client;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
+        super.onCreateView(inflater, container, savedInstanceState);
         View rootView = inflater.inflate(R.layout.fragment_announcement, container, false);
+
+        client = RequestController.getInstance().getClient();
 
         rv = (RecyclerView) rootView.findViewById(R.id.rvAnnouncements);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
@@ -111,6 +119,8 @@ public class AnnouncementFragment extends Fragment {
         SharedPreferences settings = this.getActivity().getSharedPreferences("userId", Context.MODE_PRIVATE);
         userId = settings.getInt("ID", 0);
 
+        presenter = new AnnouncementsPresenterImpl(this);
+
         initializeData();
         initializeAdapter();
 
@@ -128,7 +138,7 @@ public class AnnouncementFragment extends Fragment {
     }
 
     private void initializeAdapter() {
-        AnnouncementsAdapter adapter = new AnnouncementsAdapter(advertisementDataList, this.getContext(), userId);
+        adapter = new AnnouncementsAdapter(advertisementDataList, this.getContext(), userId, presenter);
         rv.setAdapter(adapter);
     }
 
@@ -138,7 +148,7 @@ public class AnnouncementFragment extends Fragment {
 
                 @Override
                 public void run() {
-                    initializeAdapter();
+                    adapter.notifyDataSetChanged();
                 }
             });
         }
@@ -167,7 +177,6 @@ public class AnnouncementFragment extends Fragment {
             url = "http://10.0.2.2:8080/adv/friends";
         }
 
-        OkHttpClient client = new OkHttpClient();
         Gson gson = new Gson();
         MediaType mediaType = MediaType.parse("application/json");
 
@@ -219,5 +228,10 @@ public class AnnouncementFragment extends Fragment {
                 }
             }
         });
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
     }
 }

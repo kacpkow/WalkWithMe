@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.kacper.walkwithme.LoginActivity.LoginActivity;
+import com.example.kacper.walkwithme.Model.RegistrationForm;
 import com.example.kacper.walkwithme.R;
 
 import java.lang.String;
@@ -18,13 +19,14 @@ public class RegistrationActivity extends AppCompatActivity implements Registrat
 
     private RegistrationPresenter presenter;
 
-    private EditText login;
+    private EditText nick;
     private EditText firstPassword;
     private EditText secondPassword;
     private EditText firstName;
     private EditText lastName;
     private EditText city;
     private EditText email;
+    private EditText dateOfBirth;
     private Button registerButton;
 
     @Override
@@ -32,10 +34,11 @@ public class RegistrationActivity extends AppCompatActivity implements Registrat
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        login = (EditText) findViewById(R.id.loginTextField);
+        nick = (EditText) findViewById(R.id.loginTextField);
         firstName = (EditText) findViewById(R.id.firstNameTextField);
         lastName = (EditText) findViewById(R.id.lastNameTextField);
         city = (EditText) findViewById(R.id.cityTextField);
+        dateOfBirth = (EditText) findViewById(R.id.dateOfBirthTextField);
         firstPassword = (EditText) findViewById(R.id.firstPasswordTextField);
         secondPassword = (EditText) findViewById(R.id.secondPasswordTextField);
         email = (EditText) findViewById(R.id.emailTextField);
@@ -44,16 +47,22 @@ public class RegistrationActivity extends AppCompatActivity implements Registrat
         presenter = new RegistrationPresenterImpl(this);
         registerButton.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                boolean registeredCheck = presenter.register(
-                        login.getText().toString(),
-                        firstPassword.getText().toString(),
-                        secondPassword.getText().toString(),
-                        email.getText().toString());
+                RegistrationForm form = new RegistrationForm();
+                form.setFirstName(firstName.getText().toString());
+                form.setLastName(lastName.getText().toString());
+                form.setNick(nick.getText().toString());
+                form.setCity(city.getText().toString());
+                form.setMail(email.getText().toString());
+                form.setDate(dateOfBirth.getText().toString());
+                form.setPassword(firstPassword.getText().toString());
 
-                if(registeredCheck){
-                    presenter.setFlag(0);
-                    goToLoginScreen();
+                if(secondPassword.getText().toString().equals(firstPassword.getText().toString())){
+                    presenter.register(form);
                 }
+                else{
+                    Toast.makeText(getApplicationContext(), "Second password is not the same as first", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
     }
@@ -77,6 +86,11 @@ public class RegistrationActivity extends AppCompatActivity implements Registrat
     @Override
     public Context getAppContext() {
         return getActivityContext();
+    }
+
+    @Override
+    public void finishActivity() {
+        finish();
     }
 
 }

@@ -19,7 +19,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.kacper.walkwithme.Model.NotificationData;
+import com.example.kacper.walkwithme.PersonDetails.PersonDetailsFragment;
 import com.example.kacper.walkwithme.R;
+import com.example.kacper.walkwithme.RequestController;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -38,8 +40,9 @@ import okhttp3.RequestBody;
 
 public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdapter.StrollRequestViewHolder> {
     private Context mContext;
+    private OkHttpClient client = RequestController.getInstance().getClient();
 
-    public static class StrollRequestViewHolder extends RecyclerView.ViewHolder {
+    public class StrollRequestViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         CardView cv;
         TextView personName;
@@ -70,13 +73,12 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
             acceptButton = (ImageButton)itemView.findViewById(R.id.buttonAccept);
             declineButton = (ImageButton)itemView.findViewById(R.id.buttonDecline);
 
-            cv.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            itemView.setOnClickListener(this);
+        }
 
-                    getAdapterPosition();
-                }
-            });
+        @Override
+        public void onClick(View v) {
+            checkNotification(notificationId);
         }
     }
 
@@ -89,10 +91,12 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
     }
 
     List<NotificationData> notificationDataList;
+    NotificationsPresenter presenter;
 
-    NotificationsAdapter(List<NotificationData> notificationData, Context mContext){
+    NotificationsAdapter(List<NotificationData> notificationData, Context mContext, NotificationsPresenter presenter){
         this.notificationDataList = notificationData;
         this.mContext = mContext;
+        this.presenter = presenter;
     }
 
     @Override
@@ -113,6 +117,8 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         Glide.with(mContext).load(notificationDataList.get(i).getSender().getPhoto_url())
                 .into(strollRequestViewHolder.personPhoto);
 
+        Log.e("initialized", "1");
+
         if(notificationDataList.get(i).getType().equals("Stroll")){
             strollRequestViewHolder.invitationType.setText("stroll");
         }
@@ -132,7 +138,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                 notificationDataList.remove(i);
                 notificationDataList.add(notificationDataList.size(), notificationData);
 
-                notifyDataSetChanged();
+                presenter.refreshAdapterElements();
             }
         });
 
@@ -150,6 +156,8 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                     checkNotification(strollRequestViewHolder.notificationId);
                     acceptFriend(strollRequestViewHolder.getAdapterPosition());
                 }
+
+                presenter.refreshAdapterElements();
             }
         });
 
@@ -176,6 +184,26 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
                 }
             });
         }
+        else{
+            strollRequestViewHolder.cv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    FragmentManager fm = ((AppCompatActivity)mContext).getSupportFragmentManager();
+                    FragmentTransaction ft = fm.beginTransaction();
+                    PersonDetailsFragment newFragment = new PersonDetailsFragment();
+                    Fragment f = ((AppCompatActivity)mContext).getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+
+                    Bundle args = new Bundle();
+                    args.putInt("USER_ID_1", notificationDataList.get(i).getSender().getUser_id());
+
+                    newFragment.setArguments(args);
+
+                    ft.replace(R.id.fragment_container, newFragment);
+                    ft.addToBackStack(null);
+                    ft.commit();
+                }
+            });
+        }
     }
 
 
@@ -183,7 +211,6 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
     public void checkNotification(Integer requestId){
 
         String url ="http://10.0.2.2:8080/notification/" + toString().valueOf(requestId);
-        OkHttpClient client = new OkHttpClient();
 
         Gson gson = new Gson();
 
