@@ -15,6 +15,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +26,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.kacper.walkwithme.Model.AdvertisementData;
 import com.example.kacper.walkwithme.Model.StrollData;
 import com.example.kacper.walkwithme.Model.UserProfileData;
@@ -230,56 +233,45 @@ public class StrollNotificationFragment extends Fragment implements OnMapReadyCa
     }
 
     public void initializeSenderData(){
-
-            String url ="http://10.0.2.2:8080/user/"+ toString().valueOf(userId);
+        String url = getString(R.string.service_address) + "user/"+ toString().valueOf(userId);
         Log.e("url", url);
 
-            Gson gson = new Gson();
+        final Request request;
+        request = new Request.Builder()
+                .url(url)
+                .addHeader("content-type", "application/json")
+                .build();
 
-            MediaType mediaType = MediaType.parse("application/json");
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
 
-            final Request request;
-            request = new Request.Builder()
-                    .url(url)
-                    .addHeader("content-type", "application/json")
-                    .build();
+            }
 
-            Call call = client.newCall(request);
-            call.enqueue(new Callback() {
-                @Override
-                public void onFailure(Call call, IOException e) {
+            @Override
+            public void onResponse(Call call, okhttp3.Response response) throws IOException {
+                Gson retGson = new Gson();
+                String json = response.body().string();
 
+                try{
+
+                    UserProfileData usr = retGson.fromJson(json, UserProfileData.class);
+                    backgroundThreadInitializeSender(getContext(), usr);
+
+                }catch (JsonSyntaxException e){
+                    Log.e("exception", e.getLocalizedMessage());
                 }
 
-                @Override
-                public void onResponse(Call call, okhttp3.Response response) throws IOException {
-                    Gson retGson = new Gson();
-                    String json = response.body().string();
-                    Log.e("json", json);
 
-                    try{
-
-                        UserProfileData usr = retGson.fromJson(json, UserProfileData.class);
-                        backgroundThreadInitializeSender(getContext(), usr);
-
-
-                    }catch (JsonSyntaxException e){
-                        Log.e("exception", e.getLocalizedMessage());
-                    }
-
-
-                }
-            });
+            }
+        });
 
     }
 
     public void initializeStrollData(){
 
-        String url ="http://10.0.2.2:8080/adv/"+ toString().valueOf(strollId);
-
-        Gson gson = new Gson();
-
-        MediaType mediaType = MediaType.parse("application/json");
+        String url = getString(R.string.service_address) + "adv/"+ toString().valueOf(strollId);
 
         final Request request;
         request = new Request.Builder()
@@ -317,15 +309,13 @@ public class StrollNotificationFragment extends Fragment implements OnMapReadyCa
 
     public void makeStroll(){
 
-        String url ="http://10.0.2.2:8080/stroll/makeStroll";
+        String url = getString(R.string.service_address) + "stroll/makeStroll";
 
         Gson gson = new Gson();
 
         MediaType mediaType = MediaType.parse("application/json");
 
         SharedPreferences settings = getActivity().getSharedPreferences("userId", Context.MODE_PRIVATE);
-        int[] arr = {advData.getUserId(), settings.getInt("ID", 0)};
-        arr[0] = advData.getUserId();
 
         StrollData strollData = new StrollData();
 
@@ -343,7 +333,7 @@ public class StrollNotificationFragment extends Fragment implements OnMapReadyCa
         }
         strollData.setLocation(advData.getLocation());
         strollData.setStrollId(0);
-        strollData.setUsers(arr);
+        strollData.setUser(advData.getUserId());
         strollData.setStatus("activ");
 
         RequestBody requestBody = RequestBody.create(mediaType, gson.toJson(strollData));
@@ -364,7 +354,7 @@ public class StrollNotificationFragment extends Fragment implements OnMapReadyCa
 
             @Override
             public void onResponse(Call call, okhttp3.Response response) throws IOException {
-                Log.e("response make stroll", response.body().string());
+
             }
         });
 
@@ -378,7 +368,11 @@ public class StrollNotificationFragment extends Fragment implements OnMapReadyCa
                 @Override
                 public void run() {
                     senderName.setText(senderName.getText().toString() + " " + user.getFirstName() + " " +user.getLastName());
-                    Glide.with(getContext()).load(user.getPhoto_url())
+                    
+                    Glide.with(getContext())
+                            .load(Base64.decode(user.getPhoto_url(), Base64.DEFAULT))
+                            .apply(new RequestOptions()
+                                    .diskCacheStrategy(DiskCacheStrategy.NONE))
                             .into(personPhoto);
                 }
             });

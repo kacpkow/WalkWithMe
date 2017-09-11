@@ -5,5 +5,5 @@ package com.example.kacper.walkwithme.MainActivity.Announcements;
  */
 
 public interface AnnouncementsView {
-
+    void refreshElements();
 }

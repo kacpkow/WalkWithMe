@@ -35,8 +35,8 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.example.kacper.walkwithme.LoginActivity.LoginContent;
 import com.example.kacper.walkwithme.Model.PasswordForm;
-import com.example.kacper.walkwithme.Model.Person;
 import com.example.kacper.walkwithme.Model.PhotoData;
 import com.example.kacper.walkwithme.Model.PhotoDataDeserializer;
 import com.example.kacper.walkwithme.Model.UserData;
@@ -45,16 +45,10 @@ import com.example.kacper.walkwithme.Model.UserProfileDataDeserializer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
 
 
 import okhttp3.Call;
@@ -70,6 +64,8 @@ public class PersonProfileSettings extends AppCompatActivity{
 
     private Button uploadImgButton;
     private ImageView imageView;
+
+    Dialog dialog;
 
     private TextView firstName;
     private TextView lastName;
@@ -109,6 +105,8 @@ public class PersonProfileSettings extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_person_profile_settings);
         client = RequestController.getInstance().getClient();
+
+
 
         imageView = (ImageView)findViewById(R.id.userImage);
         uploadImgButton = (Button)findViewById(R.id.uploadPhotoButton);
@@ -196,7 +194,7 @@ public class PersonProfileSettings extends AppCompatActivity{
     }
 
     public void updatePassword(){
-        final Dialog dialog = new Dialog(PersonProfileSettings.this);
+        dialog = new Dialog(PersonProfileSettings.this);
         dialog.setContentView(R.layout.dialog_change_password);
         dialog.setTitle("Change password");
 
@@ -218,7 +216,13 @@ public class PersonProfileSettings extends AppCompatActivity{
                 pwdF.setNewPassword(newPasswordEditText.getText().toString());
                 pwdF.setConfirmPassword(confirmationPasswordEditText.getText().toString());
 
-                requestChangePassword(pwdF);
+                if(pwdF.getNewPassword().equals(pwdF.getConfirmPassword())){
+                    requestChangePassword(pwdF);
+                }
+                else{
+                    Toast.makeText(PersonProfileSettings.this, "Password not changed, password confirmation and new password must be the same", Toast.LENGTH_LONG).show();
+                }
+
             }
         });
 
@@ -234,13 +238,13 @@ public class PersonProfileSettings extends AppCompatActivity{
         dialog.show();
     }
 
-    public void requestChangePassword(PasswordForm pwdF){
-        String url ="http://10.0.2.2:8080/user/updatePassword";
+    public void requestChangePassword(final PasswordForm pwdF){
+        String url = getString(R.string.service_address) + "user/updatePassword";
 
         Gson gson = new Gson();
 
         MediaType mediaType = MediaType.parse("application/json");
-        PasswordForm pwdForm = pwdF;
+        final PasswordForm pwdForm = pwdF;
 
         RequestBody requestBody = RequestBody.create(mediaType, gson.toJson(pwdForm));
 
@@ -255,15 +259,28 @@ public class PersonProfileSettings extends AppCompatActivity{
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
+                Log.e("password", "failure");
                 backgroundThreadShowDialog(getApplicationContext(), "Password not changed, try again");
             }
 
             @Override
             public void onResponse(Call call, okhttp3.Response response) throws IOException {
 
+                Log.e("password", response.body().string());
                 if(response.code() == 200){
 
                    backgroundThreadShowDialog(getApplicationContext(), "Password changed successfully");
+                    SharedPreferences preferences = getApplicationContext().getSharedPreferences("CREDENTIALS", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = preferences.edit();
+                    String json = preferences.getString("values", "");
+                    if(json != null){
+                        Gson gson = new Gson();
+                        LoginContent log = gson.fromJson(json, LoginContent.class);
+                        log.setPassword(pwdForm.getNewPassword());
+                        String jsonSave = gson.toJson(log);
+                        editor.putString("values", jsonSave);
+                    }
+                    backgroundThreadCloseDialog(getApplicationContext());
 
                 }
                 else{
@@ -297,14 +314,12 @@ public class PersonProfileSettings extends AppCompatActivity{
     }
 
     public void loadPhoto(){
-        String url ="http://10.0.2.2:8080/profile/photo";
+        String url = getString(R.string.service_address) + "profile/photo";
 
         // Configure Gson
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(PhotoData.class, new PhotoDataDeserializer());
         final Gson retGson = gsonBuilder.create();
-
-        MediaType mediaType = MediaType.parse("application/json");
 
         final Request request;
         request = new Request.Builder()
@@ -327,11 +342,9 @@ public class PersonProfileSettings extends AppCompatActivity{
 
                 if(response.code() == 200){
                     try{
-                        Log.e("photo", json);
                         PhotoData photos = retGson.fromJson(json, PhotoData.class);
                         photo1 = photos;
                         backgroundThreadSetImage(PersonProfileSettings.this, photos);
-                        Log.e("photId", photos.getData().toString());
                     }catch(Exception ex){
                         Log.e("ex", ex.getLocalizedMessage());
                     }
@@ -419,7 +432,7 @@ public class PersonProfileSettings extends AppCompatActivity{
 
     public void saveDescription(){
 
-        String url ="http://10.0.2.2:8080/profile/description";
+        String url = getString(R.string.service_address) + "profile/description";
 
         String userDescription = String.valueOf(description.getText());
         MediaType mediaType = MediaType.parse("application/json");
@@ -443,8 +456,6 @@ public class PersonProfileSettings extends AppCompatActivity{
 
             @Override
             public void onResponse(Call call, okhttp3.Response response) throws IOException {
-                //Gson retGson = new Gson();
-                //String json = response.body().string();
 
                 if(response.code() == 200){
 
@@ -455,7 +466,7 @@ public class PersonProfileSettings extends AppCompatActivity{
 
     public void savePhoto(Bitmap img){
 
-        String url ="http://10.0.2.2:8080/profile/photo";
+        String url = getString(R.string.service_address) + "profile/photo";
         try {
             inputStream.reset();
         } catch (IOException e) {
@@ -506,7 +517,7 @@ public class PersonProfileSettings extends AppCompatActivity{
     }
 
     public void saveUserData(){
-        String url ="http://10.0.2.2:8080/user/updateData";
+        String url = getString(R.string.service_address)+ "user/updateData";
 
         Gson gson = new Gson();
 
@@ -519,6 +530,7 @@ public class PersonProfileSettings extends AppCompatActivity{
 
         SharedPreferences settings = getSharedPreferences("userLocation", Context.MODE_PRIVATE);
         userData.setCity(settings.getString("description", ""));
+        Log.e("city", userData.getCity());
 
         RequestBody requestBody = RequestBody.create(mediaType, gson.toJson(userData));
 
@@ -538,9 +550,8 @@ public class PersonProfileSettings extends AppCompatActivity{
 
             @Override
             public void onResponse(Call call, okhttp3.Response response) throws IOException {
-                Gson retGson = new Gson();
                 //progressDialog.dismiss();
-                String json = response.body().string();
+                Log.e("log", response.body().string());
 
                 if(response.code() == 200){
 
@@ -568,16 +579,26 @@ public class PersonProfileSettings extends AppCompatActivity{
         }
     }
 
+    public void backgroundThreadCloseDialog(final Context context) {
+        if (context != null) {
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+
+                @Override
+                public void run() {
+                    dialog.dismiss();
+                }
+            });
+        }
+    }
+
 
     public void getUserData(String userId){
 
-        String url ="http://10.0.2.2:8080/user/" + userId;
+        String url = getString(R.string.service_address) + "user/" + userId;
 
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(UserProfileData.class, new UserProfileDataDeserializer());
         final Gson retGson = gsonBuilder.create();
-
-        MediaType mediaType = MediaType.parse("application/json");
 
         final Request request;
         request = new Request.Builder()
@@ -602,14 +623,11 @@ public class PersonProfileSettings extends AppCompatActivity{
                 if(response.code() == 200){
                     try{
                         user = retGson.fromJson(json, UserProfileData.class);
+                        backgroundThreadChangeUserData(getApplicationContext());
+                        loadPhoto();
                     }catch(Exception ex){
                         Log.e("err", ex.getLocalizedMessage());
                     }
-
-
-
-                    backgroundThreadChangeUserData(getApplicationContext());
-                    loadPhoto();
 
                 }
             }
@@ -741,59 +759,6 @@ public class PersonProfileSettings extends AppCompatActivity{
         }
 
     }
-
-//    void saveData(){
-//        //progressDialog = new ProgressDialog(loginView.getActivityContext());
-//        //progressDialog.setTitle("Logging, please wait ...");
-//        //progressDialog.show();
-//        String url ="http://10.0.2.2:8080/user/updateData";
-//
-//        Gson gson = new Gson();
-//
-//        MediaType mediaType = MediaType.parse("application/json");
-//
-//        UserDataResource usrDataResource = new UserDataResource();
-//        usrDataResource.setFirstName(firstName.getText().toString());
-//        usrDataResource.setLastName(lastName.getText().toString());
-//
-//        /*TO DO
-//        * change It*/
-//        usrDataResource.setCity(user.getNick().toString());
-//        usrDataResource.setDate(dateOfBirth.getText().toString());
-//
-//        RequestBody requestBody = RequestBody.create(mediaType, gson.toJson(usrDataResource));
-//
-//        final Request request;
-//        request = new Request.Builder()
-//                .url(url)
-//                .post(requestBody)
-//                .addHeader("content-type", "application/json")
-//                .build();
-//
-//        Call call = client.newCall(request);
-//        call.enqueue(new Callback() {
-//            @Override
-//            public void onFailure(Call call, IOException e) {
-//                //progressDialog.dismiss();
-//                backgroundThreadShortToast(getApplicationContext(), "Error in saving changes occured");
-//            }
-//
-//            @Override
-//            public void onResponse(Call call, okhttp3.Response response) throws IOException {
-//                Gson retGson = new Gson();
-//                //progressDialog.dismiss();
-//
-//                if(response.code() == 200){
-//                    //getUser();
-//                }
-//                else{
-//                    //backgroundThreadShortToast(loginView.getAppContext(),"bad logging data 1");
-//                }
-//
-//            }
-//        });
-//
-//    }
 
     public static void backgroundThreadShortToast(final Context context,
                                                   final String msg) {

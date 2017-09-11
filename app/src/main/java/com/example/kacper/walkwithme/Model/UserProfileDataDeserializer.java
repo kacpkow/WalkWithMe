@@ -47,7 +47,6 @@ public class UserProfileDataDeserializer implements JsonDeserializer<UserProfile
 
         final JsonElement jsonPhotoUrl = jsonObject.get("photo_url");
         final String photoUrl = jsonPhotoUrl.getAsString();
-        //final byte[] photoUrlByte = photoUrl.getBytes(Charset.forName("UTF-8"));
 
         final JsonElement jsonEmail = jsonObject.get("email");
         final String email = jsonEmail.getAsString();

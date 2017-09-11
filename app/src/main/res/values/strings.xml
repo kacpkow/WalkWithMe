@@ -5,6 +5,8 @@
     <string name="maps_activity_title">Localisation</string>
     <string name="profile_title">Profile</string>
 
+    <string name="service_address">http://10.0.2.2:8080/</string>
+    <!--<string name="service_address">http://89.25.207.34:8100/</string>-->
 
     <!-- Strings related to Settings -->
 

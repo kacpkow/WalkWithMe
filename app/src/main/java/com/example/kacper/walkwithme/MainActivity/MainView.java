@@ -1,28 +1,38 @@
 package com.example.kacper.walkwithme.MainActivity;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
+import android.os.Handler;
+import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 
-import com.example.kacper.walkwithme.LoginActivity.LoginActivity;
 import com.example.kacper.walkwithme.MainActivity.Announcements.AnnouncementFragment;
 import com.example.kacper.walkwithme.MainActivity.Chat.ChatFragment;
 import com.example.kacper.walkwithme.MainActivity.ForthcomingAppointments.ForcomingAppointmentsFragment;
 import com.example.kacper.walkwithme.MainActivity.PersonsList.PersonsListFragment;
 import com.example.kacper.walkwithme.MainActivity.Notifications.NotificationsFragment;
+import com.example.kacper.walkwithme.Model.JsonHelper;
+import com.example.kacper.walkwithme.Model.MessageNotifications;
+import com.example.kacper.walkwithme.Services.NotificationChecker;
+import com.example.kacper.walkwithme.Services.NotificationCheckerCallbacks;
 import com.example.kacper.walkwithme.R;
-import com.example.kacper.walkwithme.RequestController;
 import com.example.kacper.walkwithme.SettingsActivity.SettingsActivity;
 
-public class MainView extends AppCompatActivity {
+import java.util.HashMap;
+import java.util.Map;
+
+public class MainView extends AppCompatActivity implements NotificationCheckerCallbacks{
 
     private ImageButton chatButton;
     private ImageButton settingsButton;
@@ -31,54 +41,69 @@ public class MainView extends AppCompatActivity {
     private ImageButton notificationsButton;
     private ImageButton getAnnouncementsButton;
 
+    private boolean launchMessagesWithNotification = false;
+
+    String jsonMap;
+
     private int userId;
     private int currentFragmentOrdinal;
 
-    String logState;
+    private NotificationChecker notificationChecker;
+    private boolean boundNotifications = false;
 
-//    @Override
-//    public void onBackPressed(){
-//
-//        android.support.v4.app.Fragment f = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-//        if ((f instanceof PersonsListFragment) || (f instanceof AnnouncementFragment) || (f instanceof ChatFragment)  || (f instanceof ForcomingAppointmentsFragment) || (f instanceof NotificationsFragment) ){
-//            finish();
-//        }
-//    }
+    long startTimeNotifications = 0;
+    Handler timerHandlerNotifications = new Handler();
+    Runnable timerRunnableNotifications = new Runnable() {
+
+        @Override
+        public void run() {
+            long millis = System.currentTimeMillis() - startTimeNotifications;
+            int seconds = (int) (millis / 1000);
+            int minutes = seconds / 60;
+            seconds = seconds % 60;
+
+            if(boundNotifications){
+                notificationChecker.checkNotifications();
+                notificationChecker.checkMessages();
+            }
+
+            timerHandlerNotifications.postDelayed(this, 30000);
+        }
+    };
+
+    @Override
+    public void onBackPressed(){
+
+        super.onBackPressed();
+    }
 
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        userId = getIntent().getIntExtra("USER_ID", 0);
-        SharedPreferences settings = getSharedPreferences
-                ("USER_ID", Context.MODE_PRIVATE);
-        logState = settings.getString("state", "logged");
-        if(RequestController.getInstance().getState() == false){
-            finish();
-            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-            startActivity(intent);
-        }
 
         setContentView(R.layout.activity_main);
-
         chatButton = (ImageButton) findViewById(R.id.chatButton);
         settingsButton = (ImageButton) findViewById(R.id.settingsButton);
-        //chatNotificationsView = (TextView) findViewById(R.id.chatNotification);
         notificationsButton = (ImageButton) findViewById(R.id.notificationsButton);
         peopleButton = (ImageButton) findViewById(R.id.personButton);
         homeButton = (ImageButton) findViewById(R.id.homeButton);
         getAnnouncementsButton = (ImageButton)findViewById(R.id.getAnnouncementsButton);
         final Animation animScaleButton = AnimationUtils.loadAnimation(this, R.anim.anim_press_menu_button);
-
+        SharedPreferences settings = getApplicationContext().getSharedPreferences("USER_ID", Context.MODE_PRIVATE);
+        userId = settings.getInt("userId", 0);
         final Bundle bundle = new Bundle();
         bundle.putInt("USER_ID", userId);
+
+        Intent intent = new Intent(this, NotificationChecker.class);
+        bindService(intent, serviceConnectionNotifications, Context.BIND_AUTO_CREATE);
 
         if (savedInstanceState != null) {
             return;
         }
 
         ForcomingAppointmentsFragment firstFragment = new ForcomingAppointmentsFragment();
-        firstFragment.setArguments(getIntent().getExtras());
+        firstFragment.setArguments(bundle);
 
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.fragment_container, firstFragment).commit();
@@ -178,6 +203,10 @@ public class MainView extends AppCompatActivity {
                         getAnnouncementsButton.setColorFilter(0xffffffff, PorterDuff.Mode.MULTIPLY);
 
                         ChatFragment newFragment = new ChatFragment();
+                        if(launchMessagesWithNotification){
+                            bundle.putString("messageNotifications", jsonMap);
+                            launchMessagesWithNotification = false;
+                        }
                         newFragment.setArguments(bundle);
                         android.support.v4.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
@@ -330,4 +359,68 @@ public class MainView extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        // Unbind from service
+        if (boundNotifications) {
+            notificationChecker.setCallbacks(null); // unregister
+            unbindService(serviceConnectionNotifications);
+            boundNotifications = false;
+        }
+    }
+
+    private ServiceConnection serviceConnectionNotifications = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            // cast the IBinder and get MyService instance
+            NotificationChecker.LocalBinder binder = (NotificationChecker.LocalBinder) service;
+            notificationChecker = binder.getService();
+            boundNotifications = true;
+            notificationChecker.setCallbacks(MainView.this); // register
+            timerHandlerNotifications.postDelayed(timerRunnableNotifications, 0);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            boundNotifications = false;
+        }
+    };
+
+    @Override
+    public void onDestroy(){
+        timerHandlerNotifications.removeCallbacks(timerRunnableNotifications);
+        super.onDestroy();
+    }
+    @Override
+    public void onPause(){
+        timerHandlerNotifications.removeCallbacks(timerRunnableNotifications);
+        super.onPause();
+    }
+    @Override
+    public void onResume(){
+        timerHandlerNotifications.postDelayed(timerRunnableNotifications, 0);
+        super.onResume();
+    }
+
+
+    @Override
+    public void updateNotificationFromNotifications() {
+        android.support.v4.app.Fragment f = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        if (!(f instanceof NotificationsFragment)){
+            notificationsButton.setColorFilter(0xff0000ff, PorterDuff.Mode.MULTIPLY);
+        }
+    }
+
+    @Override
+    public void updateMessageNotificationsFromService(String json) {
+        android.support.v4.app.Fragment f = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        if (!(f instanceof ChatFragment)){
+            chatButton.setColorFilter(0xff0000ff, PorterDuff.Mode.MULTIPLY);
+        }
+
+        launchMessagesWithNotification = true;
+        jsonMap = json;
+    }
 }

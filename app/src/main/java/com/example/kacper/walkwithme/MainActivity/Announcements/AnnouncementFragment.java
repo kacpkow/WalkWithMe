@@ -35,6 +35,7 @@ import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import okhttp3.Call;
@@ -122,12 +123,10 @@ public class AnnouncementFragment extends Fragment implements AnnouncementsView 
         presenter = new AnnouncementsPresenterImpl(this);
 
         initializeData();
-        initializeAdapter();
 
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                advertisementDataList.clear();
                 initializeData();
                 initializeAdapter();
             }
@@ -148,7 +147,7 @@ public class AnnouncementFragment extends Fragment implements AnnouncementsView 
 
                 @Override
                 public void run() {
-                    adapter.notifyDataSetChanged();
+                    initializeAdapter();
                 }
             });
         }
@@ -167,18 +166,14 @@ public class AnnouncementFragment extends Fragment implements AnnouncementsView 
 
     public void initializeData() {
         String url;
-        Log.e("selection", selection.toString());
 
         if (selection == 0) {
-            url = "http://10.0.2.2:8080/adv";
+            url = getString(R.string.service_address) + "adv";
         } else if (selection == 1) {
-            url = "http://10.0.2.2:8080/adv/all";
+            url = getString(R.string.service_address) + "adv/all";
         } else {
-            url = "http://10.0.2.2:8080/adv/friends";
+            url = getString(R.string.service_address) + "adv/friends";
         }
-
-        Gson gson = new Gson();
-        MediaType mediaType = MediaType.parse("application/json");
 
         final Request request;
         request = new Request.Builder()
@@ -196,6 +191,7 @@ public class AnnouncementFragment extends Fragment implements AnnouncementsView 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String jsonResponse = response.body().string();
+                Log.e("jsonResp", jsonResponse);
 
                 if (jsonResponse != null) {
                     Gson objGson = new GsonBuilder().setPrettyPrinting().create();
@@ -205,26 +201,15 @@ public class AnnouncementFragment extends Fragment implements AnnouncementsView 
                     try {
                         List<AdvertisementData> readFromJson = objGson.fromJson(jsonResponse, listType);
                         if (readFromJson != null) {
-                            for (AdvertisementData advertisementDataData : readFromJson
-                                    ) {
-                                AdvertisementData advertisementData = new AdvertisementData();
-                                advertisementData.setLocation(advertisementDataData.getLocation());
-                                advertisementData.setStrollStartTime(advertisementDataData.getStrollStartTime());
-                                advertisementData.setStrollEndTime(advertisementDataData.getStrollEndTime());
-                                advertisementData.setUserId(advertisementDataData.getUserId());
-                                advertisementData.setAdId(advertisementDataData.getAdId());
-                                advertisementData.setAdEndTime(advertisementDataData.getAdEndTime());
-                                advertisementData.setDescription(advertisementDataData.getDescription());
-                                advertisementData.setPrivacy(advertisementDataData.getPrivacy());
 
-                                advertisementDataList.add(advertisementData);
-                            }
-                            backgroundThreadInitializeAdapter(getActivity().getApplicationContext());
+                            AdvertisementData[] advertisementArray = objGson.fromJson(jsonResponse, AdvertisementData[].class);
+                            advertisementDataList = Arrays.asList(advertisementArray);
                         }
 
                     } catch (JsonSyntaxException e) {
                         Log.e("error", "error in syntax in returning json");
                     }
+                    backgroundThreadInitializeAdapter(getActivity().getApplicationContext());
                 }
             }
         });
@@ -232,6 +217,30 @@ public class AnnouncementFragment extends Fragment implements AnnouncementsView 
 
     @Override
     public void onResume(){
+        timerHandler.postDelayed(timerRunnable, 500);
         super.onResume();
     }
+
+    @Override
+    public void refreshElements() {
+        initializeData();
+    }
+
+    long startTime = 0;
+    Handler timerHandler = new Handler();
+    Runnable timerRunnable = new Runnable() {
+
+        @Override
+        public void run() {
+            long millis = System.currentTimeMillis() - startTime;
+            int seconds = (int) (millis / 1000);
+            int minutes = seconds / 60;
+            seconds = seconds % 60;
+
+            if (getActivity() != null){
+                refreshElements();
+            }
+
+        }
+    };
 }

@@ -5,30 +5,51 @@ package com.example.kacper.walkwithme.Model;
  */
 
 public class ChatData {
-    private String name;
-    private byte[] personPhoto;
+    private int userId;
+    private String firstName;
+    private String lastName;
+    private String personPhoto;
 
-    public ChatData(String name, byte[] personPhoto) {
-        this.name = name;
-        this.personPhoto = personPhoto;
-    }
 
     public ChatData() {
     }
 
-    public String getName() {
-        return name;
+    public ChatData(int userId, String firstName, String lastName, String personPhoto) {
+        this.userId = userId;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.personPhoto = personPhoto;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public int getUserId() {
+        return userId;
     }
 
-    public byte[] getPersonPhoto() {
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getPersonPhoto() {
         return personPhoto;
     }
 
-    public void setPersonPhoto(byte[] personPhoto) {
+    public void setPersonPhoto(String personPhoto) {
         this.personPhoto = personPhoto;
     }
 }

@@ -4,6 +4,7 @@ package com.example.kacper.walkwithme.PersonDetails;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -11,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,17 +22,26 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+import com.example.kacper.walkwithme.MainActivity.Conversation.ConversationFragment;
 import com.example.kacper.walkwithme.MakeStrollActivity.MakeStrollFragment;
 import com.example.kacper.walkwithme.Model.UserProfileData;
+import com.example.kacper.walkwithme.Model.UserProfileDataDeserializer;
 import com.example.kacper.walkwithme.R;
 import com.example.kacper.walkwithme.RequestController;
 import com.franmontiel.persistentcookiejar.PersistentCookieJar;
 import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
 import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.Calendar;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -54,13 +65,19 @@ public class PersonDetailsFragment extends Fragment {
     private ImageView image;
     private Button strollButton;
     private Button addToFriendsButton;
+    private Button sendMessageButton;
     private Integer userId;
     private String userAge;
     private String userLocation;
     private String userDescription;
+    private String userNick;
     private Integer userId1;
     private String userName;
-    private String userImageUrl;
+    private String userImage;
+    private TextView friendName;
+    private TextView friendStatus;
+
+    boolean friendState = false;
 
     OkHttpClient client;
 
@@ -81,26 +98,25 @@ public class PersonDetailsFragment extends Fragment {
         age = (TextView)v.findViewById(R.id.userAge);
         description = (TextView)v.findViewById(R.id.userDescription);
         location = (TextView)v.findViewById(R.id.userLocation);
+        friendName = (TextView)v.findViewById(R.id.personNameInFriend);
+        friendStatus = (TextView)v.findViewById(R.id.personStatusInFriend);
+
         image = (ImageView)v.findViewById(R.id.photo);
         strollButton = (Button)v.findViewById(R.id.strollButton);
         addToFriendsButton = (Button)v.findViewById(R.id.addToFriendsButton);
+        sendMessageButton = (Button)v.findViewById(R.id.sendMessageButton);
 
         userId = getArguments().getInt("USER_ID", 0);
-        Log.e("usrid", toString().valueOf(userId));
 
         if(userId != 0){
-            userId = getArguments().getInt("USER_ID");
-            userAge = getArguments().getString("USER_AGE");
-            userLocation = getArguments().getString("USER_LOCATION");
-            userDescription= getArguments().getString("USER_DESCRIPTION");
-            userName = getArguments().getString("USER_NAME");
-            userImageUrl = getArguments().getString("USER_IMAGE");
-            setParameters();
+            getPerson(userId);
         }
         else{
             userId1 = getArguments().getInt("USER_ID_1", 0);
-            getPerson();
+            getPerson(userId1);
         }
+
+        isFriend();
 
         strollButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,50 +138,146 @@ public class PersonDetailsFragment extends Fragment {
             }
         });
 
-        addToFriendsButton.setOnClickListener(new View.OnClickListener() {
+        sendMessageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(
-                        getContext());
+                FragmentManager fm = ((AppCompatActivity)v.getContext()).getSupportFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+                ConversationFragment newFragment = new ConversationFragment();
+                Fragment f = ((AppCompatActivity)v.getContext()).getSupportFragmentManager().findFragmentById(R.id.fragment_container);
 
-                dialogBuilder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        inviteToFriends();
-                        getActivity().getSupportFragmentManager().popBackStack();
-                    }
-                });
-                dialogBuilder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                });
+                Bundle args = new Bundle();
+                args.putInt("userId", userId);
+                newFragment.setArguments(args);
 
-                final AlertDialog alertDialog = dialogBuilder.create();
-                alertDialog.setTitle("Do you want to invite " + userName +" to friends?" );
-                alertDialog.show();
+                ft.replace(R.id.fragment_container, newFragment);
+                ft.addToBackStack(null);
+                ft.commit();
             }
         });
 
         return v;
     }
 
+    public void getUserData(){
+
+        String url = getString(R.string.service_address) + "friends";
+
+        final Request request;
+        request = new Request.Builder()
+                .url(url)
+                .addHeader("content-type", "application/json")
+                .build();
+
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e("error", "error while connecting with server");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String jsonResponse = response.body().string();
+
+                Gson objGson = new GsonBuilder().setPrettyPrinting().create();
+                Type listType = new TypeToken<List<UserProfileData>>() {
+                }.getType();
+
+                try {
+                    List<UserProfileData> readFromJson = objGson.fromJson(jsonResponse, listType);
+
+                    for (UserProfileData userProfileData:readFromJson
+                            ) {
+                        try {
+                            if (userProfileData.getUser_id() == userId){
+                                friendState = true;
+                                break;
+                            }
+
+                        } catch (JsonSyntaxException e) {
+                            Log.e("error", "error in syntax in returning json");
+                        }
+                    }
+                }catch (JsonSyntaxException e){
+                    Log.e("Json Syntax exception", e.getLocalizedMessage());
+                }
+
+                backgroundThreadInitializeFriend(getActivity().getApplicationContext(), friendState);
+            }
+        });
+
+    }
+
+    public void isFriend(){
+
+        String url = getString(R.string.service_address) + "friends";
+
+        final Request request;
+        request = new Request.Builder()
+                .url(url)
+                .addHeader("content-type", "application/json")
+                .build();
+
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e("error", "error while connecting with server");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String jsonResponse = response.body().string();
+
+                Gson objGson = new GsonBuilder().setPrettyPrinting().create();
+                Type listType = new TypeToken<List<UserProfileData>>() {
+                }.getType();
+
+                try {
+                    List<UserProfileData> readFromJson = objGson.fromJson(jsonResponse, listType);
+
+                    for (UserProfileData userProfileData:readFromJson
+                            ) {
+                        try {
+                            if (userProfileData.getUser_id() == userId){
+                                friendState = true;
+                                break;
+                            }
+
+                        } catch (JsonSyntaxException e) {
+                            Log.e("error", "error in syntax in returning json");
+                        }
+                    }
+                }catch (JsonSyntaxException e){
+                    Log.e("Json Syntax exception", e.getLocalizedMessage());
+                }
+
+                backgroundThreadInitializeFriend(getActivity().getApplicationContext(), friendState);
+            }
+        });
+
+    }
+
     public void setParameters(){
 
-        nick.setText(userId.toString());
+        nick.setText(userNick);
         name.setText(userName);
         age.setText(userAge);
         location.setText(userLocation);
         description.setText(userDescription);
 
-        Glide.with(this).load(userImageUrl)
+        Glide.with(this)
+                .load(Base64.decode(userImage, Base64.DEFAULT))
+                .apply(new RequestOptions()
+                        .diskCacheStrategy(DiskCacheStrategy.NONE))
                 .into(image);
 
     }
 
     public void inviteToFriends(){
 
-        String url ="http://10.0.2.2:8080/friends/invite/" +toString().valueOf(userId);
+        String url = getString(R.string.service_address)+"invite/" +toString().valueOf(userId);
         Gson gson = new Gson();
         MediaType mediaType = MediaType.parse("application/json");
 
@@ -194,19 +306,46 @@ public class PersonDetailsFragment extends Fragment {
                 Log.e("respCode: ", String.valueOf(response.code()));
 
                 if(jsonResponse != null){
-                    Log.e("error", jsonResponse);
+                    isFriend();
                 }
 
             }
         });
     }
 
-    public void getPerson(){
+    public void deleteFriend(){
 
-        String url ="http://10.0.2.2:8080/user/" +toString().valueOf(userId1);
-//        OkHttpClient client = new OkHttpClient();
-        Gson gson = new Gson();
-        MediaType mediaType = MediaType.parse("application/json");
+        String url = getString(R.string.service_address)+"friends/"+String.valueOf(userId);
+
+        final Request request;
+        request = new Request.Builder()
+                .url(url)
+                .delete()
+                .addHeader("content-type", "application/json")
+                .build();
+
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e("error", "error while connectinh with server");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+
+                if(response.code() == 200){
+                    friendState = false;
+                    isFriend();
+                }
+
+            }
+        });
+    }
+
+    public void getPerson(Integer usrId){
+
+        String url = getString(R.string.service_address) + "user/" +toString().valueOf(usrId);
 
         final Request request;
         request = new Request.Builder()
@@ -223,7 +362,9 @@ public class PersonDetailsFragment extends Fragment {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                Gson retGson = new Gson();
+                GsonBuilder gsonBuilder = new GsonBuilder();
+                gsonBuilder.registerTypeAdapter(UserProfileData.class, new UserProfileDataDeserializer());
+                final Gson retGson = gsonBuilder.create();
                 String jsonResponse = response.body().string();
 
                 if(jsonResponse != null){
@@ -248,7 +389,8 @@ public class PersonDetailsFragment extends Fragment {
                     userLocation = usrProfileData.getCity();
                     userDescription= usrProfileData.getDescription();
                     userName = usrProfileData.getFirstName() +" "+usrProfileData.getLastName();
-                    userImageUrl = usrProfileData.getPhoto_url();
+                    userImage = usrProfileData.getPhoto_url();
+                    userNick = usrProfileData.getNick();
 
                     backgroundThreadSetParameters(getContext());
                 }
@@ -265,6 +407,73 @@ public class PersonDetailsFragment extends Fragment {
                 public void run() {
 
                     setParameters();
+                }
+            });
+        }
+    }
+
+    public void backgroundThreadInitializeFriend(final Context context, final boolean isFriend) {
+        if (context != null) {
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+
+                @Override
+                public void run() {
+
+                    friendName.setText(userName);
+                    if(isFriend){
+                        friendStatus.setText("is your friend");
+                        addToFriendsButton.setText("DELETE FRIEND");
+                        addToFriendsButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(
+                                        getContext());
+
+                                dialogBuilder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        deleteFriend();
+                                    }
+                                });
+                                dialogBuilder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                    }
+                                });
+
+                                final AlertDialog alertDialog = dialogBuilder.create();
+                                alertDialog.setTitle("Do you want to delete " + userName +" from friends?" );
+                                alertDialog.show();
+                            }
+                        });
+                    }
+                    else{
+                        friendStatus.setText("is not your friend");
+                        addToFriendsButton.setText("INVITE TO FRIENDS");
+                        addToFriendsButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(
+                                        getContext());
+
+                                dialogBuilder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        inviteToFriends();
+                                    }
+                                });
+                                dialogBuilder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                    }
+                                });
+
+                                final AlertDialog alertDialog = dialogBuilder.create();
+                                alertDialog.setTitle("Do you want to delete " + userName +" from friends?" );
+                                alertDialog.show();
+                            }
+                        });
+                    }
                 }
             });
         }

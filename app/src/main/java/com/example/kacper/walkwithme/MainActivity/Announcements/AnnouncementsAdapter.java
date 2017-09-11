@@ -54,6 +54,8 @@ public class AnnouncementsAdapter extends RecyclerView.Adapter<AnnouncementsAdap
         Integer adId;
         Integer position;
 
+        String advEndTime;
+
         String description;
         String startTime;
         String endTime;
@@ -145,6 +147,7 @@ public class AnnouncementsAdapter extends RecyclerView.Adapter<AnnouncementsAdap
                     args.putDouble("longtitude", longtitude);
                     args.putString("startTime", startTime);
                     args.putString("endTime", endTime);
+                    args.putString("advEndTime", advEndTime);
                     args.putString("location", location);
                     args.putString("description", description);
                     newFragment.setArguments(args);
@@ -156,28 +159,10 @@ public class AnnouncementsAdapter extends RecyclerView.Adapter<AnnouncementsAdap
             });
         }
 
-
-//        @Override
-//        public void onClick(View v) {
-//            context = v.getContext();
-////            Intent intent = new Intent(context, AppointmentDetailsActivity.class);
-////            intent.putExtra("STROLL_ID", strollId);
-////            intent.putExtra("USER_ID", userId);
-////            intent.putExtra("LOCATION", location);
-////            intent.putExtra("DATE", date);
-////            intent.putExtra("TIME", time);
-////            intent.putExtra("USER_FIRST_NAME", firstName);
-////            intent.putExtra("USER_LAST_NAME", lastName);
-////            intent.putExtra("USER_IMAGE", mediumPhoto);
-////
-////            context.startActivity(intent);
-//
-//        }
     }
 
     private void deleteAnnouncement(Integer adId, final Integer position){
-        String url ="http://10.0.2.2:8080/adv/"+adId.toString();
-        Log.e("url:", url);
+        String url = mContext.getString(R.string.service_address) + "adv/"+adId.toString();
 
         final Request request;
         request = new Request.Builder()
@@ -196,6 +181,7 @@ public class AnnouncementsAdapter extends RecyclerView.Adapter<AnnouncementsAdap
             public void onResponse(Call call, Response response) throws IOException {
                 Log.e("body", response.body().string());
                 advertisementDatas.remove(position);
+                presenter.refreshElements();
             }
         });
     }
@@ -237,6 +223,7 @@ public class AnnouncementsAdapter extends RecyclerView.Adapter<AnnouncementsAdap
         announcementViewHolder.description = advertisementDatas.get(i).getDescription();
         announcementViewHolder.startTime = advertisementDatas.get(i).getStrollStartTime();
         announcementViewHolder.endTime = advertisementDatas.get(i).getStrollEndTime();
+        announcementViewHolder.advEndTime = advertisementDatas.get(i).getAdEndTime();
         announcementViewHolder.location = advertisementDatas.get(i).getLocation().getDescription();
         announcementViewHolder.position = i;
         if(advertisementDatas.get(i).getUserId() == userId){

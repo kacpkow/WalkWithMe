@@ -18,6 +18,6 @@ public class AnnouncementsPresenterImpl implements  AnnouncementsPresenter {
 
     @Override
     public void refreshElements() {
-
+        announcementsView.refreshElements();
     }
 }

@@ -32,6 +32,7 @@ import android.widget.TimePicker;
 import com.example.kacper.walkwithme.Model.AdvertisementData;
 import com.example.kacper.walkwithme.Model.LocationData;
 import com.example.kacper.walkwithme.R;
+import com.example.kacper.walkwithme.RequestController;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -73,6 +74,8 @@ public class MakeAnnouncementFragment extends Fragment {
     TextView strollEndTimeView;
     TextView strollDescriptionView;
 
+    OkHttpClient client;
+
     private Calendar calendar;
     private int year, month, day, hour, minute;
 
@@ -91,6 +94,9 @@ public class MakeAnnouncementFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_make_announcement, container, false);
+
+        client = RequestController.getInstance().getClient();
+
         editStartTimeButton = (ImageButton)v.findViewById(R.id.strollStartTimeButton);
         editEndTimeButton = (ImageButton)v.findViewById(R.id.strollEndTimeButton);
         editLocationButton = (ImageButton)v.findViewById(R.id.strollLocationButton);
@@ -233,8 +239,7 @@ public class MakeAnnouncementFragment extends Fragment {
 
         changedAdvertisementData.setLocation(locationData);
 
-        String url ="http://10.0.2.2:8080/adv";
-        OkHttpClient client = new OkHttpClient();
+        String url = getString(R.string.service_address) + "adv";
         Gson gson = new Gson();
         MediaType mediaType = MediaType.parse("application/json");
 

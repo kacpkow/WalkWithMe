@@ -48,8 +48,16 @@
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps" />
         <activity android:name=".MainActivity.MainView" />
-        <activity android:name=".AppointmentDetails.AppointmentDetailsActivity" />
-        <activity android:name=".PersonProfileSettings"></activity>
+        <activity android:name=".PersonProfileSettings" />
+
+        <service
+            android:name=".Services.NotificationChecker"
+            android:enabled="true"
+            android:exported="true" />
+        <service
+            android:name=".Services.MessageChecker"
+            android:enabled="true"
+            android:exported="true" />
     </application>
 
 </manifest>

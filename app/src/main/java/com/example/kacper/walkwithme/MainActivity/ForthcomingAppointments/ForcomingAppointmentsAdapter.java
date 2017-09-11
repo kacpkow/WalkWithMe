@@ -1,7 +1,6 @@
 package com.example.kacper.walkwithme.MainActivity.ForthcomingAppointments;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -14,11 +13,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.example.kacper.walkwithme.AppointmentDetails.AppointmentDetailsActivity;
 import com.example.kacper.walkwithme.AppointmentDetails.StrollDetailsFragment;
 import com.example.kacper.walkwithme.Model.StrollData;
 import com.example.kacper.walkwithme.R;
@@ -62,14 +58,14 @@ public class ForcomingAppointmentsAdapter extends RecyclerView.Adapter<Forcoming
             Fragment f = ((AppCompatActivity)mContext).getSupportFragmentManager().findFragmentById(R.id.fragment_container);
 
             Bundle args = new Bundle();
-            Log.e("Stroll id", String.valueOf(strollData.getStrollId()));
+            Log.e("Stroll id in adapter", String.valueOf(strollData.getStrollId()));
             args.putInt("STROLL_ID", strollData.getStrollId());
             args.putString("privacy", strollData.getPrivacy());
             args.putString("startTime", strollData.getData_start());
             args.putString("endTime", strollData.getData_end());
             args.putString("location", strollData.getLocation().getDescription());
             args.putString("description", strollData.getInfo());
-            args.putIntArray("participants", strollData.getUsers());
+            args.putInt("participants", strollData.getUser());
             newFragment.setArguments(args);
 
             ft.replace(R.id.fragment_container, newFragment);

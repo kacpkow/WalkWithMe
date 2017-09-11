@@ -11,4 +11,5 @@ public interface LoginView {
     void goToOptions(Integer userId);
     Context getAppContext();
     Context getActivityContext();
+    String getResourceStringValue(int id);
 }

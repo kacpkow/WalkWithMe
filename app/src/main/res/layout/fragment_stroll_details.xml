@@ -102,7 +102,7 @@
                 android:id="@+id/showParticipatorsButton"
                 android:layout_width="170dp"
                 android:layout_height="30dp"
-                android:text="Show participators"
+                android:text="Show participants"
                 android:layout_marginTop="15dp"
                 android:background="@drawable/button_register_rounded"
                 android:textColor="#FFFFFF"

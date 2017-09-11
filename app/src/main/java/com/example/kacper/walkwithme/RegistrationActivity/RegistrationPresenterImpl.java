@@ -36,6 +36,7 @@ public class RegistrationPresenterImpl implements RegistrationPresenter{
     public RegistrationPresenterImpl(RegistrationView registrationView) {
         this.registrationView = registrationView;
         progressDialog = new ProgressDialog(registrationView.getActivityContext());
+        RequestController.getInstance().newClient();
         client = RequestController.getInstance().getClient();
     }
 

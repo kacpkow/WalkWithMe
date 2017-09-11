@@ -161,7 +161,7 @@ public class PersonsListFragment extends Fragment {
 
         persons.clear();
 
-        String url = "http://10.0.2.2:8080/friends";
+        String url = getString(R.string.service_address)+"friends";
 
         Gson gson = new Gson();
 
@@ -257,7 +257,7 @@ public class PersonsListFragment extends Fragment {
         latitude = settings.getFloat("latitude", 0.0f);
         longtitude = settings.getFloat("longtitude", 0.0f);
 
-        String url = "http://10.0.2.2:8080/search";
+        String url = getString(R.string.service_address)+"search";
 
         Gson gson = new Gson();
 
@@ -270,7 +270,7 @@ public class PersonsListFragment extends Fragment {
         String prettyJson = gson.toJson(requestContent);
         RequestBody requestBody = RequestBody.create(mediaType, gson.toJson(requestContent));
 
-        Log.e("gson", prettyJson);
+        Log.e("jsonbody", gson.toJson(requestContent));
 
         final Request request;
         request = new Request.Builder()
@@ -289,7 +289,6 @@ public class PersonsListFragment extends Fragment {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 jsonResponse = response.body().string();
-                Log.e("json people", jsonResponse);
 
                 Type listType = new TypeToken<ArrayList<UserProfileData>>() {
                 }.getType();
@@ -303,8 +302,6 @@ public class PersonsListFragment extends Fragment {
                     SharedPreferences settings = getContext().getSharedPreferences("userLocation", Context.MODE_PRIVATE);
                     userLatitude = (double)settings.getFloat("latitude", 0.0f);
                     userLongtitude = (double)settings.getFloat("longtitude", 0.0f);
-
-
 
                     for (UserProfileData userProfileData:readFromJson
                             ) {

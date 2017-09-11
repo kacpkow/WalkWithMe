@@ -1,20 +1,32 @@
 package com.example.kacper.walkwithme.MainActivity.Conversation;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.print.PrintAttributes;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
+import android.util.DisplayMetrics;
+import android.util.FloatProperty;
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.kacper.walkwithme.MainActivity.Chat.ChatAdapter;
 import com.example.kacper.walkwithme.Model.UserMessageData;
 import com.example.kacper.walkwithme.R;
@@ -31,26 +43,31 @@ public class ConversationAdapter extends RecyclerView.Adapter<ConversationAdapte
 
         CardView cv1;
         TextView message;
+        de.hdodenhof.circleimageview.CircleImageView personPhoto;
 
         public ConversationViewHolder(View itemView) {
             super(itemView);
             cv1 = (CardView)itemView.findViewById(R.id.cv_my_message);
             message = (TextView)itemView.findViewById(R.id.my_message);
-            message.setBackgroundResource(R.drawable.button_foreign_message);
-            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)message.getLayoutParams();
-            params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-            params.removeRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-            message.setLayoutParams(params);
+            personPhoto = (de.hdodenhof.circleimageview.CircleImageView)itemView.findViewById(R.id.userPhoto);
         }
 
     }
 
     Context mContext;
     List<UserMessageData> userMessageData;
+    Integer myId = 0;
+    String myPhoto;
+    String foreignPhoto;
 
-    ConversationAdapter(List<UserMessageData> userMessageData, Context mContext){
+    ConversationAdapter(List<UserMessageData> userMessageData, String myPhoto, String foreignPhoto, Context mContext){
         this.userMessageData = userMessageData;
         this.mContext = mContext;
+        SharedPreferences settings = mContext.getApplicationContext().getSharedPreferences("USER_ID", Context.MODE_PRIVATE);
+        myId = settings.getInt("userId", 0);
+        this.myPhoto = myPhoto;
+        this.foreignPhoto = foreignPhoto;
+
     }
 
     @Override
@@ -68,12 +85,50 @@ public class ConversationAdapter extends RecyclerView.Adapter<ConversationAdapte
 
     @Override
     public void onBindViewHolder(ConversationViewHolder chatViewHolder, int i) {
+        chatViewHolder.message.setText(userMessageData.get(i).getMessage());
+        if(userMessageData.get(i).getSenderId() == myId){
+            Glide.with(mContext)
+                    .load(Base64.decode(myPhoto, Base64.DEFAULT))
+                    .apply(new RequestOptions()
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .dontAnimate())
+                    .into(chatViewHolder.personPhoto);
+            chatViewHolder.message.setBackgroundResource(R.drawable.button_my_message);
+            RelativeLayout.LayoutParams messageParams = (RelativeLayout.LayoutParams)chatViewHolder.message.getLayoutParams();
+            RelativeLayout.LayoutParams photoParams = (RelativeLayout.LayoutParams)chatViewHolder.personPhoto.getLayoutParams();
+            photoParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+            photoParams.removeRule(RelativeLayout.ALIGN_PARENT_LEFT);
+            messageParams.setMargins(300,0,10,0);
+            messageParams.addRule(RelativeLayout.LEFT_OF,R.id.userPhoto);
+            messageParams.removeRule(RelativeLayout.RIGHT_OF);
+            chatViewHolder.message.setLayoutParams(messageParams);
+            chatViewHolder.personPhoto.setLayoutParams(photoParams);
+        }
+        else{
+            Glide.with(mContext)
+                    .load(Base64.decode(foreignPhoto, Base64.DEFAULT))
+                    .apply(new RequestOptions()
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .dontAnimate())
+                    .into(chatViewHolder.personPhoto);
+            chatViewHolder.message.setBackgroundResource(R.drawable.button_foreign_message);
+            RelativeLayout.LayoutParams messageParams = (RelativeLayout.LayoutParams)chatViewHolder.message.getLayoutParams();
+            RelativeLayout.LayoutParams photoParams = (RelativeLayout.LayoutParams)chatViewHolder.personPhoto.getLayoutParams();
+            photoParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+            photoParams.removeRule(RelativeLayout.ALIGN_PARENT_RIGHT);
 
+            messageParams.setMargins(10,0,300,0);
+
+            messageParams.addRule(RelativeLayout.RIGHT_OF,R.id.userPhoto);
+            messageParams.removeRule(RelativeLayout.LEFT_OF);
+            chatViewHolder.message.setLayoutParams(messageParams);
+            chatViewHolder.personPhoto.setLayoutParams(photoParams);
+        }
     }
 
     @Override
     public int getItemCount() {
-//        return userMessageData.size();
-        return 1;
+        return userMessageData.size();
     }
 }
+

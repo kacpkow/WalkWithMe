@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +19,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.kacper.walkwithme.Model.NotificationData;
 import com.example.kacper.walkwithme.PersonDetails.PersonDetailsFragment;
 import com.example.kacper.walkwithme.R;
@@ -47,7 +50,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         CardView cv;
         TextView personName;
         TextView invitationType;
-        ImageView personPhoto;
+        de.hdodenhof.circleimageview.CircleImageView personPhoto;
         ImageButton acceptButton;
         ImageButton declineButton;
 
@@ -69,7 +72,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
             cv = (CardView)itemView.findViewById(R.id.cvNotification);
             invitationType = (TextView)itemView.findViewById(R.id.notificationTypeField);
             personName = (TextView)itemView.findViewById(R.id.notificationSenderName);
-            personPhoto = (ImageView)itemView.findViewById(R.id.person_photo);
+            personPhoto = (de.hdodenhof.circleimageview.CircleImageView)itemView.findViewById(R.id.person_photo);
             acceptButton = (ImageButton)itemView.findViewById(R.id.buttonAccept);
             declineButton = (ImageButton)itemView.findViewById(R.id.buttonDecline);
 
@@ -114,10 +117,13 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
     @Override
     public void onBindViewHolder(final StrollRequestViewHolder strollRequestViewHolder, final int i) {
         strollRequestViewHolder.personName.setText(notificationDataList.get(i).getSender().getFirstName() + " " + notificationDataList.get(i).getSender().getLastName());
-        Glide.with(mContext).load(notificationDataList.get(i).getSender().getPhoto_url())
-                .into(strollRequestViewHolder.personPhoto);
 
-        Log.e("initialized", "1");
+        Glide.with(mContext)
+                .load(Base64.decode(notificationDataList.get(i).getSender().getPhoto_url(), Base64.DEFAULT))
+                .apply(new RequestOptions()
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .dontAnimate())
+                .into(strollRequestViewHolder.personPhoto);
 
         if(notificationDataList.get(i).getType().equals("Stroll")){
             strollRequestViewHolder.invitationType.setText("stroll");
@@ -151,9 +157,11 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
             @Override
             public void onClick(View v) {
                 if(notificationDataList.get(i).getType().equals("Friend")){
+                    Log.e("accept", String.valueOf(strollRequestViewHolder.getAdapterPosition()));
                     strollRequestViewHolder.acceptButton.setVisibility(View.GONE);
                     strollRequestViewHolder.declineButton.setVisibility(View.GONE);
                     checkNotification(strollRequestViewHolder.notificationId);
+
                     acceptFriend(strollRequestViewHolder.getAdapterPosition());
                 }
 
@@ -210,7 +218,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
     public void checkNotification(Integer requestId){
 
-        String url ="http://10.0.2.2:8080/notification/" + toString().valueOf(requestId);
+        String url = mContext.getString(R.string.service_address)+ "notification/" + toString().valueOf(requestId);
 
         Gson gson = new Gson();
 
@@ -240,8 +248,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
 
     public void acceptFriend(Integer position){
 
-        String url ="http://10.0.2.2:8080/friends/accept/" + toString().valueOf(notificationDataList.get(position).getSender().getUser_id());
-        OkHttpClient client = new OkHttpClient();
+        String url = mContext.getString(R.string.service_address) + "friends/accept/" + toString().valueOf(notificationDataList.get(position).getSender().getUser_id());
 
         Gson gson = new Gson();
 
@@ -260,10 +267,12 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
+                Log.e("failure", "accepting");
             }
 
             @Override
             public void onResponse(Call call, okhttp3.Response response) throws IOException {
+                Log.e("resp after accept", response.body().string());
             }
         });
 

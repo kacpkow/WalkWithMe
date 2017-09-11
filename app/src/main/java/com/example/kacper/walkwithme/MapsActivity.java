@@ -2,7 +2,9 @@ package com.example.kacper.walkwithme;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -19,6 +21,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.kacper.walkwithme.Model.LocationData;
@@ -98,11 +101,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
 
     public void getUserLocationData(){
-        String url ="http://10.0.2.2:8080/profile/location";
-
-        Gson gson = new Gson();
-
-        MediaType mediaType = MediaType.parse("application/json");
+        String url = getString(R.string.service_address) + "profile/location";
 
         final Request request;
         request = new Request.Builder()
@@ -121,6 +120,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onResponse(Call call, okhttp3.Response response) throws IOException {
                 String json;
                 json = response.body().string();
+                Log.e("resp", json);
                 Gson retGson = new Gson();
 
                 if(response.code() == 200){
@@ -128,6 +128,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     latitudeFromBase = (float)location.getLatitude();
                     longtitudeFromBase = (float)location.getLongtitude();
                     backgroundThreadSetLocation(getApplicationContext());
+                }
+                else{
+                    backgroundThreadShowDialog(getApplicationContext());
                 }
 
             }
@@ -174,9 +177,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SharedPreferences.Editor editor = settings.edit();
         editor.putFloat("latitude", latitude);
         editor.putFloat("longtitude", longtitude);
-        editor.putString("description", locationDescription);
+        String str = "";
+        if(locationDescription.length() >= 30){
+            str = locationDescription.substring(0,29);
+        }
+        locationDescription = str;
+        editor.putString("description", str);
         editor.commit();
-        Toast.makeText(this, String.valueOf(latitude), Toast.LENGTH_SHORT).show();
         finish();
         if(latitude != 0.0f && longtitude != 0.0f){
             saveLocationToBase();
@@ -195,6 +202,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    public void backgroundThreadShowDialog(final Context context) {
+        if (context != null) {
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+
+                @Override
+                public void run() {
+                    showInfoDialog();
+                }
+            });
+        }
+    }
+
     public void setLocation(){
         Geocoder geocoder = new Geocoder(this);
         List<Address> addressList = null;
@@ -207,20 +226,46 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Log.e("lat", String.valueOf(latitudeFromBase));
         Log.e("lng", String.valueOf(longtitudeFromBase));
 
-        if(addressList.get(0) != null){
-            Address address = addressList.get(0);
-            LatLng latLng = new LatLng(address.getLatitude() , address.getLongitude());
-            mMap.clear();
-            mMap.addMarker(new MarkerOptions().position(latLng).title("Marker"));
-            mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
-            latitude = (float)address.getLatitude();
-            longtitude = (float)address.getLongitude();
+        if(addressList != null){
+            if(addressList.size() != 0){
+                Address address = addressList.get(0);
+                LatLng latLng = new LatLng(address.getLatitude() , address.getLongitude());
+                mMap.clear();
+                mMap.addMarker(new MarkerOptions().position(latLng).title("Marker"));
+                mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+                latitude = (float)address.getLatitude();
+                longtitude = (float)address.getLongitude();
+            }
+            else{
+                showInfoDialog();
+            }
+        }
+        else{
+            showInfoDialog();
         }
 
     }
 
+    public void showInfoDialog(){
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(
+                MapsActivity.this);
+
+        TextView textView = new TextView(MapsActivity.this);
+        textView.setText("Your location seems not to be set. Please type name of your current location in type field, next press \"set location data\" button and then press \"save button\"");
+        dialogBuilder.setCustomTitle(textView);
+        dialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+
+        final AlertDialog alertDialog = dialogBuilder.create();
+        alertDialog.show();
+    }
+
     public void saveLocationToBase(){
-        String url ="http://10.0.2.2:8080/profile/location";
+        String url = getString(R.string.service_address) + "profile/location";
 
         Gson gson = new Gson();
 
@@ -284,26 +329,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onConnected(@Nullable Bundle bundle) {
 
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
-                mGoogleApiClient);
-        if (mLastLocation != null) {
-            lastLocationLat = mLastLocation.getLatitude();
-            lastLocationLng = mLastLocation.getLongitude();
-        }
+        SharedPreferences settings = getApplicationContext().getSharedPreferences("userLocation", Context.MODE_PRIVATE);
+        Float f = settings.getFloat("latitude", 0.0f);
+        if(f == 0.0f){
+            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                    mGoogleApiClient);
+            if (mLastLocation != null) {
+                lastLocationLat = mLastLocation.getLatitude();
+                lastLocationLng = mLastLocation.getLongitude();
+            }
 
-        if (marker != null){
-            mMap.clear();
-        }
+            if (marker != null){
+                mMap.clear();
+            }
 
-        LatLng currentLatLng = new LatLng(lastLocationLat, lastLocationLng);
-        marker = mMap.addMarker(new MarkerOptions().position(currentLatLng)
-                .title("Your Location"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15));
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            return;
+            LatLng currentLatLng = new LatLng(lastLocationLat, lastLocationLng);
+            marker = mMap.addMarker(new MarkerOptions().position(currentLatLng)
+                    .title("Your Location"));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15));
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                return;
+            }
+            mMap.setMyLocationEnabled(true);
         }
-        mMap.setMyLocationEnabled(true);
 
     }
 

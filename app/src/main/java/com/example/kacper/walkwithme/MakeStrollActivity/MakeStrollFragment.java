@@ -83,9 +83,8 @@ public class MakeStrollFragment extends Fragment {
 
     OkHttpClient client;
 
-
     public MakeStrollFragment() {
-        // Required empty public constructor
+
     }
 
 
@@ -219,7 +218,7 @@ public class MakeStrollFragment extends Fragment {
 
     public void makeStroll(){
 
-        String url ="http://10.0.2.2:8080/adv/" + toString().valueOf(userId);
+        String url = getString(R.string.service_address) + "adv/" + toString().valueOf(userId);
         Gson gson = new Gson();
         MediaType mediaType = MediaType.parse("application/json");
         AdvertisementData requestContent = new AdvertisementData();
@@ -257,8 +256,6 @@ public class MakeStrollFragment extends Fragment {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                Gson retGson = new Gson();
-                String jsonResponse = response.body().string();
                 if(response.code() == 201) {
                     try {
                         backgroundThreadShortToast(getContext(), "The stroll propose has been sent");

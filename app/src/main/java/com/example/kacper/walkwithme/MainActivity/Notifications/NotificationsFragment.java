@@ -1,5 +1,6 @@
 package com.example.kacper.walkwithme.MainActivity.Notifications;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -67,15 +68,11 @@ public class NotificationsFragment extends Fragment implements NotificationsView
     }
 
     private void initializeData(){
+
         SharedPreferences settings = this.getActivity().getSharedPreferences("userId", Context.MODE_PRIVATE);
         userId = settings.getInt("ID", 0);
 
-        String url ="http://10.0.2.2:8080/notification";
-        Gson gson = new Gson();
-        MediaType mediaType = MediaType.parse("application/json");
-
-        Log.e("err", "initializing in 1");
-
+        String url = getString(R.string.service_address)  + "notification";
 
         final Request request;
         request = new Request.Builder()
@@ -87,13 +84,12 @@ public class NotificationsFragment extends Fragment implements NotificationsView
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                Log.e("error", "error while connectinh with server");
+                Log.e("error", "error while connecting with server");
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 Log.e("err", "err");
-                Gson retGson = new Gson();
                 String jsonResponse = response.body().string();
                 Log.e("err", "err1");
                 Log.e("responsecode", toString().valueOf(response.code()));

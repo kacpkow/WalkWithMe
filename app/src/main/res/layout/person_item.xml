@@ -19,7 +19,7 @@ app:cardElevation="5dp">
         android:layout_toRightOf="@+id/person_photo"
         android:textSize="30sp" />
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/person_photo"
         android:layout_width="250px"
         android:layout_height="250px"

@@ -1,6 +1,8 @@
 package com.example.kacper.walkwithme.MainActivity.ForthcomingAppointments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,9 +14,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.example.kacper.walkwithme.LoginActivity.LoginActivity;
+import com.example.kacper.walkwithme.LoginActivity.LoginContent;
 import com.example.kacper.walkwithme.MainActivity.SimpleDividerItemDecoration;
 import com.example.kacper.walkwithme.Model.StrollData;
+import com.example.kacper.walkwithme.Model.User;
 import com.example.kacper.walkwithme.R;
 import com.example.kacper.walkwithme.RequestController;
 import com.franmontiel.persistentcookiejar.PersistentCookieJar;
@@ -40,17 +46,133 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static com.example.kacper.walkwithme.PersonProfileSettings.backgroundThreadShowToast;
+
 public class ForcomingAppointmentsFragment extends Fragment {
     private List<StrollData> strollDataList;
     private RecyclerView rv;
     private Integer userId;
+    ProgressDialog dialog;
 
     OkHttpClient client;
+
+
+    public void tryToLogIn(){
+
+        String url = getString(R.string.service_address) + "rest/login";
+        SharedPreferences settings = getActivity().getApplicationContext().getSharedPreferences("CREDENTIALS", Context.MODE_PRIVATE);
+        String json = settings.getString("values", "");
+        Gson gson1 = new Gson();
+        LoginContent log = gson1.fromJson(json, LoginContent.class);
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        MediaType mediaType = MediaType.parse("application/json");
+        RequestBody requestBody = RequestBody.create(mediaType, gson.toJson(log));
+
+        final Request request;
+        request = new Request.Builder()
+                .url(url)
+                .post(requestBody)
+                .addHeader("content-type", "application/json")
+                .build();
+
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                //goBackToLoginPage(getActivity().getApplicationContext());
+                backgroundThreadShortToast(getActivity().getApplicationContext(), "Connection error. Please check your Internet connection status");
+            }
+
+            @Override
+            public void onResponse(Call call, okhttp3.Response response) throws IOException {
+                Gson retGson = new Gson();
+
+                if(response.code() == 200){
+                    getUser();
+                }
+                else{
+                    //TO DO log out
+                }
+
+            }
+        });
+    }
+
+    public static void backgroundThreadShortToast(final Context context,
+                                                  final String msg) {
+        if (context != null && msg != null) {
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+
+                @Override
+                public void run() {
+                    Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
+    public void getUser(){
+
+        String url = getString(R.string.service_address) + "user";
+
+        final Request request;
+        request = new Request.Builder()
+                .url(url)
+                .addHeader("content-type", "application/json")
+                .build();
+
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, okhttp3.Response response) throws IOException {
+                Gson retGson = new Gson();
+                String json = response.body().string();
+
+                if(response.code() == 200){
+
+                    User usr = retGson.fromJson(json, User.class);
+
+                    RequestController.getInstance().setState(true);
+
+                    userId = usr.getUser_id();
+
+                    backgroundThreadInitializeData(getActivity().getApplicationContext());
+
+                }
+                else{
+                    Log.e("get data", json);
+                }
+
+            }
+        });
+
+    }
+
+
+    public void goBackToLoginPage(final Context context) {
+        if (context != null) {
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+
+                @Override
+                public void run() {
+                    Intent intent = new Intent(getActivity().getApplicationContext(), LoginActivity.class);
+                    startActivity(intent);
+                }
+            });
+        }
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_appointments, container, false);
+
 
         rv=(RecyclerView)rootView.findViewById(R.id.rv);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
@@ -60,21 +182,35 @@ public class ForcomingAppointmentsFragment extends Fragment {
         userId = 0;
         strollDataList = new ArrayList<>();
         client = RequestController.getInstance().getClient();
-        initializeData();
-        initializeAdapter();
+        SharedPreferences settings = getActivity().getApplicationContext().getSharedPreferences("userId", Context.MODE_PRIVATE);
+        userId = settings.getInt("userId", 0);
+        Log.e("1initialize fr", "1");
+
+        if(userId == 0){
+            tryToLogIn();
+            Log.e("1", "1");
+
+        }
+        else{
+            initializeData();
+            initializeAdapter();
+            Log.e("2", "2");
+        }
 
         return rootView;
     }
 
     private void initializeData(){
-        SharedPreferences settings = this.getActivity().getSharedPreferences("userId", Context.MODE_PRIVATE);
-        userId = settings.getInt("ID", 0);
+        if(getActivity().getApplicationContext() != null){
+            dialog = new ProgressDialog(getActivity());
+            dialog.setTitle("Loading, please wait");
+            dialog.show();
 
-        String url ="http://10.0.2.2:8080/stroll/get";
+        }
+
+        String url = getString(R.string.service_address)+"stroll/get";
         final Gson gson = new Gson();
-        MediaType mediaType = MediaType.parse("application/json");
-        AppointmentsContent requestContent = new AppointmentsContent(userId);
-        RequestBody requestBody = RequestBody.create(mediaType, gson.toJson(requestContent));
+
         final Request request;
         request = new Request.Builder()
                 .url(url)
@@ -85,6 +221,7 @@ public class ForcomingAppointmentsFragment extends Fragment {
             @Override
             public void onFailure(Call call, IOException e) {
                 Log.e("error", "error while connectinh with server");
+                backgroundThreadInitializeAdapter(getActivity().getApplicationContext());
             }
 
             @Override
@@ -101,26 +238,14 @@ public class ForcomingAppointmentsFragment extends Fragment {
                     try {
                         List<StrollData> readFromJson = objGson.fromJson(jsonResponse, listType);
                         if (readFromJson != null) {
-//                            for (StrollData strollData : readFromJson
-//                                    ) {
-//                                Log.e("str idd", strollData.getData_start());
-//
-//                                StrollData newStrollData = new StrollData();
-//                                newStrollData = strollData;
-//                                strollDataList.add(newStrollData);
-//                            }
                             StrollData[] strollArray = gson.fromJson(jsonResponse, StrollData[].class);
                             strollDataList = Arrays.asList(strollArray);
-                            Log.e("str idd", Integer.toString(strollDataList.get(0).getStrollId()));
-                            if(getActivity().getApplicationContext() != null){
-                                backgroundThreadInitializeAdapter(getActivity().getApplicationContext());
-                            }
                         }
 
                     } catch (JsonSyntaxException e) {
                         Log.e("error", "error in syntax in returning json");
-                        backgroundThreadFinishActivity(getActivity().getApplicationContext());
                     }
+                    backgroundThreadInitializeAdapter(getActivity().getApplicationContext());
 
                 }
             }
@@ -130,12 +255,16 @@ public class ForcomingAppointmentsFragment extends Fragment {
 
     @Override
     public void onResume(){
-        initializeData();
+        //initializeData();
+        if(dialog != null){
+
+        }
         super.onResume();
     }
 
     private void initializeAdapter(){
         ForcomingAppointmentsAdapter adapter = new ForcomingAppointmentsAdapter(strollDataList, this.getContext());
+        dialog.dismiss();
         rv.setAdapter(adapter);
     }
 
@@ -145,6 +274,7 @@ public class ForcomingAppointmentsFragment extends Fragment {
 
                 @Override
                 public void run() {
+
                     initializeAdapter();
                 }
             });
@@ -162,4 +292,34 @@ public class ForcomingAppointmentsFragment extends Fragment {
             });
         }
     }
+
+    public void backgroundThreadInitializeData(final Context context) {
+        if (context != null) {
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+
+                @Override
+                public void run() {
+                    initializeData();
+                }
+            });
+        }
+    }
+
+    @Override
+    public void onPause(){
+        if(dialog != null){
+            dialog.dismiss();
+        }
+
+        super.onPause();
+    }
+
+    @Override
+    public void onDestroy(){
+        if(dialog != null){
+            dialog.dismiss();
+        }
+        super.onDestroy();
+    }
+
 }

@@ -253,7 +253,7 @@ public class EditAnnouncementFragment extends Fragment {
 
         changedAdvertisementData.setLocation(locationData);
 
-        String url ="http://10.0.2.2:8080/adv";
+        String url = getString(R.string.service_address) + "adv";
         Gson gson = new Gson();
         MediaType mediaType = MediaType.parse("application/json");
 

@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.example.kacper.walkwithme.MainActivity.MainView;
 import com.example.kacper.walkwithme.Model.User;
+import com.example.kacper.walkwithme.R;
 import com.example.kacper.walkwithme.RequestController;
 
 import com.google.gson.Gson;
@@ -49,9 +50,9 @@ public class LoginPresenterImpl implements LoginPresenter{
             progressDialog = new ProgressDialog(loginView.getActivityContext());
             progressDialog.setTitle("Logging, please wait ...");
             progressDialog.show();
-            String url ="http://10.0.2.2:8080/rest/login";
 
-            LoginContent log = new LoginContent(username, password);
+            String url = loginView.getResourceStringValue(R.string.service_address) + "rest/login";
+            final LoginContent log = new LoginContent(username, password);
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             MediaType mediaType = MediaType.parse("application/json");
             RequestBody requestBody = RequestBody.create(mediaType, gson.toJson(log));
@@ -70,7 +71,7 @@ public class LoginPresenterImpl implements LoginPresenter{
                 @Override
                 public void onFailure(Call call, IOException e) {
                     progressDialog.dismiss();
-                    backgroundThreadShortToast(loginView.getAppContext(), "Error in logging occured");
+                    backgroundThreadShortToast(loginView.getAppContext(), "Error in logging occurred. Please try Internet connection");
                 }
 
                 @Override
@@ -79,10 +80,18 @@ public class LoginPresenterImpl implements LoginPresenter{
                     progressDialog.dismiss();
 
                     if(response.code() == 200){
+                        SharedPreferences settings = loginView.getAppContext().getSharedPreferences("CREDENTIALS", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = settings.edit();
+                        Gson gson = new Gson();
+                        String json = gson.toJson(log);
+                        editor.putString("values", json);
+                        editor.commit();
                         getUser();
                     }
                     else{
                         backgroundThreadShortToast(loginView.getAppContext(),"bad logging data 1");
+                        Log.e("logresponse", response.body().string());
+                        Log.e("respcode", String.valueOf(response.code()));
                     }
 
                 }
@@ -93,7 +102,7 @@ public class LoginPresenterImpl implements LoginPresenter{
 
     public void getUser(){
 
-        String url ="http://10.0.2.2:8080/user";
+        String url = loginView.getResourceStringValue(R.string.service_address) + "user";
         Gson gson = new Gson();
 
         MediaType mediaType = MediaType.parse("application/json");
@@ -109,7 +118,7 @@ public class LoginPresenterImpl implements LoginPresenter{
             @Override
             public void onFailure(Call call, IOException e) {
                 progressDialog.dismiss();
-                backgroundThreadShortToast(loginView.getAppContext(), "Error in logging occured");
+                backgroundThreadShortToast(loginView.getAppContext(), "Error in logging occurred. Please try Internet connection");
             }
 
             @Override

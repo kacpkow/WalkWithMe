@@ -1,6 +1,5 @@
 package com.example.kacper.walkwithme.AppointmentDetails;
 
-
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -14,21 +13,18 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.example.kacper.walkwithme.AppModel.ParticipantsData;
-import com.example.kacper.walkwithme.Model.User;
 import com.example.kacper.walkwithme.Model.UserProfileData;
 import com.example.kacper.walkwithme.R;
 import com.example.kacper.walkwithme.RequestController;
@@ -36,7 +32,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -44,7 +39,6 @@ import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import okhttp3.Call;
@@ -65,11 +59,11 @@ public class StrollDetailsFragment extends Fragment implements OnMapReadyCallbac
     String startTime;
     String endTime;
     String description;
-    int[] participants;
+    int participants;
 
     int participantsNumber = 0;
 
-    List<ParticipantsData> participantsList;
+    List<UserProfileData> participantsList;
 
     TextView startTimeView;
     TextView endTimeView;
@@ -85,7 +79,7 @@ public class StrollDetailsFragment extends Fragment implements OnMapReadyCallbac
     float latitude;
     float longtitude;
 
-    private ListView listView;
+    private RecyclerView rv;
     private ArrayAdapter<String> adapter ;
 
     OkHttpClient client;
@@ -117,7 +111,7 @@ public class StrollDetailsFragment extends Fragment implements OnMapReadyCallbac
         endTime = getArguments().getString("endTime");
         location = getArguments().getString("location");
         description = getArguments().getString("description");
-        participants = getArguments().getIntArray("participants");
+        participants = getArguments().getInt("participants");
 
         participantsList = new ArrayList<>();
 
@@ -125,7 +119,6 @@ public class StrollDetailsFragment extends Fragment implements OnMapReadyCallbac
         endTimeView.setText(endTimeView.getText().toString() + endTime);
         descriptionView.setText(descriptionView.getText().toString() + description);
         locationView.setText(locationView.getText().toString() + location);
-        //Glide.with(this).load(mediumPhoto).into(personPhoto);
 
         cancelStrollButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -138,20 +131,12 @@ public class StrollDetailsFragment extends Fragment implements OnMapReadyCallbac
                 dialogBuilder.setPositiveButton("CANCEL STROLL", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        //Toast.makeText(AppointmentDetailsActivity.this, "You cancelled a stroll", Toast.LENGTH_SHORT).show();
-                        if(cancelStroll(strollId) == true){
-                            Toast.makeText(getActivity().getApplicationContext(), "You cancelled stroll", Toast.LENGTH_SHORT).show();
-                            getActivity().getFragmentManager().popBackStack();
-                        }
-                        else{
-                            Toast.makeText(getActivity().getApplicationContext(), "An error occured, try again", Toast.LENGTH_SHORT).show();
-                        }
+                        cancelStroll(strollId);
                     }
                 });
                 dialogBuilder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(getActivity().getApplicationContext(), "You click no", Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -164,6 +149,7 @@ public class StrollDetailsFragment extends Fragment implements OnMapReadyCallbac
         showParticipatorsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                participantsList.clear();
                 showParticipantsDialog = new ProgressDialog(getContext());
                 showParticipantsDialog .setTitle("Loading, please wait...");
                 showParticipantsDialog.show();
@@ -185,17 +171,9 @@ public class StrollDetailsFragment extends Fragment implements OnMapReadyCallbac
     }
 
     public void loadParticipants(){
-        if(participants != null){
-            for(int singleParticipant: participants){
-                Log.e("participant id", String.valueOf(singleParticipant));
-                loadSingleParticipant(singleParticipant);
-                participantsNumber++;
-            }
-        }
-        else{
-            showParticipantsDialog.dismiss();
-            showParticipants();
-        }
+
+        Log.e("participant id", String.valueOf(participants));
+        loadSingleParticipant(participants);
 
     }
 
@@ -205,16 +183,14 @@ public class StrollDetailsFragment extends Fragment implements OnMapReadyCallbac
         View dialogView = inflater.inflate(R.layout.dialog_stroll_participants, null);
         dialogBuilder.setView(dialogView);
 
-        listView = (ListView) dialogView.findViewById(R.id.listview);
-        String cars[] = {"Mercedes", "Fiat", "Ferrari", "Aston Martin", "Lamborghini", "Skoda", "Volkswagen"};
-        ArrayList<String> participantsL = new ArrayList<String>();
-        for(ParticipantsData data: participantsList){
-            participantsL.add(data.getName());
-        }
+        rv=(RecyclerView)dialogView.findViewById(R.id.rvParticipants);
+        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+        rv.setLayoutManager(llm);
+        rv.setHasFixedSize(true);
 
-        adapter = new ArrayAdapter<String>(getContext(), R.layout.participants_item, participantsL);
+        ParticipantsAdapter adapter = new ParticipantsAdapter(participantsList, this.getContext());
 
-        listView.setAdapter(adapter);
+        rv.setAdapter(adapter);
 
         dialogBuilder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
             @Override
@@ -229,7 +205,7 @@ public class StrollDetailsFragment extends Fragment implements OnMapReadyCallbac
     }
 
     public void loadSingleParticipant(int singleParticipant){
-        String url ="http://10.0.2.2:8080/user/"+String.valueOf(singleParticipant);
+        String url = getString(R.string.service_address)+"user/"+String.valueOf(singleParticipant);
 
         final Request request;
         request = new Request.Builder()
@@ -263,19 +239,20 @@ public class StrollDetailsFragment extends Fragment implements OnMapReadyCallbac
 
                 @Override
                 public void run() {
-                    ParticipantsData newParticipant = new ParticipantsData(usr.getFirstName() + " " + usr.getLastName());
-                    participantsList.add(newParticipant);
-                    if(participantsNumber == participants.length){
-                        showParticipantsDialog.dismiss();
-                        showParticipants();
-                    }
+                    participantsList.add(usr);
+//                    if(participantsNumber == participants.length){
+//                        showParticipantsDialog.dismiss();
+//                        showParticipants();
+//                    }
+                    showParticipantsDialog.dismiss();
+                    showParticipants();
                 }
             });
         }
     }
 
-    public boolean cancelStroll(Integer strollId){
-        String url ="http://10.0.2.2:8080/stroll/delete/"+strollId.toString();
+    public void cancelStroll(Integer strollId){
+        String url = getString(R.string.service_address) +"stroll/delete/"+String.valueOf(strollId);
         final boolean[] flag = {false};
         Gson gson = new Gson();
 
@@ -299,20 +276,44 @@ public class StrollDetailsFragment extends Fragment implements OnMapReadyCallbac
 
             @Override
             public void onResponse(Call call, okhttp3.Response response) throws IOException {
-                Gson retGson = new Gson();
                 int code = response.code();
                 Log.e("was ok code", "Was ok");
+                Log.e("response", response.body().string());
                 if(code == 200){
-                    flag[0] = true;
+                    backgroundThreadShortToast(getActivity().getApplicationContext(), "You cancelled your participation in this stroll");
+                    backgroundThreadFinishFragment(getActivity().getApplicationContext());
+                }
+                else{
+                    backgroundThreadShortToast(getActivity().getApplicationContext(),"An error occurred, try again...");
                 }
             }
         });
 
-        if(flag[0] == true)
-            return true;
+    }
 
-        return false;
+    public static void backgroundThreadShortToast(final Context context,
+                                                  final String msg) {
+        if (context != null && msg != null) {
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
 
+                @Override
+                public void run() {
+                    Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
+    public void backgroundThreadFinishFragment(final Context context){
+        if (context != null) {
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+
+                @Override
+                public void run() {
+                    getActivity().getSupportFragmentManager().popBackStack();
+                }
+            });
+        }
     }
 
     @Override
@@ -327,21 +328,21 @@ public class StrollDetailsFragment extends Fragment implements OnMapReadyCallbac
         {
             Geocoder geocoder = new Geocoder(getContext());
             try {
-                //addressList = geocoder.getFromLocationName(location, 1);
                 addressList = geocoder.getFromLocationName(location, 1);
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-            if(addressList.size() != 0){
-                Address address = addressList.get(0);
-                LatLng latLng = new LatLng(address.getLatitude() , address.getLongitude());
-                mMap.clear();
-                mMap.addMarker(new MarkerOptions().position(latLng).title("Marker"));
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
-                latitude = (float)address.getLatitude();
-                longtitude = (float)address.getLongitude();
+            if(addressList != null){
+                if(addressList.size() != 0){
+                    Address address = addressList.get(0);
+                    LatLng latLng = new LatLng(address.getLatitude() , address.getLongitude());
+                    mMap.clear();
+                    mMap.addMarker(new MarkerOptions().position(latLng).title("Marker"));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+                    latitude = (float)address.getLatitude();
+                    longtitude = (float)address.getLongitude();
+                }
             }
 
         }

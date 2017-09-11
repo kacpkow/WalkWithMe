@@ -48,7 +48,7 @@ public class PersonAdapter extends RecyclerView.Adapter<PersonAdapter.PersonView
         String personLocation;
         String personPhoto;
         TextView distance;
-        ImageView personMediumPhoto;
+        de.hdodenhof.circleimageview.CircleImageView personMediumPhoto;
 
         private Context context;
 
@@ -59,7 +59,7 @@ public class PersonAdapter extends RecyclerView.Adapter<PersonAdapter.PersonView
             personName = (TextView)itemView.findViewById(R.id.person_name);
             distance = (TextView)itemView.findViewById(R.id.person_distance);
             personAge = (TextView)itemView.findViewById(R.id.person_age);
-            personMediumPhoto = (ImageView)itemView.findViewById(R.id.person_photo);
+            personMediumPhoto = (de.hdodenhof.circleimageview.CircleImageView)itemView.findViewById(R.id.person_photo);
             personLocation = "";
             personFirstName = "";
             personLastName = "";
@@ -78,13 +78,7 @@ public class PersonAdapter extends RecyclerView.Adapter<PersonAdapter.PersonView
             Fragment f = ((AppCompatActivity)v.getContext()).getSupportFragmentManager().findFragmentById(R.id.fragment_container);
 
             Bundle args = new Bundle();
-            args.putInt("USER_ID", userId);
-            args.putString("USER_AGE", personAge.getText().toString());
-            args.putString("USER_LOCATION", personLocation);
-            args.putString("USER_DESCRIPTION", personDescription);
-            args.putString("USER_NAME", personName.getText().toString());
-            args.putString("USER_IMAGE", personPhoto);
-
+            args.putInt("USER_ID_1", userId);
             newFragment.setArguments(args);
 
             ft.replace(R.id.fragment_container, newFragment);
@@ -122,18 +116,13 @@ public class PersonAdapter extends RecyclerView.Adapter<PersonAdapter.PersonView
         personViewHolder.personDescription = persons.get(i).getDescription();
         personViewHolder.personLocation = persons.get(i).getCity();
         personViewHolder.personPhoto = persons.get(i).getPhoto_url();
-//        Glide.with(mContext).load(persons.get(i).getPhoto_url())
-//                .into(personViewHolder.personMediumPhoto);
-
-//        Log.e("photo",  String.valueOf(persons.get(i).getPhoto_url().toString().getBytes(StandardCharsets.UTF_8)));
-        //Log.e("photo",  String.valueOf(persons.get(i).getPhoto_url().toString()));
 
         try{
-//            Log.e("photo1",  array.toString());
             Glide.with(mContext)
                     .load(Base64.decode(persons.get(i).getPhoto_url(), Base64.DEFAULT))
                     .apply(new RequestOptions()
-                            .diskCacheStrategy(DiskCacheStrategy.NONE))
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .dontAnimate())
                     .into(personViewHolder.personMediumPhoto);
         }catch (Exception ex){
             ex.printStackTrace();

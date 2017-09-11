@@ -1,5 +1,8 @@
 package com.example.kacper.walkwithme;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import com.example.kacper.walkwithme.LoginActivity.LoginActivity;
 import com.example.kacper.walkwithme.LoginActivity.LoginContent;
 import com.franmontiel.persistentcookiejar.PersistentCookieJar;
@@ -51,6 +54,8 @@ public class RequestController {
         state = false;
     }
 
+
+
     public boolean getState(){
         return state;
     }
@@ -58,4 +63,40 @@ public class RequestController {
     public void setState(boolean newState){
         this.state = newState;
     }
+
+//    public void saveInstance(Context mContext){
+//        SharedPreferences prefs = mContext.getSharedPreferences("SESSION", Context.MODE_PRIVATE);
+//        SharedPreferences.Editor editor = prefs.edit();
+//        Gson gson = new Gson();
+//        String json = gson.toJson(client);
+//        editor.putString("Session_object", json);
+//        editor.commit();
+//    }
+
+    public void saveInstance(Context mContext){
+        SharedPreferences prefs = mContext.getSharedPreferences("SESSION", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(mInstance);
+        editor.putString("Session_object", json);
+        editor.commit();
+    }
+//
+//
+//    public void getInstanceFromSharedPreferences(Context mContext){
+//        SharedPreferences prefs = mContext.getSharedPreferences("SESSION", Context.MODE_PRIVATE);
+//        String json = prefs.getString("Session_object", null);
+//        Gson gson = new Gson();
+//        if(json != null){
+//            mInstance = gson.fromJson(json, RequestController.class);
+//        }
+//    }
+//
+//    public void deleteSession(Context mContext){
+//        SharedPreferences prefs = mContext.getSharedPreferences("SESSION", Context.MODE_PRIVATE);
+//        SharedPreferences.Editor editor = prefs.edit();
+//        editor.remove("Session_object");
+//        editor.commit();
+//        mInstance = null;
+//    }
 }

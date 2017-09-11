@@ -1,5 +1,6 @@
 package com.example.kacper.walkwithme.LoginActivity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Handler;
@@ -83,27 +84,23 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
         usrId = settings.getInt("userId", 0);
         loginState = settings.getString("state", "out");
 
-        client = RequestController.getInstance().getClient();
+        settings = getSharedPreferences
+                ("CREDENTIALS", Context.MODE_PRIVATE);
+        String credentials = settings.getString("values", "");
 
-//        if(loginState.equals("logged in")){
-//            client = RequestController.getInstance().getClient();
-//            getUsrData();
-//        }
-//        else{
-//            RequestController.getInstance().newClient();
-//            client = RequestController.getInstance().getClient();
-//        }
-//        ;
+        if(!credentials.equals("")){
+            Intent intent = new Intent(getApplicationContext(), MainView.class);
+            startActivity(intent);
+            Log.e("Starting", "main view");
+        }
+
+        client = RequestController.getInstance().getClient();
 
     }
 
     public void getUsrData(){
 
-        String url ="http://10.0.2.2:8080/user";
-
-        Gson gson = new Gson();
-
-        MediaType mediaType = MediaType.parse("application/json");
+        String url = getString(R.string.service_address) + "user";
 
         final Request request;
         request = new Request.Builder()
@@ -123,7 +120,6 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
 
                 if(response.code() == 200){
                     backgroundThreadGoToOptions(getApplicationContext());
-                    Log.e("info", "wassomething");
                 }
 
             }
@@ -169,17 +165,19 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
     }
 
     @Override
+    public String getResourceStringValue(int id) {
+        return getString(id);
+    }
+
+    @Override
     protected void onResume(){
         super.onResume();
                 SharedPreferences settings = getSharedPreferences
                 ("USER_ID", Context.MODE_PRIVATE);
         usrId = settings.getInt("userId", 0);
-        if(RequestController.getInstance().getState() == true){
-            goToOptions(usrId);
+        if(usrId != 0){
             finish();
         }
-
-        client = RequestController.getInstance().getClient();
 
     }
 
