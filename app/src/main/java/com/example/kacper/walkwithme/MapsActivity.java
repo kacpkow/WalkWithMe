@@ -117,7 +117,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-
+                Log.e("fail", "failure");
             }
 
             @Override
@@ -125,6 +125,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 String json;
                 json = response.body().string();
                 Log.e("resp", json);
+                Log.e("code localisation", String.valueOf(response.code()));
                 Gson retGson = new Gson();
 
                 if(response.code() == 200){
@@ -248,12 +249,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mMap.getUiSettings().setZoomControlsEnabled(true);
                 latitude = (float)address.getLatitude();
                 longtitude = (float)address.getLongitude();
+                Log.e("here", "1");
             }
             else{
+                Log.e("here", "2");
                 showInfoDialog();
             }
         }
         else{
+            Log.e("here", "3");
             showInfoDialog();
         }
 

@@ -173,13 +173,13 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
 
     @Override
     protected void onResume(){
-        super.onResume();
-                SharedPreferences settings = getSharedPreferences
+        SharedPreferences settings = getSharedPreferences
                 ("USER_ID", Context.MODE_PRIVATE);
         usrId = settings.getInt("userId", 0);
         if(usrId != 0){
             finish();
         }
+        super.onResume();
 
     }
 

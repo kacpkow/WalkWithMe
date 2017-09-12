@@ -234,17 +234,19 @@ public class PersonDetailsFragment extends Fragment {
                 try {
                     List<UserProfileData> readFromJson = objGson.fromJson(jsonResponse, listType);
 
-                    for (UserProfileData userProfileData:readFromJson
-                            ) {
-                        try {
-                            Log.e("from fragment", String.valueOf(userProfileData.getUser_id()));
-                            if (userProfileData.getUser_id() == userId){
-                                friendState = true;
-                                break;
-                            }
+                    if(readFromJson != null){
+                        for (UserProfileData userProfileData:readFromJson
+                                ) {
+                            try {
+                                Log.e("from fragment", String.valueOf(userProfileData.getUser_id()));
+                                if (userProfileData.getUser_id() == userId){
+                                    friendState = true;
+                                    break;
+                                }
 
-                        } catch (JsonSyntaxException e) {
-                            Log.e("error", "error in syntax in returning json");
+                            } catch (JsonSyntaxException e) {
+                                Log.e("error", "error in syntax in returning json");
+                            }
                         }
                     }
                 }catch (JsonSyntaxException e){

@@ -27,6 +27,7 @@ import com.example.kacper.walkwithme.Model.Person;
 import com.example.kacper.walkwithme.Model.PhotoData;
 import com.example.kacper.walkwithme.Model.PhotoDataDeserializer;
 import com.example.kacper.walkwithme.Model.SearchCriteria;
+import com.example.kacper.walkwithme.Model.User;
 import com.example.kacper.walkwithme.Model.UserProfileData;
 import com.example.kacper.walkwithme.R;
 import com.example.kacper.walkwithme.RequestController;
@@ -38,6 +39,7 @@ import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
@@ -199,6 +201,17 @@ public class PersonsListFragment extends Fragment {
                 }.getType();
 
                 try {
+
+                    try {
+                        List<UserProfileData> readFromJson = objGson.fromJson(jsonResponse, listType);
+                        if (readFromJson != null) {
+                            UserProfileData[] usersArray = objGson.fromJson(jsonResponse, UserProfileData[].class);
+                            readFromJson = new ArrayList<UserProfileData>(Arrays.asList(usersArray));
+                        }
+
+                    } catch (JsonSyntaxException e) {
+                        Log.e("error", "error in syntax in returning json");
+                    }
                     List<UserProfileData> readFromJson = objGson.fromJson(jsonResponse, listType);
                     DistanceCalculator calculator = new DistanceCalculator();
                     Double distance;
@@ -208,46 +221,49 @@ public class PersonsListFragment extends Fragment {
                     userLatitude = (double)settings.getFloat("latitude", 0.0f);
                     userLongtitude = (double)settings.getFloat("longtitude", 0.0f);
 
-                    for (UserProfileData userProfileData:readFromJson
-                            ) {
-                        try {
-                            Person person = new Person();
+                    if(readFromJson != null){
+                        for (UserProfileData userProfileData:readFromJson
+                                ) {
+                            try {
+                                Person person = new Person();
 
-                            person.setCity(userProfileData.getCity());
-                            person.setDescription(userProfileData.getDescription());
-                            person.setPhoto_url(userProfileData.getPhoto_url());
-                            person.setUser_id(userProfileData.getUser_id());
-                            person.setFirstName(userProfileData.getFirstName());
-                            person.setLastName(userProfileData.getLastName());
-                            person.setCity(userProfileData.getCity());
-                            person.setBirth_date(userProfileData.getBirth_date());
-                            person.setLatitude(userProfileData.getLatitude());
-                            person.setLongtitude(userProfileData.getLongtitude());
-                            person.setNick(userProfileData.getNick());
+                                person.setCity(userProfileData.getCity());
+                                person.setDescription(userProfileData.getDescription());
+                                person.setPhoto_url(userProfileData.getPhoto_url());
+                                person.setUser_id(userProfileData.getUser_id());
+                                person.setFirstName(userProfileData.getFirstName());
+                                person.setLastName(userProfileData.getLastName());
+                                person.setCity(userProfileData.getCity());
+                                person.setBirth_date(userProfileData.getBirth_date());
+                                person.setLatitude(userProfileData.getLatitude());
+                                person.setLongtitude(userProfileData.getLongtitude());
+                                person.setNick(userProfileData.getNick());
 
-                            distance = calculator.distance(person.getLongtitude(), person.getLongtitude(), userLongtitude, userLatitude, "K");
-                            person.setDistance(distance.intValue());
-                            String year = person.getBirth_date().substring(0, Math.min(person.getBirth_date().length(), 4));
-                            String month = person.getBirth_date().substring(5, Math.min(person.getBirth_date().length(), 7));
-                            String day = person.getBirth_date().substring(9, Math.min(person.getBirth_date().length(), 11));
+                                distance = calculator.distance(person.getLongtitude(), person.getLongtitude(), userLongtitude, userLatitude, "K");
+                                person.setDistance(distance.intValue());
+                                String year = person.getBirth_date().substring(0, Math.min(person.getBirth_date().length(), 4));
+                                String month = person.getBirth_date().substring(5, Math.min(person.getBirth_date().length(), 7));
+                                String day = person.getBirth_date().substring(9, Math.min(person.getBirth_date().length(), 11));
 
-                            Calendar c = Calendar.getInstance();
-                            int actualYear = c.get(Calendar.YEAR);
-                            int actualMonth = c.get(Calendar.MONTH);
-                            int actualDay = c.get(Calendar.DAY_OF_MONTH);
+                                Calendar c = Calendar.getInstance();
+                                int actualYear = c.get(Calendar.YEAR);
+                                int actualMonth = c.get(Calendar.MONTH);
+                                int actualDay = c.get(Calendar.DAY_OF_MONTH);
 
-                            Double calcAge =Double.valueOf(year) + Double.valueOf(month)/100.0 + Double.valueOf(day)/10000.0;
-                            Double actCalcAge = actualYear + actualMonth/100.0 + actualDay/10000.0;
-                            Double calc = Math.floor(actCalcAge - calcAge);
+                                Double calcAge =Double.valueOf(year) + Double.valueOf(month)/100.0 + Double.valueOf(day)/10000.0;
+                                Double actCalcAge = actualYear + actualMonth/100.0 + actualDay/10000.0;
+                                Double calc = Math.floor(actCalcAge - calcAge);
 
-                            person.setAge(calc.intValue());
+                                person.setAge(calc.intValue());
 
-                            persons.add(person);
+                                persons.add(person);
 
-                        } catch (JsonSyntaxException e) {
-                            Log.e("error", "error in syntax in returning json");
+                            } catch (JsonSyntaxException e) {
+                                Log.e("error", "error in syntax in returning json");
+                            }
                         }
                     }
+
                 }catch (JsonSyntaxException e){
                     Log.e("Json Syntax exception", e.getLocalizedMessage());
                 }

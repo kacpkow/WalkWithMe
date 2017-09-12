@@ -74,12 +74,14 @@ public class ConversationAdapter extends RecyclerView.Adapter<ConversationAdapte
     public void onBindViewHolder(ConversationViewHolder chatViewHolder, int i) {
         chatViewHolder.message.setText(userMessageData.get(i).getMessage());
         if(userMessageData.get(i).getSenderId() == myId){
-            Glide.with(mContext)
-                    .load(Base64.decode(myPhoto, Base64.DEFAULT))
-                    .apply(new RequestOptions()
-                            .diskCacheStrategy(DiskCacheStrategy.NONE)
-                            .dontAnimate())
-                    .into(chatViewHolder.personPhoto);
+            if(myPhoto != null){
+                Glide.with(mContext)
+                        .load(Base64.decode(myPhoto, Base64.DEFAULT))
+                        .apply(new RequestOptions()
+                                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                .dontAnimate())
+                        .into(chatViewHolder.personPhoto);
+            }
             chatViewHolder.message.setBackgroundResource(R.drawable.button_my_message);
             RelativeLayout.LayoutParams messageParams = (RelativeLayout.LayoutParams)chatViewHolder.message.getLayoutParams();
             RelativeLayout.LayoutParams photoParams = (RelativeLayout.LayoutParams)chatViewHolder.personPhoto.getLayoutParams();
@@ -92,12 +94,15 @@ public class ConversationAdapter extends RecyclerView.Adapter<ConversationAdapte
             chatViewHolder.personPhoto.setLayoutParams(photoParams);
         }
         else{
-            Glide.with(mContext)
-                    .load(Base64.decode(foreignPhoto, Base64.DEFAULT))
-                    .apply(new RequestOptions()
-                            .diskCacheStrategy(DiskCacheStrategy.NONE)
-                            .dontAnimate())
-                    .into(chatViewHolder.personPhoto);
+            if(foreignPhoto!=null){
+                Glide.with(mContext)
+                        .load(Base64.decode(foreignPhoto, Base64.DEFAULT))
+                        .apply(new RequestOptions()
+                                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                .dontAnimate())
+                        .into(chatViewHolder.personPhoto);
+            }
+
             chatViewHolder.message.setBackgroundResource(R.drawable.button_foreign_message);
             RelativeLayout.LayoutParams messageParams = (RelativeLayout.LayoutParams)chatViewHolder.message.getLayoutParams();
             RelativeLayout.LayoutParams photoParams = (RelativeLayout.LayoutParams)chatViewHolder.personPhoto.getLayoutParams();

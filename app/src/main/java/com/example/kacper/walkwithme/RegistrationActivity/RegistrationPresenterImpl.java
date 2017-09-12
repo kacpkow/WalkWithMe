@@ -11,6 +11,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.kacper.walkwithme.Model.RegistrationForm;
+import com.example.kacper.walkwithme.R;
 import com.example.kacper.walkwithme.RequestController;
 import com.google.gson.Gson;
 
@@ -46,7 +47,7 @@ public class RegistrationPresenterImpl implements RegistrationPresenter{
     public void register(RegistrationForm form) {
         if(validateFields(form)){
             progressDialog = new ProgressDialog(registrationView.getActivityContext());
-            String url ="http://10.0.2.2:8080/registration";
+            String url = registrationView.getAppContext().getString(R.string.service_address) + "registration";
             progressDialog.setTitle("Account registering, please wait ...");
             progressDialog.show();
             OkHttpClient client = new OkHttpClient();
