@@ -1,6 +1,6 @@
 package com.example.kacper.walkwithme.Model;
 /**
- * @author Marek Makowski
+ * @author Kacper Kowalik
  * @version 1.0
  */
 public class UserProfileData {

@@ -52,7 +52,8 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /**
- * A simple {@link Fragment} subclass.
+ * @author Kacper Kowalik
+ * @version 1.0
  */
 public class EditAnnouncementFragment extends Fragment {
 

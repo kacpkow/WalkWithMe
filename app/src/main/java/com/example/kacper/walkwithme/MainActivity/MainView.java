@@ -6,12 +6,11 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -20,18 +19,17 @@ import android.widget.ImageButton;
 import com.example.kacper.walkwithme.MainActivity.Announcements.AnnouncementFragment;
 import com.example.kacper.walkwithme.MainActivity.Chat.ChatFragment;
 import com.example.kacper.walkwithme.MainActivity.ForthcomingAppointments.ForcomingAppointmentsFragment;
-import com.example.kacper.walkwithme.MainActivity.PersonsList.PersonsListFragment;
 import com.example.kacper.walkwithme.MainActivity.Notifications.NotificationsFragment;
-import com.example.kacper.walkwithme.Model.JsonHelper;
-import com.example.kacper.walkwithme.Model.MessageNotifications;
+import com.example.kacper.walkwithme.MainActivity.PersonsList.PersonsListFragment;
+import com.example.kacper.walkwithme.R;
 import com.example.kacper.walkwithme.Services.NotificationChecker;
 import com.example.kacper.walkwithme.Services.NotificationCheckerCallbacks;
-import com.example.kacper.walkwithme.R;
 import com.example.kacper.walkwithme.SettingsActivity.SettingsActivity;
 
-import java.util.HashMap;
-import java.util.Map;
-
+/**
+ * @author Kacper Kowalik
+ * @version 1.0
+ */
 public class MainView extends AppCompatActivity implements NotificationCheckerCallbacks{
 
     private ImageButton chatButton;

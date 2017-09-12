@@ -1,7 +1,8 @@
 package com.example.kacper.walkwithme.MainActivity.Notifications;
 
 /**
- * Created by kacper on 2017-07-04.
+ * @author Kacper Kowalik
+ * @version 1.0
  */
 
 public class NotificationsPresenterImpl implements NotificationsPresenter {

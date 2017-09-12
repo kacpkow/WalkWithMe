@@ -15,6 +15,7 @@ import com.example.kacper.walkwithme.RequestController;
 import com.google.gson.Gson;
 
 import java.io.IOException;
+
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -23,7 +24,8 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 
 /**
- * Created by kacper on 2017-03-31.
+ * @author Kacper Kowalik
+ * @version 1.0
  */
 
 public class RegistrationPresenterImpl implements RegistrationPresenter{

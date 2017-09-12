@@ -1,20 +1,20 @@
 package com.example.kacper.walkwithme.RegistrationActivity;
 
 import android.content.Context;
-import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.kacper.walkwithme.LoginActivity.LoginActivity;
 import com.example.kacper.walkwithme.Model.RegistrationForm;
 import com.example.kacper.walkwithme.R;
-
-import java.lang.String;
+/**
+ * @author Kacper Kowalik
+ * @version 1.0
+ */
 
 public class RegistrationActivity extends AppCompatActivity implements RegistrationView {
 

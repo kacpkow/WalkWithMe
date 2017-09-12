@@ -27,10 +27,6 @@ package com.example.kacper.walkwithme.MainActivity.PersonsList;
 /*::                                                                         :*/
 /*::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
 
-import java.util.*;
-import java.lang.*;
-import java.io.*;
-
 class DistanceCalculator
 {
     public static void main (String[] args) throws java.lang.Exception

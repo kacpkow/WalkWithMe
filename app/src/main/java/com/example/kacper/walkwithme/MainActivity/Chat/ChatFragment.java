@@ -39,18 +39,20 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 /**
- * A simple {@link Fragment} subclass.
+ * @author Kacper Kowalik
+ * @version 1.0
  */
-public class ChatFragment extends Fragment {
+public class ChatFragment extends Fragment implements ChatView {
 
     private RecyclerView rv;
     private List<ChatData> chatDataList;
     OkHttpClient client;
+    private ChatPresenter presenter;
 
     Map<Integer, MessageNotifications> map;
 
     String jsonMap;
-    boolean initializeFromMap = false;
+    boolean argumentsRead = false;
 
     public ChatFragment() {
         // Required empty public constructor
@@ -60,6 +62,7 @@ public class ChatFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_chat, container, false);
+        presenter = new ChatPresenterImpl(this);
         map = new HashMap<Integer, MessageNotifications>();
         client = RequestController.getInstance().getClient();
         rv=(RecyclerView)v.findViewById(R.id.rvChat);
@@ -68,11 +71,17 @@ public class ChatFragment extends Fragment {
         rv.setHasFixedSize(true);
         rv.addItemDecoration(new SimpleDividerItemDecoration(getResources()));
         chatDataList = new ArrayList<>();
-        jsonMap = getArguments().getString("messageNotifications", "");
-        if(!jsonMap.equals("")){
-            map = JsonHelper.jsonToMapIntegerObject(jsonMap);
-            initializeFromMap = true;
+        if(!argumentsRead){
+            jsonMap = getArguments().getString("messageNotifications", "");
+            if(!jsonMap.equals("")){
+                map = JsonHelper.jsonToMapIntegerObject(jsonMap);
+            }
+            argumentsRead = true;
         }
+        else{
+            jsonMap = null;
+        }
+
         initializeData();
         return v;
     }
@@ -127,13 +136,10 @@ public class ChatFragment extends Fragment {
     }
 
     void initializeAdapter(){
-        ChatAdapter adapter = new ChatAdapter(chatDataList, jsonMap, this.getContext());
+        ChatAdapter adapter = new ChatAdapter(chatDataList, jsonMap, this.getContext(), presenter);
         rv.setAdapter(adapter);
         Log.e("init", "adapter");
-        if(initializeFromMap){
-            initializeFromMap = false;
-            jsonMap = null;
-        }
+            Log.e("init", String.valueOf(jsonMap));
     }
 
     public void backgroundThreadInitializeAdapter(final Context context) {
@@ -149,10 +155,14 @@ public class ChatFragment extends Fragment {
         }
     }
 
-//    @Override
-//    public void onResume(){
-//        jsonMap = null;
-//        super.onResume();
-//    }
 
+    @Override
+    public void refresh_after_map() {
+        jsonMap = null;
+    }
+    @Override
+    public void onResume(){
+
+        super.onResume();
+    }
 }

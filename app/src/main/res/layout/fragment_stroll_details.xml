@@ -77,7 +77,7 @@
             <com.google.android.gms.maps.MapView
                 android:id="@+id/mapDetailsForcomingAppointment"
                 android:layout_width="match_parent"
-                android:layout_height="605dp"
+                android:layout_height="405dp"
                 android:apiKey="AIzaSyDUvDrGRcGOVPwuvrQu-H1WNT6Wpe7kvL0" />
 
         </LinearLayout>

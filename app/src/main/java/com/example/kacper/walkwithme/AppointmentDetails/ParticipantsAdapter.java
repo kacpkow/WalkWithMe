@@ -1,7 +1,7 @@
 package com.example.kacper.walkwithme.AppointmentDetails;
 
+
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -26,7 +26,8 @@ import com.example.kacper.walkwithme.R;
 import java.util.List;
 
 /**
- * Created by kacper on 2017-09-09.
+ * @author Kacper Kowalik
+ * @version 1.0
  */
 
 public class ParticipantsAdapter extends RecyclerView.Adapter<ParticipantsAdapter.ParticipantsViewHolder> {
@@ -64,7 +65,7 @@ public class ParticipantsAdapter extends RecyclerView.Adapter<ParticipantsAdapte
 
     List<UserProfileData> participantsData;
 
-    ParticipantsAdapter(List<UserProfileData> participantsData, Context mContext) {
+    public ParticipantsAdapter(List<UserProfileData> participantsData, Context mContext) {
         this.participantsData = participantsData;
         this.mContext = mContext;
     }

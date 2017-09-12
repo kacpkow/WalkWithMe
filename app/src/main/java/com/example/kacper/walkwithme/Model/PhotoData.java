@@ -1,7 +1,8 @@
 package com.example.kacper.walkwithme.Model;
 
 /**
- * Created by Rafal on 29.07.2017.
+ * @author Kacper Kowalik
+ * @version 1.0
  */
 public class PhotoData {
     private int photoId;

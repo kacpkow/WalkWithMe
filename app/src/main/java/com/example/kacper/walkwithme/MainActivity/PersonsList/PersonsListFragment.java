@@ -49,6 +49,10 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+/**
+ * @author Kacper Kowalik
+ * @version 1.0
+ */
 public class PersonsListFragment extends Fragment {
     private List<Person> persons;
     private RecyclerView rv;
@@ -88,6 +92,11 @@ public class PersonsListFragment extends Fragment {
         friendsCheckbox = (CheckBox) rootView.findViewById(R.id.friends_checkbox);
         progressDialog = new ProgressDialog(getContext());
         progressDialog.setTitle("Searching, please wait ...");
+
+        ageFrom.setText("20");
+        ageTo.setText("30");
+        distance.setText("100");
+
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -144,13 +153,14 @@ public class PersonsListFragment extends Fragment {
                 else{
                     searchButton.setBackgroundResource(R.drawable.button_register_rounded);
                     searchButton.setEnabled(true);
-                    initializeData(userId, 0, 100, 100.0);
+                    initializeData(userId, 20, 30, 100.0);
                 }
             }
         });
 
         progressDialog.show();
-        initializeData(userId, 0, 100, 100.0);
+
+        initializeData(userId, 20, 30, 100.0);
         initializeAdapter();
         progressDialog.dismiss();
 
@@ -385,5 +395,10 @@ public class PersonsListFragment extends Fragment {
 
 
         }
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
     }
 }

@@ -9,11 +9,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -23,13 +21,11 @@ import com.example.kacper.walkwithme.Model.Person;
 import com.example.kacper.walkwithme.PersonDetails.PersonDetailsFragment;
 import com.example.kacper.walkwithme.R;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.sql.Blob;
 import java.util.List;
 
 /**
- * Created by kacper on 2017-04-06.
+ * @author Kacper Kowalik
+ * @version 1.0
  */
 
 public class PersonAdapter extends RecyclerView.Adapter<PersonAdapter.PersonViewHolder> {

@@ -31,7 +31,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
-
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -40,12 +39,14 @@ import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 
+/**
+ * @author Kacper Kowalik
+ * @version 1.0
+ */
 public class AnnouncementFragment extends Fragment implements AnnouncementsView {
     private RecyclerView rv;
     private Integer userId;
@@ -166,6 +167,7 @@ public class AnnouncementFragment extends Fragment implements AnnouncementsView 
 
     public void initializeData() {
         String url;
+        advertisementDataList.clear();
 
         if (selection == 0) {
             url = getString(R.string.service_address) + "adv";
@@ -203,14 +205,14 @@ public class AnnouncementFragment extends Fragment implements AnnouncementsView 
                         if (readFromJson != null) {
 
                             AdvertisementData[] advertisementArray = objGson.fromJson(jsonResponse, AdvertisementData[].class);
-                            advertisementDataList = Arrays.asList(advertisementArray);
+                            advertisementDataList = new ArrayList(Arrays.asList(advertisementArray));
                         }
 
                     } catch (JsonSyntaxException e) {
                         Log.e("error", "error in syntax in returning json");
                     }
-                    backgroundThreadInitializeAdapter(getActivity().getApplicationContext());
                 }
+                backgroundThreadInitializeAdapter(getActivity().getApplicationContext());
             }
         });
     }

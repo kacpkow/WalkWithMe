@@ -1,7 +1,8 @@
 package com.example.kacper.walkwithme.MainActivity.Announcements;
 
 /**
- * Created by kacper on 2017-07-04.
+ * @author Kacper Kowalik
+ * @version 1.0
  */
 
 public interface AnnouncementsPresenter<T extends AnnouncementsView> {

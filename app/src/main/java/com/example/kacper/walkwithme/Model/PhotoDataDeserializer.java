@@ -10,7 +10,8 @@ import java.lang.reflect.Type;
 import java.nio.charset.Charset;
 
 /**
- * Created by kacper on 2017-08-10.
+ * @author Kacper Kowalik
+ * @version 1.0
  */
 
 public class PhotoDataDeserializer implements JsonDeserializer<PhotoData>{

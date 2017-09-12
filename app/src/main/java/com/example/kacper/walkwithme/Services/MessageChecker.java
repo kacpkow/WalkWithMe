@@ -27,6 +27,10 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+/**
+ * @author Kacper Kowalik
+ * @version 1.0
+ */
 public class MessageChecker extends Service {
     private MessageCheckerCallbacks messageCheckerCallbacks;
 

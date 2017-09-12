@@ -1,7 +1,5 @@
 package com.example.kacper.walkwithme.MainActivity.Announcements.AnnouncementDetails;
 
-
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -11,23 +9,23 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.kacper.walkwithme.AppointmentDetails.ParticipantsAdapter;
 import com.example.kacper.walkwithme.Model.AdvertisementData;
 import com.example.kacper.walkwithme.Model.LocationData;
+import com.example.kacper.walkwithme.Model.UserProfileData;
 import com.example.kacper.walkwithme.R;
 import com.example.kacper.walkwithme.RequestController;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -39,6 +37,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.Call;
@@ -50,7 +49,8 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /**
- * A simple {@link Fragment} subclass.
+ * @author Kacper Kowalik
+ * @version 1.0
  */
 public class AnnouncementDetailsFragment extends Fragment {
 
@@ -61,6 +61,12 @@ public class AnnouncementDetailsFragment extends Fragment {
     ImageButton showLocationButton;
     Button cancelButton;
     Button takePartInStroll;
+    Button showPerson;
+    private RecyclerView rv;
+
+    android.app.AlertDialog dialog;
+
+    List<UserProfileData> personsList;
 
     String locationName;
     Integer userId;
@@ -89,6 +95,7 @@ public class AnnouncementDetailsFragment extends Fragment {
         showLocationButton = (ImageButton)v.findViewById(R.id.strollLocationButton);
         cancelButton = (Button)v.findViewById(R.id.cancelDetails);
         takePartInStroll = (Button)v.findViewById(R.id.takePartInStrollButton);
+        showPerson = (Button)v.findViewById(R.id.showPerson);
 
         strollStartTimeView = (TextView) v.findViewById(R.id.strollStartTime);
         strollEndTimeView = (TextView) v.findViewById(R.id.strollEndTime);
@@ -135,7 +142,88 @@ public class AnnouncementDetailsFragment extends Fragment {
             }
         });
 
+        showPerson.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPerson();
+            }
+        });
+
         return v;
+    }
+
+    public void showPerson(){
+       getUserData();
+    }
+
+    public void getUserData(){
+        String url = getString(R.string.service_address)+"user/"+String.valueOf(userId);
+
+        final Request request;
+        request = new Request.Builder()
+                .url(url)
+                .addHeader("content-type", "application/json")
+                .build();
+
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, okhttp3.Response response) throws IOException {
+                Gson retGson = new Gson();
+                String json = response.body().string();
+                if(response.code() == 200){
+                    UserProfileData usr = retGson.fromJson(json, UserProfileData.class);
+                    backgroundThreadShowDialog(getContext(), usr);
+                }
+            }
+        });
+    }
+
+    public void backgroundThreadShowDialog(final Context context,
+                                                     final UserProfileData usr) {
+        if (context != null) {
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+
+                @Override
+                public void run() {
+                    showDialog(usr);
+                }
+            });
+        }
+    }
+
+    public void showDialog(UserProfileData user){
+        android.app.AlertDialog.Builder dialogBuilder = new android.app.AlertDialog.Builder(getContext());
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_stroll_participants, null);
+        dialogBuilder.setView(dialogView);
+
+        rv=(RecyclerView)dialogView.findViewById(R.id.rvParticipants);
+        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+        rv.setLayoutManager(llm);
+        rv.setHasFixedSize(true);
+        personsList = new ArrayList<>();
+        Log.e("User", String.valueOf(user.getUser_id()));
+        personsList.add(user);
+
+        ParticipantsAdapter adapter = new ParticipantsAdapter(personsList, this.getContext());
+
+        rv.setAdapter(adapter);
+
+        dialogBuilder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //Toast.makeText(MakeStrollActivity.this, "You cancelled", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        dialog = dialogBuilder.create();
+        dialog.show();
     }
 
 
@@ -259,6 +347,14 @@ public class AnnouncementDetailsFragment extends Fragment {
 
             }
         });
+    }
+
+    @Override
+    public void onPause(){
+        if(dialog!=null){
+            dialog.dismiss();
+        }
+        super.onPause();
     }
 
 }

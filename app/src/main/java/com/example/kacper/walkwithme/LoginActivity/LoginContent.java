@@ -1,7 +1,8 @@
 package com.example.kacper.walkwithme.LoginActivity;
 
 /**
- * Created by kacper on 2017-05-09.
+ * @author Kacper Kowalik
+ * @version 1.0
  */
 
 public class LoginContent {

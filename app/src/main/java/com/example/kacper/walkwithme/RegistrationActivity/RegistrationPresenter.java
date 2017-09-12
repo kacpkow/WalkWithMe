@@ -3,7 +3,8 @@ package com.example.kacper.walkwithme.RegistrationActivity;
 import com.example.kacper.walkwithme.Model.RegistrationForm;
 
 /**
- * Created by kacper on 2017-03-31.
+ * @author Kacper Kowalik
+ * @version 1.0
  */
 
 public interface RegistrationPresenter<T extends RegistrationView> {

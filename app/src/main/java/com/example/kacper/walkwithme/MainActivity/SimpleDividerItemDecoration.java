@@ -9,7 +9,8 @@ import android.view.View;
 import com.example.kacper.walkwithme.R;
 
 /**
- * Created by kacper on 2017-04-04.
+ * @author Kacper Kowalik
+ * @version 1.0
  */
 
 public class SimpleDividerItemDecoration extends RecyclerView.ItemDecoration{

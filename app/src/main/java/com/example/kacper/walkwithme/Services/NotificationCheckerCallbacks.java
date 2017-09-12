@@ -1,7 +1,8 @@
 package com.example.kacper.walkwithme.Services;
 
 /**
- * Created by kacper on 2017-09-05.
+ * @author Kacper Kowalik
+ * @version 1.0
  */
 
 public interface NotificationCheckerCallbacks {

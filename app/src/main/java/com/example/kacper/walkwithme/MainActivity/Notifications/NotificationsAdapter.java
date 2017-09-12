@@ -1,7 +1,6 @@
 package com.example.kacper.walkwithme.MainActivity.Notifications;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -15,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -38,7 +36,8 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 
 /**
- * Created by kacper on 2017-06-09.
+ * @author Kacper Kowalik
+ * @version 1.0
  */
 
 public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdapter.StrollRequestViewHolder> {

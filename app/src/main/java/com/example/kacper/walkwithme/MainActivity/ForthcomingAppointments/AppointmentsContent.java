@@ -1,7 +1,8 @@
 package com.example.kacper.walkwithme.MainActivity.ForthcomingAppointments;
 
 /**
- * Created by kacper on 2017-05-23.
+ * @author Kacper Kowalik
+ * @version 1.0
  */
 
 public class AppointmentsContent {

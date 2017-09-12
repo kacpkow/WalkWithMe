@@ -10,13 +10,13 @@ import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentActivity;
-import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -47,6 +47,10 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 
+/**
+ * @author Kacper Kowalik
+ * @version 1.0
+ */
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private GoogleMap mMap;
@@ -151,23 +155,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Geocoder geocoder = new Geocoder(this);
             try {
                 addressList = geocoder.getFromLocationName(location, 1);
-                Address address = (Address) addressList.get(0);
-                locationDescription = "";
-                locationDescription += address.getAddressLine(0) + ", ";
-                locationDescription += address.getAddressLine(1) + ", ";
-                locationDescription += address.getAddressLine(2);
+                if(addressList != null && addressList.size() != 0) {
+                    Address address = (Address) addressList.get(0);
+                    locationDescription = "";
+                    locationDescription += address.getAddressLine(0) + ", ";
+                    locationDescription += address.getAddressLine(1) + ", ";
+                    locationDescription += address.getAddressLine(2);
+                }
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-            Address address = addressList.get(0);
-            LatLng latLng = new LatLng(address.getLatitude() , address.getLongitude());
-            mMap.clear();
-            mMap.addMarker(new MarkerOptions().position(latLng).title("Marker"));
-            mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
-            latitude = (float)address.getLatitude();
-            longtitude = (float)address.getLongitude();
+            if(addressList.size() != 0){
+                Address address = addressList.get(0);
+                LatLng latLng = new LatLng(address.getLatitude() , address.getLongitude());
+                mMap.clear();
+                mMap.addMarker(new MarkerOptions().position(latLng).title("Marker"));
+                mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+                mMap.getUiSettings().setZoomControlsEnabled(true);
+                latitude = (float)address.getLatitude();
+                longtitude = (float)address.getLongitude();
+            }
         }
     }
 
@@ -178,15 +186,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         editor.putFloat("latitude", latitude);
         editor.putFloat("longtitude", longtitude);
         String str = "";
-        if(locationDescription.length() >= 30){
-            str = locationDescription.substring(0,29);
+        if(locationDescription == null){
+            Toast.makeText(MapsActivity.this, "You must type your localization", Toast.LENGTH_LONG).show();
         }
-        locationDescription = str;
-        editor.putString("description", str);
-        editor.commit();
-        finish();
-        if(latitude != 0.0f && longtitude != 0.0f){
-            saveLocationToBase();
+        else{
+            if(locationDescription.length() >= 30){
+                str = locationDescription.substring(0,29);
+            }
+            locationDescription = str;
+            editor.putString("description", str);
+            editor.commit();
+            finish();
+            if(latitude != 0.0f && longtitude != 0.0f){
+                saveLocationToBase();
+            }
         }
     }
 
@@ -219,7 +232,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         List<Address> addressList = null;
         try {
             addressList = geocoder.getFromLocation(latitudeFromBase, longtitudeFromBase, 1);
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -233,6 +245,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mMap.clear();
                 mMap.addMarker(new MarkerOptions().position(latLng).title("Marker"));
                 mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+                mMap.getUiSettings().setZoomControlsEnabled(true);
                 latitude = (float)address.getLatitude();
                 longtitude = (float)address.getLongitude();
             }
@@ -318,6 +331,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         marker = mMap.addMarker(new MarkerOptions().position(warsawLatLng)
                 .title("Warszawa"));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(warsawLatLng, 15));
+        mMap.getUiSettings().setZoomControlsEnabled(true);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             return;
@@ -347,6 +361,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             marker = mMap.addMarker(new MarkerOptions().position(currentLatLng)
                     .title("Your Location"));
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15));
+            mMap.getUiSettings().setZoomControlsEnabled(true);
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 // TODO: Consider calling
                 return;

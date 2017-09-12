@@ -22,7 +22,8 @@ import com.example.kacper.walkwithme.R;
 import java.util.List;
 
 /**
- * Created by kacper on 2017-04-04.
+ * @author Kacper Kowalik
+ * @version 1.0
  */
 
 public class ForcomingAppointmentsAdapter extends RecyclerView.Adapter<ForcomingAppointmentsAdapter.AppointmentViewHolder> {

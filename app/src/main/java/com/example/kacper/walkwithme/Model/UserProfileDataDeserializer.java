@@ -7,10 +7,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
 import java.lang.reflect.Type;
-import java.nio.charset.Charset;
 
 /**
- * Created by kacper on 2017-09-03.
+ * @author Kacper Kowalik
+ * @version 1.0
  */
 
 public class UserProfileDataDeserializer implements JsonDeserializer<UserProfileData> {

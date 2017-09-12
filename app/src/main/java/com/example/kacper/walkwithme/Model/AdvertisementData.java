@@ -1,7 +1,8 @@
 package com.example.kacper.walkwithme.Model;
 
 /**
- * Created by kacper on 2017-06-13.
+ * @author Kacper Kowalik
+ * @version 1.0
  */
 
 public class AdvertisementData {

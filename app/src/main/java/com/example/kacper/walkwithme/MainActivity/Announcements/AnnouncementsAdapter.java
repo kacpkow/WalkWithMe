@@ -33,7 +33,8 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 /**
- * Created by kacper on 2017-06-13.
+ * @author Kacper Kowalik
+ * @version 1.0
  */
 
 public class AnnouncementsAdapter extends RecyclerView.Adapter<AnnouncementsAdapter.AnnouncementViewHolder>{

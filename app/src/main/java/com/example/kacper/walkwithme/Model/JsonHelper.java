@@ -9,7 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by kacper on 2017-09-11.
+ * @author Kacper Kowalik
+ * @version 1.0
  */
 
 public class JsonHelper {

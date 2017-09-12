@@ -1,9 +1,9 @@
 package com.example.kacper.walkwithme.Services;
 
 /**
- * Created by kacper on 2017-09-11.
+ * @author Kacper Kowalik
+ * @version 1.0
  */
-
 public interface MessageCheckerCallbacks {
 
     public void updateMessages();

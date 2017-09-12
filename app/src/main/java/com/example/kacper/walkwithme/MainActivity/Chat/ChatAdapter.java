@@ -1,39 +1,34 @@
 package com.example.kacper.walkwithme.MainActivity.Chat;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.kacper.walkwithme.MainActivity.Conversation.ConversationFragment;
-import com.example.kacper.walkwithme.MainActivity.ForthcomingAppointments.ForcomingAppointmentsAdapter;
 import com.example.kacper.walkwithme.Model.ChatData;
 import com.example.kacper.walkwithme.Model.JsonHelper;
 import com.example.kacper.walkwithme.Model.MessageNotifications;
 import com.example.kacper.walkwithme.R;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Created by kacper on 2017-07-24.
+ * @author Kacper Kowalik
+ * @version 1.0
  */
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder> {
@@ -74,13 +69,20 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
     List<ChatData> chatData;
     Map<Integer, MessageNotifications> map;
     String jsonMap;
+    ChatPresenter presenter;
+    boolean initialized = false;
 
 
-    ChatAdapter(List<ChatData> chatData, String jsonMap, Context mContext){
+    ChatAdapter(List<ChatData> chatData, String jsonMap, Context mContext, ChatPresenter presenter){
         this.chatData = chatData;
         this.mContext = mContext;
         this.jsonMap = jsonMap;
-        this.map = JsonHelper.jsonToMapIntegerObject(jsonMap);
+        if(jsonMap != null){
+            this.map = JsonHelper.jsonToMapIntegerObject(jsonMap);
+            initialized = true;
+        }
+        this.presenter = presenter;
+        presenter.refresh_after_map();
     }
 
     @Override
@@ -112,7 +114,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
         chatViewHolder.chatPersonName.setText(chatData.get(i).getFirstName() + " " + chatData.get(i).getLastName());
         chatViewHolder.userId = chatData.get(i).getUserId();
 
-        if(map.get(chatViewHolder.userId) != null) {
+        if(initialized && map.get(chatViewHolder.userId) != null) {
             if(map.get(chatData.get(i).getUserId()).getCount()== 1){
                 chatViewHolder.notificationStatus.setText("1 message not read");
             }

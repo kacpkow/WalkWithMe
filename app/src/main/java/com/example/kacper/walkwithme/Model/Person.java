@@ -3,7 +3,8 @@ package com.example.kacper.walkwithme.Model;
 import java.io.Serializable;
 
 /**
- * Created by kacper on 2017-04-06.
+ * @author Kacper Kowalik
+ * @version 1.0
  */
 
 public class Person implements Serializable{

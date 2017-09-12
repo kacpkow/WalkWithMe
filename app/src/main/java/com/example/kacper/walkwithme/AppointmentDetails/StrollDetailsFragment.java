@@ -49,7 +49,8 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 
 /**
- * A simple {@link Fragment} subclass.
+ * @author Kacper Kowalik
+ * @version 1.0
  */
 public class StrollDetailsFragment extends Fragment implements OnMapReadyCallback {
 
@@ -240,10 +241,6 @@ public class StrollDetailsFragment extends Fragment implements OnMapReadyCallbac
                 @Override
                 public void run() {
                     participantsList.add(usr);
-//                    if(participantsNumber == participants.length){
-//                        showParticipantsDialog.dismiss();
-//                        showParticipants();
-//                    }
                     showParticipantsDialog.dismiss();
                     showParticipants();
                 }
@@ -340,6 +337,7 @@ public class StrollDetailsFragment extends Fragment implements OnMapReadyCallbac
                     mMap.clear();
                     mMap.addMarker(new MarkerOptions().position(latLng).title("Marker"));
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+                    mMap.getUiSettings().setZoomControlsEnabled(true);
                     latitude = (float)address.getLatitude();
                     longtitude = (float)address.getLongitude();
                 }
@@ -380,6 +378,7 @@ public class StrollDetailsFragment extends Fragment implements OnMapReadyCallbac
                     mMap.clear();
                     mMap.addMarker(new MarkerOptions().position(latLng).title("Marker"));
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+                    mMap.getUiSettings().setZoomControlsEnabled(true);
                     latitude = (float)address.getLatitude();
                     longtitude = (float)address.getLongitude();
 

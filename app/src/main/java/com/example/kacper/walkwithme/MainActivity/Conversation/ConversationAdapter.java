@@ -2,39 +2,26 @@ package com.example.kacper.walkwithme.MainActivity.Conversation;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
-import android.print.PrintAttributes;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
-import android.util.DisplayMetrics;
-import android.util.FloatProperty;
-import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
-import com.example.kacper.walkwithme.MainActivity.Chat.ChatAdapter;
 import com.example.kacper.walkwithme.Model.UserMessageData;
 import com.example.kacper.walkwithme.R;
 
 import java.util.List;
 
 /**
- * Created by kacper on 2017-08-31.
+ * @author Kacper Kowalik
+ * @version 1.0
  */
 
 public class ConversationAdapter extends RecyclerView.Adapter<ConversationAdapter.ConversationViewHolder>  {

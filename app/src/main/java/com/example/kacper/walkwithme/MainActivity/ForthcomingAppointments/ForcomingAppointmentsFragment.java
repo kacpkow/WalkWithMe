@@ -23,9 +23,6 @@ import com.example.kacper.walkwithme.Model.StrollData;
 import com.example.kacper.walkwithme.Model.User;
 import com.example.kacper.walkwithme.R;
 import com.example.kacper.walkwithme.RequestController;
-import com.franmontiel.persistentcookiejar.PersistentCookieJar;
-import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
-import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
@@ -39,15 +36,16 @@ import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.CookieJar;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static com.example.kacper.walkwithme.PersonProfileSettings.backgroundThreadShowToast;
-
+/**
+ * @author Kacper Kowalik
+ * @version 1.0
+ */
 public class ForcomingAppointmentsFragment extends Fragment {
     private List<StrollData> strollDataList;
     private RecyclerView rv;

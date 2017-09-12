@@ -12,6 +12,7 @@ android:orientation="vertical">
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:layout_marginTop="10dp"
         android:weightSum="1">
 
         <EditText
@@ -26,6 +27,8 @@ android:orientation="vertical">
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="onSearch"
+            android:background="@drawable/button_register_rounded"
+            android:textColor="#FFFFFF"
             android:text="Set locationData"/>
 
         <Button
@@ -34,6 +37,9 @@ android:orientation="vertical">
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="onSave"
+            android:background="@drawable/button_register_rounded"
+            android:textColor="#FFFFFF"
+            android:layout_marginLeft="10dp"
             android:text="Save"/>
 
     </LinearLayout>
@@ -42,7 +48,6 @@ android:orientation="vertical">
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        tools:layout_editor_absoluteX="8dp"
         android:layout_marginTop="8dp">
 
         <fragment
@@ -52,9 +57,7 @@ android:orientation="vertical">
             android:layout_height="605dp"
             android:layout_weight="1"
             android:apiKey="AIzaSyDUvDrGRcGOVPwuvrQu-H1WNT6Wpe7kvL0"
-            tools:context="com.example.kacper.walkwithme.MapsActivity"
-            tools:layout_editor_absoluteX="0dp"
-            tools:layout_editor_absoluteY="0dp" />
+            tools:context="com.example.kacper.walkwithme.MapsActivity" />
     </LinearLayout>
 
 </LinearLayout>

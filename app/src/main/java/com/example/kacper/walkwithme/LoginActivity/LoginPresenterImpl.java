@@ -14,14 +14,13 @@ import com.example.kacper.walkwithme.MainActivity.MainView;
 import com.example.kacper.walkwithme.Model.User;
 import com.example.kacper.walkwithme.R;
 import com.example.kacper.walkwithme.RequestController;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
 import java.io.IOException;
-import java.net.CookieHandler;
+
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.JavaNetCookieJar;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -29,7 +28,8 @@ import okhttp3.RequestBody;
 
 
 /**
- * Created by kacper on 2017-03-31.
+ * @author Kacper Kowalik
+ * @version 1.0
  */
 
 public class LoginPresenterImpl implements LoginPresenter{

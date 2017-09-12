@@ -5,7 +5,6 @@ package com.example.kacper.walkwithme.MainActivity.Chat;
  * @version 1.0
  */
 
-public interface ChatPresenter {
-    void onDestroy();
-    void refresh_after_map();
+public interface ChatView {
+   void refresh_after_map();
 }

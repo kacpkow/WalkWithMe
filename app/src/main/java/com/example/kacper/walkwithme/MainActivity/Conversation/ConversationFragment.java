@@ -24,12 +24,12 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import com.example.kacper.walkwithme.Services.MessageChecker;
-import com.example.kacper.walkwithme.Services.MessageCheckerCallbacks;
 import com.example.kacper.walkwithme.Model.UserMessageData;
 import com.example.kacper.walkwithme.Model.UserProfileData;
 import com.example.kacper.walkwithme.R;
 import com.example.kacper.walkwithme.RequestController;
+import com.example.kacper.walkwithme.Services.MessageChecker;
+import com.example.kacper.walkwithme.Services.MessageCheckerCallbacks;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
@@ -52,7 +52,8 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /**
- * A simple {@link Fragment} subclass.
+ * @author Kacper Kowalik
+ * @version 1.0
  */
 public class ConversationFragment extends Fragment implements MessageCheckerCallbacks {
 
@@ -218,7 +219,9 @@ public class ConversationFragment extends Fragment implements MessageCheckerCall
                                 backgroundThreadInitializeAdapter(getActivity().getApplicationContext());
                             }
                             else{
-                                backgroundThreadNotificateDataSetChanged(getActivity().getApplicationContext());
+                                if(getActivity().getApplicationContext() != null){
+                                    backgroundThreadNotificateDataSetChanged(getActivity().getApplicationContext());
+                                }
                             }
                         }
 

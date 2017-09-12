@@ -1,6 +1,5 @@
 package com.example.kacper.walkwithme.MainActivity.Notifications;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -30,12 +29,14 @@ import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 
+/**
+ * @author Kacper Kowalik
+ * @version 1.0
+ */
 public class NotificationsFragment extends Fragment implements NotificationsView {
     private NotificationsPresenter notificationsPresenter;
     private List<NotificationData> notificationDataList;

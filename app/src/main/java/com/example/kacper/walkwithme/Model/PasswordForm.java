@@ -1,7 +1,8 @@
 package com.example.kacper.walkwithme.Model;
 
 /**
- * Created by kacper on 2017-08-15.
+ * @author Kacper Kowalik
+ * @version 1.0
  */
 
 public class PasswordForm {

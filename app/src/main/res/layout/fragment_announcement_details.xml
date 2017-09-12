@@ -77,26 +77,37 @@
         android:layout_height="wrap_content"
         android:text="" />
 
+    <Button
+        android:id="@+id/showPerson"
+        android:layout_width="310dp"
+        android:layout_height="wrap_content"
+        android:text="Show person"
+        android:background="@drawable/button_register_rounded"
+        android:textColor="#FFFFFF"
+        android:layout_gravity="center"/>
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:layout_marginTop="10dp"
         android:layout_gravity="center">
 
         <Button
         android:id="@+id/cancelDetails"
-        android:layout_width="wrap_content"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:text="Cancel"
         android:layout_marginRight="10dp"
+            android:textColor="#FFFFFF"
         android:background="@drawable/button_register_rounded"/>
 
         <Button
             android:id="@+id/takePartInStrollButton"
-            android:layout_width="wrap_content"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:text="Take part in stroll"
-            android:layout_marginRight="10dp"
+            android:textColor="#FFFFFF"
             android:background="@drawable/button_register_rounded"/>
 
     </LinearLayout>

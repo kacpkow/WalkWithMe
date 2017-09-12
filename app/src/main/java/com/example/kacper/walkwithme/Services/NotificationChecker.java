@@ -33,6 +33,10 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+/**
+ * @author Kacper Kowalik
+ * @version 1.0
+ */
 public class NotificationChecker extends Service {
 
     private NotificationCheckerCallbacks notificationCheckerCallbacks;
@@ -42,6 +46,7 @@ public class NotificationChecker extends Service {
     private OkHttpClient client;
 
     int count = 0;
+    private int userId;
 
     Map<Integer, MessageNotifications> messageNotificationsList;
     MessageNotifications singleNotification;
@@ -59,6 +64,8 @@ public class NotificationChecker extends Service {
     public IBinder onBind(Intent intent) {
         messageNotificationsList = new HashMap<Integer, MessageNotifications>();
         client = RequestController.getInstance().getClient();
+        SharedPreferences settings = getApplicationContext().getSharedPreferences("USER_ID", Context.MODE_PRIVATE);
+        userId = settings.getInt("userId", 0);
         return binder;
     }
 
@@ -82,9 +89,6 @@ public class NotificationChecker extends Service {
 
 
     public void checkNotifications(){
-        SharedPreferences settings = getApplicationContext().getSharedPreferences("userId", Context.MODE_PRIVATE);
-        Integer userId = settings.getInt("ID", 0);
-
         String url = getString(R.string.service_address) + "notification";
 
         final Request request;
@@ -158,7 +162,7 @@ public class NotificationChecker extends Service {
                         List<UserMessageData> readFromJson = objGson.fromJson(jsonResponse, listType);
                         if(readFromJson != null){
                             for (UserMessageData userMessageData :readFromJson) {
-                                if(userMessageData.getStatus().equals("nread")){
+                                if(userMessageData.getStatus().equals("nread")  && userMessageData.getSenderId() != userId){
                                     singleNotification = new MessageNotifications();
                                     singleNotification.setUserId(userMessageData.getSenderId());
                                     if(messageNotificationsList.get(userMessageData.getSenderId()) != null){

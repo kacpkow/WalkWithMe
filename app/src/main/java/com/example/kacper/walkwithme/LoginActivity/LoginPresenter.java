@@ -1,7 +1,8 @@
 package com.example.kacper.walkwithme.LoginActivity;
 
 /**
- * Created by kacper on 2017-03-31.
+ * @author Kacper Kowalik
+ * @version 1.0
  */
 
 public interface LoginPresenter<T extends LoginView> {

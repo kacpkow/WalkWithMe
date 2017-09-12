@@ -4,7 +4,6 @@ package com.example.kacper.walkwithme.PersonDetails;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -30,9 +29,6 @@ import com.example.kacper.walkwithme.Model.UserProfileData;
 import com.example.kacper.walkwithme.Model.UserProfileDataDeserializer;
 import com.example.kacper.walkwithme.R;
 import com.example.kacper.walkwithme.RequestController;
-import com.franmontiel.persistentcookiejar.PersistentCookieJar;
-import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
-import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
@@ -45,7 +41,6 @@ import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.CookieJar;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -53,7 +48,8 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /**
- * A simple {@link Fragment} subclass.
+ * @author Kacper Kowalik
+ * @version 1.0
  */
 public class PersonDetailsFragment extends Fragment {
 
@@ -107,6 +103,7 @@ public class PersonDetailsFragment extends Fragment {
         sendMessageButton = (Button)v.findViewById(R.id.sendMessageButton);
 
         userId = getArguments().getInt("USER_ID", 0);
+        Log.e("id passed", String.valueOf(userId));
 
         if(userId != 0){
             getPerson(userId);
@@ -240,6 +237,7 @@ public class PersonDetailsFragment extends Fragment {
                     for (UserProfileData userProfileData:readFromJson
                             ) {
                         try {
+                            Log.e("from fragment", String.valueOf(userProfileData.getUser_id()));
                             if (userProfileData.getUser_id() == userId){
                                 friendState = true;
                                 break;
@@ -370,7 +368,10 @@ public class PersonDetailsFragment extends Fragment {
                 if(jsonResponse != null){
                     Log.e("json", jsonResponse);
                     UserProfileData usrProfileData = retGson.fromJson(jsonResponse, UserProfileData.class);
-                    userId = userId1;
+                    if(userId1 != null){
+                        userId = userId1;
+
+                    }
 
                     String year = usrProfileData.getBirth_date().substring(0, Math.min(usrProfileData.getBirth_date().length(), 4));
                     String month = usrProfileData.getBirth_date().substring(5, Math.min(usrProfileData.getBirth_date().length(), 7));

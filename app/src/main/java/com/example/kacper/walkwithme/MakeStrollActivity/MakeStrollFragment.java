@@ -11,7 +11,6 @@ import android.content.SharedPreferences;
 import android.icu.util.Calendar;
 import android.location.Address;
 import android.location.Geocoder;
-import android.location.LocationListener;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,11 +22,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -58,7 +55,8 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /**
- * A simple {@link Fragment} subclass.
+ * @author Kacper Kowalik
+ * @version 1.0
  */
 public class MakeStrollFragment extends Fragment {
 
@@ -353,6 +351,7 @@ public class MakeStrollFragment extends Fragment {
                                 googleMap.clear();
                                 googleMap.addMarker(new MarkerOptions().position(latLng).title("Marker"));
                                 googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+                                googleMap.getUiSettings().setZoomControlsEnabled(true);
                                 StringBuilder str = new StringBuilder();
                                 int maxAddressLineIndex = address.getMaxAddressLineIndex();
                                 for(int i = 0; i <= maxAddressLineIndex; i++) {
@@ -385,6 +384,36 @@ public class MakeStrollFragment extends Fragment {
                 googleMap.addMarker(new MarkerOptions().position(coordinates).title("Marker"));
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coordinates, 15));
                 googleMap.getUiSettings().setZoomControlsEnabled(true);
+
+                latitudeSet = lat.doubleValue();
+                longitudeSet = lng.doubleValue();
+
+                List<Address> addressList = null;
+                if(latitudeSet != 0.0f && longitudeSet != 0.0f) {
+                    Geocoder geocoder = new Geocoder(getContext());
+                    try {
+                        addressList = geocoder.getFromLocation(latitudeSet, longitudeSet, 1);
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if(addressList != null){
+                    Address address = addressList.get(0);
+                    StringBuilder str = new StringBuilder();
+                    int maxAddressLineIndex = address.getMaxAddressLineIndex();
+                    for(int i = 0; i <= maxAddressLineIndex; i++) {
+                        if(i != maxAddressLineIndex){
+                            str.append(address.getAddressLine(i) + ", ");
+                        }
+                        else{
+                            str.append(address.getAddressLine(i));
+                        }
+                    }
+                    locationSet = str.toString();
+                    locationView.setText(locationSet);
+                }
+
             }
         });
 
