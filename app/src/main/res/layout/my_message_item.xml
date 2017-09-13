@@ -18,6 +18,8 @@
             android:id="@+id/userPhoto"
             android:layout_width="40dp"
             android:layout_height="40dp"
+            app:civ_border_width="1dp"
+            app:civ_border_color="#009000"
             android:layout_alignParentRight="true"/>
 
         <TextView
