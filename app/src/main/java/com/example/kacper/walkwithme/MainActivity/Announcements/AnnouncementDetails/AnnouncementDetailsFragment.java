@@ -120,6 +120,10 @@ public class AnnouncementDetailsFragment extends Fragment {
         strollLocationView.setText(locationName);
         strollDescriptionView.setText(description);
 
+        if(myId == userId){
+            takePartInStroll.setEnabled(false);
+            takePartInStroll.setBackgroundResource(R.drawable.button_search_inactive);
+        }
 
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -229,6 +233,7 @@ public class AnnouncementDetailsFragment extends Fragment {
 
     public void takePartInStroll(){
         String url = getString(R.string.service_address) + "adv/" + toString().valueOf(userId);
+        Log.e("url", url);
         Gson gson = new Gson();
         MediaType mediaType = MediaType.parse("application/json");
         AdvertisementData requestContent = new AdvertisementData();
@@ -248,6 +253,7 @@ public class AnnouncementDetailsFragment extends Fragment {
         requestContent.setAdEndTime(advEndTime);
 
         RequestBody requestBody = RequestBody.create(mediaType, gson.toJson(requestContent));
+        Log.e("jsoncontent", gson.toJson(requestContent));
 
         final Request request;
         request = new Request.Builder()

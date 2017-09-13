@@ -135,7 +135,6 @@ public class PersonsListFragment extends Fragment {
 
                 initializeData(userId, castAgeFromString, castAgeToString,
                         castDistanceString);
-                initializeAdapter();
 
                 progressDialog.dismiss();
             }
@@ -163,7 +162,6 @@ public class PersonsListFragment extends Fragment {
         progressDialog.show();
 
         initializeData(userId, 20, 30, 100.0);
-        initializeAdapter();
         progressDialog.dismiss();
 
         return rootView;

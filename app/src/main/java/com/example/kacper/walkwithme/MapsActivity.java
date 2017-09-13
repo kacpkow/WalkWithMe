@@ -159,9 +159,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if(addressList != null && addressList.size() != 0) {
                     Address address = (Address) addressList.get(0);
                     locationDescription = "";
-                    locationDescription += address.getAddressLine(0) + ", ";
-                    locationDescription += address.getAddressLine(1) + ", ";
-                    locationDescription += address.getAddressLine(2);
+                    for(int i = 0; i<3; i++){
+                        if(address.getAddressLine(i) != null){
+                            locationDescription += address.getAddressLine(i) + ", ";
+                        }
+                    }
+
                 }
 
             } catch (IOException e) {

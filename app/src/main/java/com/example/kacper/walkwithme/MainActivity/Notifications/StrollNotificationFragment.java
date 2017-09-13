@@ -166,21 +166,21 @@ public class StrollNotificationFragment extends Fragment implements OnMapReadyCa
         {
             Geocoder geocoder = new Geocoder(getContext());
             try {
-                //addressList = geocoder.getFromLocationName(location, 1);
-                addressList = geocoder.getFromLocation(latitude, longtitude, 1);
+                addressList = geocoder.getFromLocationName(location, 1);
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-            if(addressList.size() != 0){
-                Address address = addressList.get(0);
-                LatLng latLng = new LatLng(address.getLatitude() , address.getLongitude());
-                mMap.clear();
-                mMap.addMarker(new MarkerOptions().position(latLng).title("Marker"));
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
-                latitude = (float)address.getLatitude();
-                longtitude = (float)address.getLongitude();
+            if(addressList!=null){
+                if(addressList.size() != 0){
+                    Address address = addressList.get(0);
+                    LatLng latLng = new LatLng(address.getLatitude() , address.getLongitude());
+                    mMap.clear();
+                    mMap.addMarker(new MarkerOptions().position(latLng).title("Marker"));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+                    latitude = (float)address.getLatitude();
+                    longtitude = (float)address.getLongitude();
+                }
             }
 
         }
@@ -214,7 +214,7 @@ public class StrollNotificationFragment extends Fragment implements OnMapReadyCa
                 Address address = addressList.get(0);
                 LatLng latLng = new LatLng(address.getLatitude() , address.getLongitude());
                 if(mMap!= null){
-
+                    Log.e("here", "here");
                     mMap.clear();
                     mMap.addMarker(new MarkerOptions().position(latLng).title("Marker"));
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
@@ -387,6 +387,7 @@ public class StrollNotificationFragment extends Fragment implements OnMapReadyCa
                     strollEndTimeView.setText(strollEndTimeView.getText().toString() + " " + advData.getStrollEndTime());
                     locationView.setText(locationView.getText().toString()+" " + advData.getLocation().getDescription());
                     location = advData.getLocation().getDescription();
+                    Log.e("location", advData.getLocation().getDescription());
                     try {
                         updateMap();
                     }catch (Exception ex){
