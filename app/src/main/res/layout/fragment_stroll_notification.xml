@@ -79,7 +79,7 @@
             android:id="@+id/mapDetailsAppointment"
             android:layout_width="match_parent"
             android:layout_height="605dp"
-            android:apiKey="AIzaSyDUm0e3ky9I-2MooRANLaWLXaIKv0rNrpU" />
+            android:apiKey="AIzaSyDUvDrGRcGOVPwuvrQu-H1WNT6Wpe7kvL0" />
 
     </LinearLayout>
 

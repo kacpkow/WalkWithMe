@@ -110,7 +110,7 @@ public class PersonProfileSettings extends AppCompatActivity{
         setContentView(R.layout.activity_person_profile_settings);
         client = RequestController.getInstance().getClient();
 
-
+        Log.e("iamhere1", "here");
 
         imageView = (ImageView)findViewById(R.id.userImage);
         uploadImgButton = (Button)findViewById(R.id.uploadPhotoButton);
@@ -120,6 +120,8 @@ public class PersonProfileSettings extends AppCompatActivity{
         description = (TextView)findViewById(R.id.userDescription);
         dateOfBirth = (TextView)findViewById(R.id.birthDate);
         email = (TextView)findViewById(R.id.userEmail);
+
+        Log.e("iamhere2", "here");
 
         changeFirstNameButton = (ImageButton)findViewById(R.id.firstNameEditButton);
         changeLastNameButton = (ImageButton)findViewById(R.id.lastNameEditButton);
@@ -191,8 +193,9 @@ public class PersonProfileSettings extends AppCompatActivity{
             }
         });
 
-        SharedPreferences settings = getApplicationContext().getSharedPreferences("userId", Context.MODE_PRIVATE);
-        userId = settings.getInt("ID", 0);
+
+        SharedPreferences settings = getApplicationContext().getSharedPreferences("USER_ID", Context.MODE_PRIVATE);
+        userId = settings.getInt("userId", 0);
         getUserData(toString().valueOf(userId));
 
     }

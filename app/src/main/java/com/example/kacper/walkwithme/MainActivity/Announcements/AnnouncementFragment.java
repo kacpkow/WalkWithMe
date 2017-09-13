@@ -1,7 +1,6 @@
 package com.example.kacper.walkwithme.MainActivity.Announcements;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -53,7 +52,7 @@ public class AnnouncementFragment extends Fragment implements AnnouncementsView 
     private List<AdvertisementData> advertisementDataList;
     private Spinner spinner;
     private Integer selection;
-    private FloatingActionButton addAnnouncementButton;
+    private android.support.design.widget.FloatingActionButton addAnnouncementButton;
     private Button searchButton;
     private AnnouncementsAdapter adapter;
     private AnnouncementsPresenter presenter;
@@ -63,10 +62,7 @@ public class AnnouncementFragment extends Fragment implements AnnouncementsView 
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-
-        super.onCreateView(inflater, container, savedInstanceState);
         View rootView = inflater.inflate(R.layout.fragment_announcement, container, false);
-
         client = RequestController.getInstance().getClient();
 
         rv = (RecyclerView) rootView.findViewById(R.id.rvAnnouncements);
@@ -81,7 +77,7 @@ public class AnnouncementFragment extends Fragment implements AnnouncementsView 
         searchButton = (Button) rootView.findViewById(R.id.searchWithCriteriaButton);
         spinner = (Spinner) rootView.findViewById(R.id.announcementsTypeSpinner);
         final Animation animScaleButton = AnimationUtils.loadAnimation(getContext(), R.anim.anim_press_menu_button);
-        addAnnouncementButton = (FloatingActionButton) rootView.findViewById(R.id.fabAddAnnouncement);
+        addAnnouncementButton = (android.support.design.widget.FloatingActionButton) rootView.findViewById(R.id.fabAddAnnouncement);
         addAnnouncementButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -118,10 +114,8 @@ public class AnnouncementFragment extends Fragment implements AnnouncementsView 
             });
         }
 
-        SharedPreferences settings = this.getActivity().getSharedPreferences("userId", Context.MODE_PRIVATE);
-        userId = settings.getInt("ID", 0);
-
         presenter = new AnnouncementsPresenterImpl(this);
+        Log.e("iamhere", "here2");
 
         initializeData();
 
@@ -169,6 +163,8 @@ public class AnnouncementFragment extends Fragment implements AnnouncementsView 
         String url;
         advertisementDataList.clear();
 
+        Log.e("iamhere", "here3");
+
         if (selection == 0) {
             url = getString(R.string.service_address) + "adv";
         } else if (selection == 1) {
@@ -193,7 +189,7 @@ public class AnnouncementFragment extends Fragment implements AnnouncementsView 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String jsonResponse = response.body().string();
-                Log.e("jsonResp", jsonResponse);
+                Log.e("annresp", jsonResponse);
 
                 if (jsonResponse != null) {
                     Gson objGson = new GsonBuilder().setPrettyPrinting().create();
@@ -211,15 +207,22 @@ public class AnnouncementFragment extends Fragment implements AnnouncementsView 
                     } catch (JsonSyntaxException e) {
                         Log.e("error", "error in syntax in returning json");
                     }
+                    backgroundThreadInitializeAdapter(getActivity().getApplicationContext());
                 }
-                backgroundThreadInitializeAdapter(getActivity().getApplicationContext());
             }
         });
     }
 
     @Override
     public void onResume(){
-        timerHandler.postDelayed(timerRunnable, 500);
+        try{
+            if (getActivity().getApplicationContext() != null){
+                timerHandler.postDelayed(timerRunnable, 500);
+            }
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+
         super.onResume();
     }
 
@@ -239,7 +242,7 @@ public class AnnouncementFragment extends Fragment implements AnnouncementsView 
             int minutes = seconds / 60;
             seconds = seconds % 60;
 
-            if (getActivity() != null){
+            if (getActivity().getApplicationContext() != null){
                 refreshElements();
             }
 

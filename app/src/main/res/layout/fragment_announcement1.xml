@@ -51,14 +51,13 @@
         android:layout_height="match_parent">
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fabAddAnnouncement"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_gravity="bottom|end"
             android:layout_margin="@dimen/fab_margin"
             android:src="@drawable/ic_action_name"
-            app:backgroundTint="@color/colorAccent"/>
-
+            android:backgroundTint="#009000"
+            android:id="@+id/fabAddAnnouncement"/>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rvAnnouncements"

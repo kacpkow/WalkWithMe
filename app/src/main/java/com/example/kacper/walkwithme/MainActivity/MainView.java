@@ -26,6 +26,8 @@ import com.example.kacper.walkwithme.Services.NotificationChecker;
 import com.example.kacper.walkwithme.Services.NotificationCheckerCallbacks;
 import com.example.kacper.walkwithme.SettingsActivity.SettingsActivity;
 
+import sk.rogansky.logger.Log;
+
 /**
  * @author Kacper Kowalik
  * @version 1.0
@@ -79,7 +81,7 @@ public class MainView extends AppCompatActivity implements NotificationCheckerCa
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Log.initialize(getApplicationContext());
         setContentView(R.layout.activity_main);
         chatButton = (ImageButton) findViewById(R.id.chatButton);
         settingsButton = (ImageButton) findViewById(R.id.settingsButton);
@@ -328,23 +330,32 @@ public class MainView extends AppCompatActivity implements NotificationCheckerCa
 
                     @Override
                     public void onAnimationEnd(Animation animation) {
+
                         homeButton.setColorFilter(0xffffffff, PorterDuff.Mode.MULTIPLY);
                         peopleButton.setColorFilter(0xffffffff, PorterDuff.Mode.MULTIPLY);
                         chatButton.setColorFilter(0xffffffff, PorterDuff.Mode.MULTIPLY);
                         notificationsButton.setColorFilter(0xffffffff, PorterDuff.Mode.MULTIPLY);
                         getAnnouncementsButton.setColorFilter(0xffffbf00, PorterDuff.Mode.MULTIPLY);
-                        Fragment previousFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-                        AnnouncementFragment newFragment = new AnnouncementFragment();
-                        newFragment.setArguments(bundle);
-                        android.support.v4.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                        transaction.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit);
 
-                        android.support.v4.app.Fragment f = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-                        if (!(f instanceof AnnouncementFragment)){
-                            transaction.replace(R.id.fragment_container, newFragment);
-                            transaction.commit();
-                            currentFragmentOrdinal = 4;
+                        try{
+                            Fragment previousFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+                            AnnouncementFragment newFragment = new AnnouncementFragment();
+                            newFragment.setArguments(bundle);
+                            android.support.v4.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                            transaction.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit);
+
+                            android.support.v4.app.Fragment f = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+
+                            if (!(f instanceof AnnouncementFragment)){
+                                transaction.replace(R.id.fragment_container, newFragment);
+                                transaction.commit();
+                                currentFragmentOrdinal = 4;
+                            }
+
+                        }catch (Exception ex){
+                            ex.printStackTrace();
                         }
+
                     }
 
                     @Override
