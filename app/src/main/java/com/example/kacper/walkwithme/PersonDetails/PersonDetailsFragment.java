@@ -266,6 +266,7 @@ public class PersonDetailsFragment extends Fragment {
         age.setText(userAge);
         location.setText(userLocation);
         description.setText(userDescription);
+        friendName.setText(userName);
 
         Glide.with(this)
                 .load(Base64.decode(userImage, Base64.DEFAULT))
@@ -277,7 +278,8 @@ public class PersonDetailsFragment extends Fragment {
 
     public void inviteToFriends(){
 
-        String url = getString(R.string.service_address)+"invite/" +toString().valueOf(userId);
+        String url = getString(R.string.service_address)+"friends/invite/" +toString().valueOf(userId);
+        Log.e("url", url);
         Gson gson = new Gson();
         MediaType mediaType = MediaType.parse("application/json");
 
@@ -304,6 +306,7 @@ public class PersonDetailsFragment extends Fragment {
                 String jsonResponse = response.body().string();
 
                 Log.e("respCode: ", String.valueOf(response.code()));
+                Log.e("jsonResp: ", jsonResponse);
 
                 if(jsonResponse != null){
                     isFriend();
@@ -424,7 +427,7 @@ public class PersonDetailsFragment extends Fragment {
 
                     friendName.setText(userName);
                     if(isFriend){
-                        friendStatus.setText("is your friend");
+                        friendStatus.setText(" is your friend");
                         addToFriendsButton.setText("DELETE FRIEND");
                         addToFriendsButton.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -451,7 +454,7 @@ public class PersonDetailsFragment extends Fragment {
                         });
                     }
                     else{
-                        friendStatus.setText("is not your friend");
+                        friendStatus.setText(" is not your friend");
                         addToFriendsButton.setText("INVITE TO FRIENDS");
                         addToFriendsButton.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -472,7 +475,7 @@ public class PersonDetailsFragment extends Fragment {
                                 });
 
                                 final AlertDialog alertDialog = dialogBuilder.create();
-                                alertDialog.setTitle("Do you want to delete " + userName +" from friends?" );
+                                alertDialog.setTitle("Do you want to invite " + userName +" to friends?" );
                                 alertDialog.show();
                             }
                         });

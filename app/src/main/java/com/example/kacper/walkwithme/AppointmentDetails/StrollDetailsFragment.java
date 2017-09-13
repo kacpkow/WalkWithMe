@@ -387,4 +387,12 @@ public class StrollDetailsFragment extends Fragment implements OnMapReadyCallbac
 
         }
     }
+
+    @Override
+    public void onPause(){
+        if(showParticipantsDialog != null){
+            showParticipantsDialog.dismiss();
+        }
+        super.onPause();
+    }
 }

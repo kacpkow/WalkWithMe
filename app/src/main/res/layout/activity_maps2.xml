@@ -56,7 +56,7 @@ android:orientation="vertical">
             android:layout_width="406dp"
             android:layout_height="605dp"
             android:layout_weight="1"
-            android:apiKey="AIzaSyDUvDrGRcGOVPwuvrQu-H1WNT6Wpe7kvL0"
+            android:apiKey="AIzaSyDUm0e3ky9I-2MooRANLaWLXaIKv0rNrpU"
             tools:context="com.example.kacper.walkwithme.MapsActivity" />
     </LinearLayout>
 

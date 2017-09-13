@@ -74,6 +74,7 @@ public class MakeAnnouncementFragment extends Fragment {
     TextView strollStartTimeView;
     TextView strollEndTimeView;
     TextView strollDescriptionView;
+    AlertDialog alertDialog;
 
     OkHttpClient client;
 
@@ -357,8 +358,7 @@ public class MakeAnnouncementFragment extends Fragment {
             }
         });
 
-
-        final AlertDialog alertDialog = dialogBuilder.create();
+        alertDialog = dialogBuilder.create();
         alertDialog.show();
 
         MapView mMapView = (MapView) alertDialog.findViewById(R.id.mapView);
@@ -396,27 +396,30 @@ public class MakeAnnouncementFragment extends Fragment {
                                 e.printStackTrace();
                             }
 
-                            Address address = addressList.get(0);
-                            LatLng latLng = new LatLng(address.getLatitude() , address.getLongitude());
-                            latitudeSet = address.getLatitude();
-                            longitudeSet = address.getLongitude();
+                            if(addressList != null){
+                                Address address = addressList.get(0);
+                                LatLng latLng = new LatLng(address.getLatitude() , address.getLongitude());
+                                latitudeSet = address.getLatitude();
+                                longitudeSet = address.getLongitude();
 
-                            googleMap.clear();
-                            googleMap.addMarker(new MarkerOptions().position(latLng).title("Marker"));
-                            googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
-                            StringBuilder str = new StringBuilder();
-                            int maxAddressLineIndex = address.getMaxAddressLineIndex();
-                            for(int i = 0; i <= maxAddressLineIndex; i++) {
-                                if(i != maxAddressLineIndex){
-                                    str.append(address.getAddressLine(i) + ", ");
+                                googleMap.clear();
+                                googleMap.addMarker(new MarkerOptions().position(latLng).title("Marker"));
+                                googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+                                StringBuilder str = new StringBuilder();
+                                int maxAddressLineIndex = address.getMaxAddressLineIndex();
+                                for(int i = 0; i <= maxAddressLineIndex; i++) {
+                                    if(i != maxAddressLineIndex){
+                                        str.append(address.getAddressLine(i) + ", ");
+                                    }
+                                    else{
+                                        str.append(address.getAddressLine(i));
+                                    }
                                 }
-                                else{
-                                    str.append(address.getAddressLine(i));
-                                }
+
+                                String locationSet = str.toString();
+                                strollLocationView.setText(locationSet);
                             }
 
-                            String locationSet = str.toString();
-                            strollLocationView.setText(locationSet);
 
                         }
                     }
@@ -437,6 +440,14 @@ public class MakeAnnouncementFragment extends Fragment {
             }
         });
 
+    }
+
+    @Override
+    public void onPause(){
+        if(alertDialog != null){
+            alertDialog.dismiss();
+        }
+        super.onPause();
     }
 
 }

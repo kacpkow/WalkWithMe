@@ -90,8 +90,6 @@ public class LoginPresenterImpl implements LoginPresenter{
                     }
                     else{
                         backgroundThreadShortToast(loginView.getAppContext(),"bad logging data 1");
-                        Log.e("logresponse", response.body().string());
-                        Log.e("respcode", String.valueOf(response.code()));
                     }
 
                 }
@@ -134,11 +132,10 @@ public class LoginPresenterImpl implements LoginPresenter{
 
                     User usr = retGson.fromJson(json, User.class);
 
-                    SharedPreferences settings = loginView.getActivityContext().getSharedPreferences("userId", Context.MODE_PRIVATE);
+                    SharedPreferences settings = loginView.getActivityContext().getSharedPreferences("USER_ID", Context.MODE_PRIVATE);
                     if(settings != null){
                         SharedPreferences.Editor editor = settings.edit();
-                        editor.putInt("ID", usr.getUser_id());
-                        editor.putString("state", "logged in");
+                        editor.putInt("userId", usr.getUser_id());
                         editor.commit();
                     }
                     RequestController.getInstance().setState(true);

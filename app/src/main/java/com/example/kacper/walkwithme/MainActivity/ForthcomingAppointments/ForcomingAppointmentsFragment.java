@@ -58,7 +58,7 @@ public class ForcomingAppointmentsFragment extends Fragment {
     public void tryToLogIn(){
 
         String url = getString(R.string.service_address) + "rest/login";
-        SharedPreferences settings = getActivity().getApplicationContext().getSharedPreferences("CREDENTIALS", Context.MODE_PRIVATE);
+        final SharedPreferences settings = getActivity().getApplicationContext().getSharedPreferences("CREDENTIALS", Context.MODE_PRIVATE);
         String json = settings.getString("values", "");
         Gson gson1 = new Gson();
         LoginContent log = gson1.fromJson(json, LoginContent.class);
@@ -77,8 +77,9 @@ public class ForcomingAppointmentsFragment extends Fragment {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                //goBackToLoginPage(getActivity().getApplicationContext());
-                backgroundThreadShortToast(getActivity().getApplicationContext(), "Connection error. Please check your Internet connection status");
+                if(getActivity().getApplicationContext() != null){
+                    backgroundThreadShortToast(getActivity().getApplicationContext(), "Connection error. Please check your Internet connection status");
+                }
             }
 
             @Override
@@ -89,7 +90,14 @@ public class ForcomingAppointmentsFragment extends Fragment {
                     getUser();
                 }
                 else{
-                    //TO DO log out
+                    SharedPreferences.Editor editor = settings.edit();
+                    editor.remove("values");
+                    editor.commit();
+                    SharedPreferences settingsUser = getActivity().getApplicationContext().getSharedPreferences("USER_ID", Context.MODE_PRIVATE);
+                    editor = settingsUser.edit();
+                    editor.remove("userId");
+                    editor.commit();
+                    backgroundThreadFinishActivity(getActivity().getApplicationContext());
                 }
 
             }

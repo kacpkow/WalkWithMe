@@ -78,7 +78,7 @@
                 android:id="@+id/mapDetailsForcomingAppointment"
                 android:layout_width="match_parent"
                 android:layout_height="405dp"
-                android:apiKey="AIzaSyDUvDrGRcGOVPwuvrQu-H1WNT6Wpe7kvL0" />
+                android:apiKey="AIzaSyDUm0e3ky9I-2MooRANLaWLXaIKv0rNrpU" />
 
         </LinearLayout>
 
@@ -87,6 +87,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
             android:gravity="center">
 
             <Button

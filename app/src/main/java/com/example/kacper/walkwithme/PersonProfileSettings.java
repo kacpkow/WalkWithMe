@@ -40,6 +40,7 @@ import com.example.kacper.walkwithme.Model.PasswordForm;
 import com.example.kacper.walkwithme.Model.PhotoData;
 import com.example.kacper.walkwithme.Model.PhotoDataDeserializer;
 import com.example.kacper.walkwithme.Model.UserData;
+import com.example.kacper.walkwithme.Model.UserMail;
 import com.example.kacper.walkwithme.Model.UserProfileData;
 import com.example.kacper.walkwithme.Model.UserProfileDataDeserializer;
 import com.google.gson.Gson;
@@ -429,15 +430,51 @@ public class PersonProfileSettings extends AppCompatActivity{
     public void saveData(){
         saveUserData();
         saveDescription();
+        saveMail();
         getUserData(String.valueOf(userId));
 
+    }
+
+
+    public void saveMail(){
+        String url = getString(R.string.service_address) + "user/updateMail";
+
+        MediaType mediaType = MediaType.parse("application/json");
+        Gson gson = new Gson();
+        UserMail mail = new UserMail();
+        mail.setMail(email.getText().toString());
+
+        RequestBody requestBody = RequestBody.create(mediaType, gson.toJson(mail));
+
+        final Request request;
+        request = new Request.Builder()
+                .url(url)
+                .post(requestBody)
+                .addHeader("content-type", "application/json")
+                .build();
+
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e("err", e.getLocalizedMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, okhttp3.Response response) throws IOException {
+
+                if(response.code() == 200){
+
+                }
+            }
+        });
     }
 
     public void saveDescription(){
 
         String url = getString(R.string.service_address) + "profile/description";
 
-        String userDescription = String.valueOf(description.getText());
+        String userDescription = description.getText().toString();
         MediaType mediaType = MediaType.parse("application/json");
         Gson gson = new Gson();
 
@@ -478,7 +515,7 @@ public class PersonProfileSettings extends AppCompatActivity{
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         stream.reset();
-        img.compress(Bitmap.CompressFormat.JPEG, 0, stream);
+        img.compress(Bitmap.CompressFormat.JPEG, 70, stream);
         byte[] byteArray = stream.toByteArray();
 
         MediaType mediaType = MediaType.parse("application/json");
